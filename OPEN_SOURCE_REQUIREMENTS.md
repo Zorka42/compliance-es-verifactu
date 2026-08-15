@@ -1,7 +1,7 @@
 # VeriFactu KMP — Open Source Repository Requirements
 
-Status: Draft  
-Canonical language: English  
+Status: Draft
+Canonical language: English
 License: Apache-2.0
 
 ## 1. Purpose
