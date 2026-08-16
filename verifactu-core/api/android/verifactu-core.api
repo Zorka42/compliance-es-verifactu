@@ -1,0 +1,530 @@
+public final class dev/verifactu/core/CancellationHashInput {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun canonicalString ()Ljava/lang/String;
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ldev/verifactu/core/CancellationHashInput;
+	public static synthetic fun copy$default (Ldev/verifactu/core/CancellationHashInput;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/core/CancellationHashInput;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCancelledInvoiceNumber ()Ljava/lang/String;
+	public final fun getCancelledIssueDate ()Ljava/lang/String;
+	public final fun getCancelledIssuerId ()Ljava/lang/String;
+	public final fun getGeneratedAt ()Ljava/lang/String;
+	public final fun getPreviousHash ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class dev/verifactu/core/ChainState {
+}
+
+public final class dev/verifactu/core/ChainState$FirstRecord : dev/verifactu/core/ChainState {
+	public static final field INSTANCE Ldev/verifactu/core/ChainState$FirstRecord;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/ChainState$PreviousRecord : dev/verifactu/core/ChainState {
+	public fun <init> (Ldev/verifactu/core/InvoiceIdentifier;Ljava/lang/String;)V
+	public final fun component1 ()Ldev/verifactu/core/InvoiceIdentifier;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ldev/verifactu/core/InvoiceIdentifier;Ljava/lang/String;)Ldev/verifactu/core/ChainState$PreviousRecord;
+	public static synthetic fun copy$default (Ldev/verifactu/core/ChainState$PreviousRecord;Ldev/verifactu/core/InvoiceIdentifier;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/core/ChainState$PreviousRecord;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHash ()Ljava/lang/String;
+	public final fun getInvoice ()Ldev/verifactu/core/InvoiceIdentifier;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/ComplianceSourceReference {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ldev/verifactu/core/ComplianceSourceReference;
+	public static synthetic fun copy$default (Ldev/verifactu/core/ComplianceSourceReference;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/core/ComplianceSourceReference;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDocument ()Ljava/lang/String;
+	public final fun getSection ()Ljava/lang/String;
+	public final fun getVersion ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/Exemption : java/lang/Enum {
+	public static final field E1 Ldev/verifactu/core/Exemption;
+	public static final field E2 Ldev/verifactu/core/Exemption;
+	public static final field E3 Ldev/verifactu/core/Exemption;
+	public static final field E4 Ldev/verifactu/core/Exemption;
+	public static final field E5 Ldev/verifactu/core/Exemption;
+	public static final field E6 Ldev/verifactu/core/Exemption;
+	public static final field E7 Ldev/verifactu/core/Exemption;
+	public static final field E8 Ldev/verifactu/core/Exemption;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getXmlValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/core/Exemption;
+	public static fun values ()[Ldev/verifactu/core/Exemption;
+}
+
+public final class dev/verifactu/core/FiscalAmount {
+	public static final field Companion Ldev/verifactu/core/FiscalAmount$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/FiscalAmount$Companion {
+	public final fun parse (Ljava/lang/String;)Ldev/verifactu/core/ValueResult;
+}
+
+public final class dev/verifactu/core/FiscalRecordFactory {
+	public static final field INSTANCE Ldev/verifactu/core/FiscalRecordFactory;
+	public final fun createCancellation (Ldev/verifactu/core/RegistroAnulacionDraft;)Ldev/verifactu/core/RecordCreationResult;
+	public final fun createRegistration (Ldev/verifactu/core/RegistroAltaDraft;)Ldev/verifactu/core/RecordCreationResult;
+}
+
+public final class dev/verifactu/core/InvoiceIdentifier {
+	public fun <init> (Ldev/verifactu/core/TaxIdentifier;Ldev/verifactu/core/InvoiceNumber;Ldev/verifactu/core/InvoiceIssueDate;)V
+	public final fun component1 ()Ldev/verifactu/core/TaxIdentifier;
+	public final fun component2 ()Ldev/verifactu/core/InvoiceNumber;
+	public final fun component3 ()Ldev/verifactu/core/InvoiceIssueDate;
+	public final fun copy (Ldev/verifactu/core/TaxIdentifier;Ldev/verifactu/core/InvoiceNumber;Ldev/verifactu/core/InvoiceIssueDate;)Ldev/verifactu/core/InvoiceIdentifier;
+	public static synthetic fun copy$default (Ldev/verifactu/core/InvoiceIdentifier;Ldev/verifactu/core/TaxIdentifier;Ldev/verifactu/core/InvoiceNumber;Ldev/verifactu/core/InvoiceIssueDate;ILjava/lang/Object;)Ldev/verifactu/core/InvoiceIdentifier;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIssueDate ()Ldev/verifactu/core/InvoiceIssueDate;
+	public final fun getIssuer ()Ldev/verifactu/core/TaxIdentifier;
+	public final fun getNumber ()Ldev/verifactu/core/InvoiceNumber;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/InvoiceIssueDate {
+	public static final field Companion Ldev/verifactu/core/InvoiceIssueDate$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/InvoiceIssueDate$Companion {
+	public final fun parse (Ljava/lang/String;)Ldev/verifactu/core/ValueResult;
+}
+
+public final class dev/verifactu/core/InvoiceNumber {
+	public static final field Companion Ldev/verifactu/core/InvoiceNumber$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/InvoiceNumber$Companion {
+	public final fun parse (Ljava/lang/String;)Ldev/verifactu/core/ValueResult;
+}
+
+public final class dev/verifactu/core/InvoiceType : java/lang/Enum {
+	public static final field F1 Ldev/verifactu/core/InvoiceType;
+	public static final field F2 Ldev/verifactu/core/InvoiceType;
+	public static final field F3 Ldev/verifactu/core/InvoiceType;
+	public static final field R1 Ldev/verifactu/core/InvoiceType;
+	public static final field R2 Ldev/verifactu/core/InvoiceType;
+	public static final field R3 Ldev/verifactu/core/InvoiceType;
+	public static final field R4 Ldev/verifactu/core/InvoiceType;
+	public static final field R5 Ldev/verifactu/core/InvoiceType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/core/InvoiceType;
+	public static fun values ()[Ldev/verifactu/core/InvoiceType;
+}
+
+public final class dev/verifactu/core/Qualification : java/lang/Enum {
+	public static final field NOT_SUBJECT Ldev/verifactu/core/Qualification;
+	public static final field NOT_SUBJECT_LOCATION_RULES Ldev/verifactu/core/Qualification;
+	public static final field SUBJECT_NOT_EXEMPT Ldev/verifactu/core/Qualification;
+	public static final field SUBJECT_REVERSE_CHARGE Ldev/verifactu/core/Qualification;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getXmlValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/core/Qualification;
+	public static fun values ()[Ldev/verifactu/core/Qualification;
+}
+
+public abstract interface class dev/verifactu/core/RecordCreationResult {
+}
+
+public final class dev/verifactu/core/RecordCreationResult$Created : dev/verifactu/core/RecordCreationResult {
+	public fun <init> (Ljava/lang/Object;Ldev/verifactu/core/ChainState$PreviousRecord;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun component2 ()Ldev/verifactu/core/ChainState$PreviousRecord;
+	public final fun copy (Ljava/lang/Object;Ldev/verifactu/core/ChainState$PreviousRecord;)Ldev/verifactu/core/RecordCreationResult$Created;
+	public static synthetic fun copy$default (Ldev/verifactu/core/RecordCreationResult$Created;Ljava/lang/Object;Ldev/verifactu/core/ChainState$PreviousRecord;ILjava/lang/Object;)Ldev/verifactu/core/RecordCreationResult$Created;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNextChainState ()Ldev/verifactu/core/ChainState$PreviousRecord;
+	public final fun getRecord ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/RecordCreationResult$Invalid : dev/verifactu/core/RecordCreationResult {
+	public fun <init> (Ldev/verifactu/core/ValidationReport;)V
+	public final fun component1 ()Ldev/verifactu/core/ValidationReport;
+	public final fun copy (Ldev/verifactu/core/ValidationReport;)Ldev/verifactu/core/RecordCreationResult$Invalid;
+	public static synthetic fun copy$default (Ldev/verifactu/core/RecordCreationResult$Invalid;Ldev/verifactu/core/ValidationReport;ILjava/lang/Object;)Ldev/verifactu/core/RecordCreationResult$Invalid;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReport ()Ldev/verifactu/core/ValidationReport;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/RecordGenerationTimestamp {
+	public static final field Companion Ldev/verifactu/core/RecordGenerationTimestamp$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/RecordGenerationTimestamp$Companion {
+	public final fun parse (Ljava/lang/String;)Ldev/verifactu/core/ValueResult;
+}
+
+public final class dev/verifactu/core/RecordHashCalculator {
+	public static final field INSTANCE Ldev/verifactu/core/RecordHashCalculator;
+	public final fun sha256 (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/RecordVersion : java/lang/Enum {
+	public static final field V1_0 Ldev/verifactu/core/RecordVersion;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getXmlValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/core/RecordVersion;
+	public static fun values ()[Ldev/verifactu/core/RecordVersion;
+}
+
+public final class dev/verifactu/core/RegistrationHashInput {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun canonicalString ()Ljava/lang/String;
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ldev/verifactu/core/RegistrationHashInput;
+	public static synthetic fun copy$default (Ldev/verifactu/core/RegistrationHashInput;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/core/RegistrationHashInput;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getGeneratedAt ()Ljava/lang/String;
+	public final fun getInvoiceNumber ()Ljava/lang/String;
+	public final fun getInvoiceType ()Ljava/lang/String;
+	public final fun getIssueDate ()Ljava/lang/String;
+	public final fun getIssuerId ()Ljava/lang/String;
+	public final fun getPreviousHash ()Ljava/lang/String;
+	public final fun getTotalAmount ()Ljava/lang/String;
+	public final fun getTotalTax ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/RegistroAlta {
+	public fun <init> (Ldev/verifactu/core/RegistroAltaDraft;Ljava/lang/String;)V
+	public final fun component1 ()Ldev/verifactu/core/RegistroAltaDraft;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ldev/verifactu/core/RegistroAltaDraft;Ljava/lang/String;)Ldev/verifactu/core/RegistroAlta;
+	public static synthetic fun copy$default (Ldev/verifactu/core/RegistroAlta;Ldev/verifactu/core/RegistroAltaDraft;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/core/RegistroAlta;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDraft ()Ldev/verifactu/core/RegistroAltaDraft;
+	public final fun getHash ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/RegistroAltaDraft {
+	public fun <init> (Ldev/verifactu/core/RecordVersion;Ldev/verifactu/core/InvoiceIdentifier;Ljava/lang/String;Ldev/verifactu/core/InvoiceType;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/core/FiscalAmount;Ljava/lang/String;Ldev/verifactu/core/TaxBreakdown;Ldev/verifactu/core/ChainState;Ldev/verifactu/core/SistemaInformatico;Ldev/verifactu/core/RecordGenerationTimestamp;)V
+	public final fun component1 ()Ldev/verifactu/core/RecordVersion;
+	public final fun component10 ()Ldev/verifactu/core/SistemaInformatico;
+	public final fun component11 ()Ldev/verifactu/core/RecordGenerationTimestamp;
+	public final fun component2 ()Ldev/verifactu/core/InvoiceIdentifier;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ldev/verifactu/core/InvoiceType;
+	public final fun component5 ()Ldev/verifactu/core/FiscalAmount;
+	public final fun component6 ()Ldev/verifactu/core/FiscalAmount;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ldev/verifactu/core/TaxBreakdown;
+	public final fun component9 ()Ldev/verifactu/core/ChainState;
+	public final fun copy (Ldev/verifactu/core/RecordVersion;Ldev/verifactu/core/InvoiceIdentifier;Ljava/lang/String;Ldev/verifactu/core/InvoiceType;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/core/FiscalAmount;Ljava/lang/String;Ldev/verifactu/core/TaxBreakdown;Ldev/verifactu/core/ChainState;Ldev/verifactu/core/SistemaInformatico;Ldev/verifactu/core/RecordGenerationTimestamp;)Ldev/verifactu/core/RegistroAltaDraft;
+	public static synthetic fun copy$default (Ldev/verifactu/core/RegistroAltaDraft;Ldev/verifactu/core/RecordVersion;Ldev/verifactu/core/InvoiceIdentifier;Ljava/lang/String;Ldev/verifactu/core/InvoiceType;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/core/FiscalAmount;Ljava/lang/String;Ldev/verifactu/core/TaxBreakdown;Ldev/verifactu/core/ChainState;Ldev/verifactu/core/SistemaInformatico;Ldev/verifactu/core/RecordGenerationTimestamp;ILjava/lang/Object;)Ldev/verifactu/core/RegistroAltaDraft;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChainState ()Ldev/verifactu/core/ChainState;
+	public final fun getGeneratedAt ()Ldev/verifactu/core/RecordGenerationTimestamp;
+	public final fun getInvoice ()Ldev/verifactu/core/InvoiceIdentifier;
+	public final fun getInvoiceType ()Ldev/verifactu/core/InvoiceType;
+	public final fun getIssuerName ()Ljava/lang/String;
+	public final fun getOperationDescription ()Ljava/lang/String;
+	public final fun getSystem ()Ldev/verifactu/core/SistemaInformatico;
+	public final fun getTaxBreakdown ()Ldev/verifactu/core/TaxBreakdown;
+	public final fun getTotalAmount ()Ldev/verifactu/core/FiscalAmount;
+	public final fun getTotalTax ()Ldev/verifactu/core/FiscalAmount;
+	public final fun getVersion ()Ldev/verifactu/core/RecordVersion;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/RegistroAltaValidator : dev/verifactu/core/Validator {
+	public static final field INSTANCE Ldev/verifactu/core/RegistroAltaValidator;
+	public fun validate (Ldev/verifactu/core/RegistroAltaDraft;)Ldev/verifactu/core/ValidationReport;
+	public synthetic fun validate (Ljava/lang/Object;)Ldev/verifactu/core/ValidationReport;
+}
+
+public final class dev/verifactu/core/RegistroAnulacion {
+	public fun <init> (Ldev/verifactu/core/RegistroAnulacionDraft;Ljava/lang/String;)V
+	public final fun component1 ()Ldev/verifactu/core/RegistroAnulacionDraft;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ldev/verifactu/core/RegistroAnulacionDraft;Ljava/lang/String;)Ldev/verifactu/core/RegistroAnulacion;
+	public static synthetic fun copy$default (Ldev/verifactu/core/RegistroAnulacion;Ldev/verifactu/core/RegistroAnulacionDraft;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/core/RegistroAnulacion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDraft ()Ldev/verifactu/core/RegistroAnulacionDraft;
+	public final fun getHash ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/RegistroAnulacionDraft {
+	public fun <init> (Ldev/verifactu/core/InvoiceIdentifier;Ldev/verifactu/core/ChainState;Ldev/verifactu/core/SistemaInformatico;Ldev/verifactu/core/RecordGenerationTimestamp;)V
+	public final fun component1 ()Ldev/verifactu/core/InvoiceIdentifier;
+	public final fun component2 ()Ldev/verifactu/core/ChainState;
+	public final fun component3 ()Ldev/verifactu/core/SistemaInformatico;
+	public final fun component4 ()Ldev/verifactu/core/RecordGenerationTimestamp;
+	public final fun copy (Ldev/verifactu/core/InvoiceIdentifier;Ldev/verifactu/core/ChainState;Ldev/verifactu/core/SistemaInformatico;Ldev/verifactu/core/RecordGenerationTimestamp;)Ldev/verifactu/core/RegistroAnulacionDraft;
+	public static synthetic fun copy$default (Ldev/verifactu/core/RegistroAnulacionDraft;Ldev/verifactu/core/InvoiceIdentifier;Ldev/verifactu/core/ChainState;Ldev/verifactu/core/SistemaInformatico;Ldev/verifactu/core/RecordGenerationTimestamp;ILjava/lang/Object;)Ldev/verifactu/core/RegistroAnulacionDraft;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCancelledInvoice ()Ldev/verifactu/core/InvoiceIdentifier;
+	public final fun getChainState ()Ldev/verifactu/core/ChainState;
+	public final fun getGeneratedAt ()Ldev/verifactu/core/RecordGenerationTimestamp;
+	public final fun getSystem ()Ldev/verifactu/core/SistemaInformatico;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/RegistroAnulacionValidator : dev/verifactu/core/Validator {
+	public static final field INSTANCE Ldev/verifactu/core/RegistroAnulacionValidator;
+	public fun validate (Ldev/verifactu/core/RegistroAnulacionDraft;)Ldev/verifactu/core/ValidationReport;
+	public synthetic fun validate (Ljava/lang/Object;)Ldev/verifactu/core/ValidationReport;
+}
+
+public final class dev/verifactu/core/SistemaInformatico {
+	public fun <init> (Ljava/lang/String;Ldev/verifactu/core/TaxIdentifier;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZZZ)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ldev/verifactu/core/TaxIdentifier;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Z
+	public final fun component8 ()Z
+	public final fun component9 ()Z
+	public final fun copy (Ljava/lang/String;Ldev/verifactu/core/TaxIdentifier;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZZZ)Ldev/verifactu/core/SistemaInformatico;
+	public static synthetic fun copy$default (Ldev/verifactu/core/SistemaInformatico;Ljava/lang/String;Ldev/verifactu/core/TaxIdentifier;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZZZILjava/lang/Object;)Ldev/verifactu/core/SistemaInformatico;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHasMultipleTaxpayers ()Z
+	public final fun getInstallationNumber ()Ljava/lang/String;
+	public final fun getProducerName ()Ljava/lang/String;
+	public final fun getProducerTaxIdentifier ()Ldev/verifactu/core/TaxIdentifier;
+	public final fun getSupportsMultipleTaxpayers ()Z
+	public final fun getSystemIdentifier ()Ljava/lang/String;
+	public final fun getSystemName ()Ljava/lang/String;
+	public final fun getVeriFactuOnly ()Z
+	public final fun getVersion ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/TaxBreakdown {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Ldev/verifactu/core/TaxBreakdown;
+	public static synthetic fun copy$default (Ldev/verifactu/core/TaxBreakdown;Ljava/util/List;ILjava/lang/Object;)Ldev/verifactu/core/TaxBreakdown;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDetails ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/TaxBreakdownDetail {
+	public fun <init> (Ldev/verifactu/core/TaxOperation;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/core/TaxType;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/core/FiscalAmount;Ljava/lang/String;Ldev/verifactu/core/FiscalAmount;)V
+	public synthetic fun <init> (Ldev/verifactu/core/TaxOperation;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/core/TaxType;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/core/FiscalAmount;Ljava/lang/String;Ldev/verifactu/core/FiscalAmount;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ldev/verifactu/core/TaxOperation;
+	public final fun component2 ()Ldev/verifactu/core/FiscalAmount;
+	public final fun component3 ()Ldev/verifactu/core/TaxType;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ldev/verifactu/core/FiscalAmount;
+	public final fun component7 ()Ldev/verifactu/core/FiscalAmount;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun component9 ()Ldev/verifactu/core/FiscalAmount;
+	public final fun copy (Ldev/verifactu/core/TaxOperation;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/core/TaxType;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/core/FiscalAmount;Ljava/lang/String;Ldev/verifactu/core/FiscalAmount;)Ldev/verifactu/core/TaxBreakdownDetail;
+	public static synthetic fun copy$default (Ldev/verifactu/core/TaxBreakdownDetail;Ldev/verifactu/core/TaxOperation;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/core/TaxType;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/core/FiscalAmount;Ljava/lang/String;Ldev/verifactu/core/FiscalAmount;ILjava/lang/Object;)Ldev/verifactu/core/TaxBreakdownDetail;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChargedTax ()Ldev/verifactu/core/FiscalAmount;
+	public final fun getCostBase ()Ldev/verifactu/core/FiscalAmount;
+	public final fun getEquivalenceSurcharge ()Ldev/verifactu/core/FiscalAmount;
+	public final fun getEquivalenceSurchargeRate ()Ljava/lang/String;
+	public final fun getOperation ()Ldev/verifactu/core/TaxOperation;
+	public final fun getRegimeCode ()Ljava/lang/String;
+	public final fun getTax ()Ldev/verifactu/core/TaxType;
+	public final fun getTaxRate ()Ljava/lang/String;
+	public final fun getTaxableBase ()Ldev/verifactu/core/FiscalAmount;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/TaxIdentifier {
+	public static final field Companion Ldev/verifactu/core/TaxIdentifier$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/TaxIdentifier$Companion {
+	public final fun parse (Ljava/lang/String;)Ldev/verifactu/core/ValueResult;
+}
+
+public abstract interface class dev/verifactu/core/TaxOperation {
+}
+
+public final class dev/verifactu/core/TaxOperation$Exempt : dev/verifactu/core/TaxOperation {
+	public fun <init> (Ldev/verifactu/core/Exemption;)V
+	public final fun component1 ()Ldev/verifactu/core/Exemption;
+	public final fun copy (Ldev/verifactu/core/Exemption;)Ldev/verifactu/core/TaxOperation$Exempt;
+	public static synthetic fun copy$default (Ldev/verifactu/core/TaxOperation$Exempt;Ldev/verifactu/core/Exemption;ILjava/lang/Object;)Ldev/verifactu/core/TaxOperation$Exempt;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ldev/verifactu/core/Exemption;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/TaxOperation$Qualified : dev/verifactu/core/TaxOperation {
+	public fun <init> (Ldev/verifactu/core/Qualification;)V
+	public final fun component1 ()Ldev/verifactu/core/Qualification;
+	public final fun copy (Ldev/verifactu/core/Qualification;)Ldev/verifactu/core/TaxOperation$Qualified;
+	public static synthetic fun copy$default (Ldev/verifactu/core/TaxOperation$Qualified;Ldev/verifactu/core/Qualification;ILjava/lang/Object;)Ldev/verifactu/core/TaxOperation$Qualified;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ldev/verifactu/core/Qualification;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/TaxType : java/lang/Enum {
+	public static final field IGIC Ldev/verifactu/core/TaxType;
+	public static final field IPSI Ldev/verifactu/core/TaxType;
+	public static final field IVA Ldev/verifactu/core/TaxType;
+	public static final field OTHER Ldev/verifactu/core/TaxType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getXmlValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/core/TaxType;
+	public static fun values ()[Ldev/verifactu/core/TaxType;
+}
+
+public final class dev/verifactu/core/ValidationIssue {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ValidationSeverity;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ComplianceSourceReference;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ValidationSeverity;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ComplianceSourceReference;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ldev/verifactu/core/ValidationSeverity;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ldev/verifactu/core/ComplianceSourceReference;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ValidationSeverity;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ComplianceSourceReference;)Ldev/verifactu/core/ValidationIssue;
+	public static synthetic fun copy$default (Ldev/verifactu/core/ValidationIssue;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ValidationSeverity;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ComplianceSourceReference;ILjava/lang/Object;)Ldev/verifactu/core/ValidationIssue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAeatCode ()Ljava/lang/String;
+	public final fun getCode ()Ljava/lang/String;
+	public final fun getFieldPath ()Ljava/lang/String;
+	public final fun getMessage ()Ljava/lang/String;
+	public final fun getSeverity ()Ldev/verifactu/core/ValidationSeverity;
+	public final fun getSource ()Ldev/verifactu/core/ComplianceSourceReference;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/ValidationReport {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Ldev/verifactu/core/ValidationReport;
+	public static synthetic fun copy$default (Ldev/verifactu/core/ValidationReport;Ljava/util/List;ILjava/lang/Object;)Ldev/verifactu/core/ValidationReport;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIssues ()Ljava/util/List;
+	public fun hashCode ()I
+	public final fun isValid ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/ValidationSeverity : java/lang/Enum {
+	public static final field ASSUMPTION Ldev/verifactu/core/ValidationSeverity;
+	public static final field ERROR Ldev/verifactu/core/ValidationSeverity;
+	public static final field WARNING Ldev/verifactu/core/ValidationSeverity;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/core/ValidationSeverity;
+	public static fun values ()[Ldev/verifactu/core/ValidationSeverity;
+}
+
+public abstract interface class dev/verifactu/core/Validator {
+	public abstract fun validate (Ljava/lang/Object;)Ldev/verifactu/core/ValidationReport;
+}
+
+public final class dev/verifactu/core/ValueError {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ldev/verifactu/core/ValueError;
+	public static synthetic fun copy$default (Ldev/verifactu/core/ValueError;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/core/ValueError;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCode ()Ljava/lang/String;
+	public final fun getFieldPath ()Ljava/lang/String;
+	public final fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class dev/verifactu/core/ValueResult {
+}
+
+public final class dev/verifactu/core/ValueResult$Invalid : dev/verifactu/core/ValueResult {
+	public fun <init> (Ldev/verifactu/core/ValueError;)V
+	public final fun component1 ()Ldev/verifactu/core/ValueError;
+	public final fun copy (Ldev/verifactu/core/ValueError;)Ldev/verifactu/core/ValueResult$Invalid;
+	public static synthetic fun copy$default (Ldev/verifactu/core/ValueResult$Invalid;Ldev/verifactu/core/ValueError;ILjava/lang/Object;)Ldev/verifactu/core/ValueResult$Invalid;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getError ()Ldev/verifactu/core/ValueError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/core/ValueResult$Valid : dev/verifactu/core/ValueResult {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Ldev/verifactu/core/ValueResult$Valid;
+	public static synthetic fun copy$default (Ldev/verifactu/core/ValueResult$Valid;Ljava/lang/Object;ILjava/lang/Object;)Ldev/verifactu/core/ValueResult$Valid;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

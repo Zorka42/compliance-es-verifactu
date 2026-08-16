@@ -1,0 +1,64 @@
+public final class dev/verifactu/qr/QrEnvironment : java/lang/Enum {
+	public static final field PRODUCTION Ldev/verifactu/qr/QrEnvironment;
+	public static final field TEST Ldev/verifactu/qr/QrEnvironment;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/qr/QrEnvironment;
+	public static fun values ()[Ldev/verifactu/qr/QrEnvironment;
+}
+
+public final class dev/verifactu/qr/QrPayload {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Ldev/verifactu/qr/QrPayload;
+	public static synthetic fun copy$default (Ldev/verifactu/qr/QrPayload;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/qr/QrPayload;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getUrl ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/qr/QrPayloadBuilder {
+	public static final field INSTANCE Ldev/verifactu/qr/QrPayloadBuilder;
+	public final fun build (Ldev/verifactu/qr/QrPayloadInput;)Ldev/verifactu/qr/QrPayloadResult;
+}
+
+public final class dev/verifactu/qr/QrPayloadInput {
+	public fun <init> (Ldev/verifactu/core/InvoiceIdentifier;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/qr/QrEnvironment;)V
+	public final fun component1 ()Ldev/verifactu/core/InvoiceIdentifier;
+	public final fun component2 ()Ldev/verifactu/core/FiscalAmount;
+	public final fun component3 ()Ldev/verifactu/qr/QrEnvironment;
+	public final fun copy (Ldev/verifactu/core/InvoiceIdentifier;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/qr/QrEnvironment;)Ldev/verifactu/qr/QrPayloadInput;
+	public static synthetic fun copy$default (Ldev/verifactu/qr/QrPayloadInput;Ldev/verifactu/core/InvoiceIdentifier;Ldev/verifactu/core/FiscalAmount;Ldev/verifactu/qr/QrEnvironment;ILjava/lang/Object;)Ldev/verifactu/qr/QrPayloadInput;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEnvironment ()Ldev/verifactu/qr/QrEnvironment;
+	public final fun getInvoice ()Ldev/verifactu/core/InvoiceIdentifier;
+	public final fun getTotalAmount ()Ldev/verifactu/core/FiscalAmount;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class dev/verifactu/qr/QrPayloadResult {
+}
+
+public final class dev/verifactu/qr/QrPayloadResult$Created : dev/verifactu/qr/QrPayloadResult {
+	public fun <init> (Ldev/verifactu/qr/QrPayload;)V
+	public final fun component1 ()Ldev/verifactu/qr/QrPayload;
+	public final fun copy (Ldev/verifactu/qr/QrPayload;)Ldev/verifactu/qr/QrPayloadResult$Created;
+	public static synthetic fun copy$default (Ldev/verifactu/qr/QrPayloadResult$Created;Ldev/verifactu/qr/QrPayload;ILjava/lang/Object;)Ldev/verifactu/qr/QrPayloadResult$Created;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPayload ()Ldev/verifactu/qr/QrPayload;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/qr/QrPayloadResult$Invalid : dev/verifactu/qr/QrPayloadResult {
+	public fun <init> (Ldev/verifactu/core/ValidationReport;)V
+	public final fun component1 ()Ldev/verifactu/core/ValidationReport;
+	public final fun copy (Ldev/verifactu/core/ValidationReport;)Ldev/verifactu/qr/QrPayloadResult$Invalid;
+	public static synthetic fun copy$default (Ldev/verifactu/qr/QrPayloadResult$Invalid;Ldev/verifactu/core/ValidationReport;ILjava/lang/Object;)Ldev/verifactu/qr/QrPayloadResult$Invalid;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReport ()Ldev/verifactu/core/ValidationReport;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

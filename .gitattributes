@@ -1,0 +1,3 @@
+gradlew.bat text eol=crlf
+*.api -whitespace
+verifactu-xml/src/jvmTest/resources/aeat-xsd/*.xsd binary

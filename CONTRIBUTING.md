@@ -2,7 +2,7 @@
 
 Thanks for considering a contribution to VeriFactu KMP.
 
-The project is currently in specification and repository-structure setup. Code contribution instructions will become more concrete once the Gradle KMP project exists.
+The Gradle Kotlin Multiplatform workspace is available. This project is still pre-release and must not be used for production fiscal compliance.
 
 ## Language
 
@@ -19,26 +19,21 @@ Official Spanish VERI*FACTU terms may remain where they map directly to AEAT pro
 
 ## Local Development
 
-Until the Gradle project is created, documentation changes can be reviewed with:
-
-```bash
-git diff --check
-```
-
-Once the Gradle project exists, contributors should be able to run:
+Run the standard local gate before opening a pull request:
 
 ```bash
 ./gradlew check
 ```
 
-Expected future checks:
+The CI workflow also runs:
 
-- Kotlin compilation for supported KMP targets;
-- formatting/linting;
-- static analysis;
-- tests;
-- coverage;
-- Dokka documentation build.
+- `ktlintCheck` for Kotlin formatting;
+- `detekt` for static analysis without a baseline;
+- `apiCheck` for reviewed public JVM/Android API signatures;
+- `koverVerifyJvm` for the 90% line-coverage gate in `verifactu-core`;
+- `dokkaHtml` for generated API documentation.
+
+The remaining modules publish JVM Kover reports without pretending that target-specific coverage is equivalent to JVM coverage.
 
 ## Compliance-Sensitive Changes
 

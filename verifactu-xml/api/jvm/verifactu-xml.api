@@ -1,0 +1,49 @@
+public final class dev/verifactu/xml/RegistroXmlSerializer {
+	public static final field INSTANCE Ldev/verifactu/xml/RegistroXmlSerializer;
+	public final fun serialize (Ldev/verifactu/core/RegistroAlta;)Ljava/lang/String;
+	public final fun serialize (Ldev/verifactu/core/RegistroAnulacion;)Ljava/lang/String;
+}
+
+public final class dev/verifactu/xml/SubmissionBatchXmlSerializer {
+	public static final field INSTANCE Ldev/verifactu/xml/SubmissionBatchXmlSerializer;
+	public final fun serialize (Ldev/verifactu/xml/SubmissionHeader;Ljava/util/List;)Ljava/lang/String;
+}
+
+public final class dev/verifactu/xml/SubmissionHeader {
+	public fun <init> (Ljava/lang/String;Ldev/verifactu/core/TaxIdentifier;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ldev/verifactu/core/TaxIdentifier;
+	public final fun copy (Ljava/lang/String;Ldev/verifactu/core/TaxIdentifier;)Ldev/verifactu/xml/SubmissionHeader;
+	public static synthetic fun copy$default (Ldev/verifactu/xml/SubmissionHeader;Ljava/lang/String;Ldev/verifactu/core/TaxIdentifier;ILjava/lang/Object;)Ldev/verifactu/xml/SubmissionHeader;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIssuerName ()Ljava/lang/String;
+	public final fun getIssuerTaxIdentifier ()Ldev/verifactu/core/TaxIdentifier;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class dev/verifactu/xml/SubmissionRecord {
+}
+
+public final class dev/verifactu/xml/SubmissionRecord$Cancellation : dev/verifactu/xml/SubmissionRecord {
+	public fun <init> (Ldev/verifactu/core/RegistroAnulacion;)V
+	public final fun component1 ()Ldev/verifactu/core/RegistroAnulacion;
+	public final fun copy (Ldev/verifactu/core/RegistroAnulacion;)Ldev/verifactu/xml/SubmissionRecord$Cancellation;
+	public static synthetic fun copy$default (Ldev/verifactu/xml/SubmissionRecord$Cancellation;Ldev/verifactu/core/RegistroAnulacion;ILjava/lang/Object;)Ldev/verifactu/xml/SubmissionRecord$Cancellation;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ldev/verifactu/core/RegistroAnulacion;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/xml/SubmissionRecord$Registration : dev/verifactu/xml/SubmissionRecord {
+	public fun <init> (Ldev/verifactu/core/RegistroAlta;)V
+	public final fun component1 ()Ldev/verifactu/core/RegistroAlta;
+	public final fun copy (Ldev/verifactu/core/RegistroAlta;)Ldev/verifactu/xml/SubmissionRecord$Registration;
+	public static synthetic fun copy$default (Ldev/verifactu/xml/SubmissionRecord$Registration;Ldev/verifactu/core/RegistroAlta;ILjava/lang/Object;)Ldev/verifactu/xml/SubmissionRecord$Registration;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ldev/verifactu/core/RegistroAlta;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

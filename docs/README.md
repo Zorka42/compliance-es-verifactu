@@ -23,3 +23,7 @@ The README stays short. Product scope, integration details, and compliance expla
 - Keep examples aligned with the public API once implementation exists.
 - Do not present planned APIs as released APIs.
 - Update documentation when public behavior, compliance baseline, or integration responsibility changes.
+## Architecture
+
+- [Module architecture](architecture.md)
+- [Chain-state persistence and concurrency contract](chain-state-contract.md)

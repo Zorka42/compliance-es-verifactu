@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    name: Linux JVM and Android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build and test common, JVM, and Android code
+        run: ./gradlew check compileKotlinMetadata jvmTest testDebugUnitTest apiCheck dokkaHtml koverXmlReportJvm koverVerifyJvm
+      - name: Upload JVM coverage
+        uses: codecov/codecov-action@v5
+        with:
+          files: verifactu-core/build/reports/kover/reportJvm.xml,verifactu-xml/build/reports/kover/reportJvm.xml,verifactu-qr/build/reports/kover/reportJvm.xml,verifactu-aeat/build/reports/kover/reportJvm.xml
+          fail_ci_if_error: true
+
+  apple:
+    name: Apple targets
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Compile and test Apple targets
+        run: ./gradlew iosSimulatorArm64Test macosArm64Test
