@@ -193,6 +193,70 @@ public final class dev/verifactu/aeat/AeatSubmissionStatus : java/lang/Enum {
 	public static fun values ()[Ldev/verifactu/aeat/AeatSubmissionStatus;
 }
 
+public abstract interface class dev/verifactu/aeat/AeatTransportResult {
+}
+
+public final class dev/verifactu/aeat/AeatTransportResult$InvalidEndpoint : dev/verifactu/aeat/AeatTransportResult {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Ldev/verifactu/aeat/AeatTransportResult$InvalidEndpoint;
+	public static synthetic fun copy$default (Ldev/verifactu/aeat/AeatTransportResult$InvalidEndpoint;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatTransportResult$InvalidEndpoint;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReason ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/aeat/AeatTransportResult$NetworkFailure : dev/verifactu/aeat/AeatTransportResult {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Ldev/verifactu/aeat/AeatTransportResult$NetworkFailure;
+	public static synthetic fun copy$default (Ldev/verifactu/aeat/AeatTransportResult$NetworkFailure;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatTransportResult$NetworkFailure;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReason ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/aeat/AeatTransportResult$NonXmlResponse : dev/verifactu/aeat/AeatTransportResult {
+	public fun <init> (ILjava/lang/String;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (ILjava/lang/String;)Ldev/verifactu/aeat/AeatTransportResult$NonXmlResponse;
+	public static synthetic fun copy$default (Ldev/verifactu/aeat/AeatTransportResult$NonXmlResponse;ILjava/lang/String;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatTransportResult$NonXmlResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContentType ()Ljava/lang/String;
+	public final fun getStatusCode ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/aeat/AeatTransportResult$Timeout : dev/verifactu/aeat/AeatTransportResult {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Ldev/verifactu/aeat/AeatTransportResult$Timeout;
+	public static synthetic fun copy$default (Ldev/verifactu/aeat/AeatTransportResult$Timeout;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatTransportResult$Timeout;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReason ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/aeat/AeatTransportResult$XmlResponse : dev/verifactu/aeat/AeatTransportResult {
+	public fun <init> (ILjava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (ILjava/lang/String;Ljava/lang/String;)Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;
+	public static synthetic fun copy$default (Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;ILjava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContentType ()Ljava/lang/String;
+	public final fun getStatusCode ()I
+	public final fun getXml ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class dev/verifactu/aeat/SoapFault {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
