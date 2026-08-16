@@ -1,3 +1,39 @@
+public final class dev/verifactu/aeat/AeatAdvancedEndpointConfiguration {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Ldev/verifactu/aeat/AeatAdvancedEndpointConfiguration;
+	public static synthetic fun copy$default (Ldev/verifactu/aeat/AeatAdvancedEndpointConfiguration;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatAdvancedEndpointConfiguration;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSubmissionUrl ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/aeat/AeatCertificateAccess : java/lang/Enum {
+	public static final field SEAL Ldev/verifactu/aeat/AeatCertificateAccess;
+	public static final field STANDARD Ldev/verifactu/aeat/AeatCertificateAccess;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/aeat/AeatCertificateAccess;
+	public static fun values ()[Ldev/verifactu/aeat/AeatCertificateAccess;
+}
+
+public final class dev/verifactu/aeat/AeatEndpointConfiguration {
+	public static final field INSTANCE Ldev/verifactu/aeat/AeatEndpointConfiguration;
+	public static final field OFFICIAL_WSDL_URL Ljava/lang/String;
+	public final fun defaultSubmissionEndpoint (Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
+	public static synthetic fun defaultSubmissionEndpoint$default (Ldev/verifactu/aeat/AeatEndpointConfiguration;Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
+	public final fun submissionEndpointWithAdvancedOverride (Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;Ldev/verifactu/aeat/AeatAdvancedEndpointConfiguration;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
+	public static synthetic fun submissionEndpointWithAdvancedOverride$default (Ldev/verifactu/aeat/AeatEndpointConfiguration;Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;Ldev/verifactu/aeat/AeatAdvancedEndpointConfiguration;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
+}
+
+public final class dev/verifactu/aeat/AeatEnvironment : java/lang/Enum {
+	public static final field PRODUCTION Ldev/verifactu/aeat/AeatEnvironment;
+	public static final field TEST Ldev/verifactu/aeat/AeatEnvironment;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/aeat/AeatEnvironment;
+	public static fun values ()[Ldev/verifactu/aeat/AeatEnvironment;
+}
+
 public final class dev/verifactu/aeat/AeatRecordStatus : java/lang/Enum {
 	public static final field ACCEPTED Ldev/verifactu/aeat/AeatRecordStatus;
 	public static final field ACCEPTED_WITH_ERRORS Ldev/verifactu/aeat/AeatRecordStatus;
@@ -55,6 +91,42 @@ public final class dev/verifactu/aeat/AeatResponseParser {
 	public static final field INSTANCE Ldev/verifactu/aeat/AeatResponseParser;
 	public final fun parseSoapFault (Ljava/lang/String;)Ldev/verifactu/aeat/SoapFaultParseResult;
 	public final fun parseSubmission (Ljava/lang/String;)Ldev/verifactu/aeat/AeatResponseParseResult;
+}
+
+public final class dev/verifactu/aeat/AeatServiceVersion : java/lang/Enum {
+	public static final field TIKE_V1_0 Ldev/verifactu/aeat/AeatServiceVersion;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/aeat/AeatServiceVersion;
+	public static fun values ()[Ldev/verifactu/aeat/AeatServiceVersion;
+}
+
+public final class dev/verifactu/aeat/AeatSubmissionEndpoint {
+	public fun <init> (Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;Ldev/verifactu/aeat/AeatServiceVersion;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)V
+	public final fun component1 ()Ldev/verifactu/aeat/AeatEnvironment;
+	public final fun component2 ()Ldev/verifactu/aeat/AeatCertificateAccess;
+	public final fun component3 ()Ldev/verifactu/aeat/AeatServiceVersion;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/util/List;
+	public final fun copy (Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;Ldev/verifactu/aeat/AeatServiceVersion;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
+	public static synthetic fun copy$default (Ldev/verifactu/aeat/AeatSubmissionEndpoint;Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;Ldev/verifactu/aeat/AeatServiceVersion;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCertificateAccess ()Ldev/verifactu/aeat/AeatCertificateAccess;
+	public final fun getEnvironment ()Ldev/verifactu/aeat/AeatEnvironment;
+	public final fun getFeatures ()Ljava/util/List;
+	public final fun getSourceUrl ()Ljava/lang/String;
+	public final fun getUrl ()Ljava/lang/String;
+	public final fun getVersion ()Ldev/verifactu/aeat/AeatServiceVersion;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/aeat/AeatSubmissionFeature : java/lang/Enum {
+	public static final field RECORD_QUERY Ldev/verifactu/aeat/AeatSubmissionFeature;
+	public static final field REGISTRATION_SUBMISSION Ldev/verifactu/aeat/AeatSubmissionFeature;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/aeat/AeatSubmissionFeature;
+	public static fun values ()[Ldev/verifactu/aeat/AeatSubmissionFeature;
 }
 
 public final class dev/verifactu/aeat/AeatSubmissionResponse {
