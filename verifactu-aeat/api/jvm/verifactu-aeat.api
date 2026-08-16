@@ -17,6 +17,44 @@ public final class dev/verifactu/aeat/AeatCertificateAccess : java/lang/Enum {
 	public static fun values ()[Ldev/verifactu/aeat/AeatCertificateAccess;
 }
 
+public abstract interface class dev/verifactu/aeat/AeatClientCredential {
+	public abstract fun getMetadata ()Ldev/verifactu/aeat/AeatCredentialMetadata;
+}
+
+public final class dev/verifactu/aeat/AeatCredentialMetadata {
+	public fun <init> (Ldev/verifactu/aeat/AeatCredentialStrategy;Ldev/verifactu/aeat/AeatCredentialReference;)V
+	public final fun component1 ()Ldev/verifactu/aeat/AeatCredentialStrategy;
+	public final fun component2 ()Ldev/verifactu/aeat/AeatCredentialReference;
+	public final fun copy (Ldev/verifactu/aeat/AeatCredentialStrategy;Ldev/verifactu/aeat/AeatCredentialReference;)Ldev/verifactu/aeat/AeatCredentialMetadata;
+	public static synthetic fun copy$default (Ldev/verifactu/aeat/AeatCredentialMetadata;Ldev/verifactu/aeat/AeatCredentialStrategy;Ldev/verifactu/aeat/AeatCredentialReference;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatCredentialMetadata;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReference ()Ldev/verifactu/aeat/AeatCredentialReference;
+	public final fun getStrategy ()Ldev/verifactu/aeat/AeatCredentialStrategy;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/aeat/AeatCredentialReference {
+	public static final field Companion Ldev/verifactu/aeat/AeatCredentialReference$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/aeat/AeatCredentialReference$Companion {
+	public final fun fromAlias (Ljava/lang/String;)Ldev/verifactu/aeat/AeatCredentialReference;
+}
+
+public final class dev/verifactu/aeat/AeatCredentialStrategy : java/lang/Enum {
+	public static final field ANDROID_KEY_CHAIN Ldev/verifactu/aeat/AeatCredentialStrategy;
+	public static final field APPLE_KEYCHAIN Ldev/verifactu/aeat/AeatCredentialStrategy;
+	public static final field JVM_KEY_STORE Ldev/verifactu/aeat/AeatCredentialStrategy;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/aeat/AeatCredentialStrategy;
+	public static fun values ()[Ldev/verifactu/aeat/AeatCredentialStrategy;
+}
+
 public final class dev/verifactu/aeat/AeatEndpointConfiguration {
 	public static final field INSTANCE Ldev/verifactu/aeat/AeatEndpointConfiguration;
 	public static final field OFFICIAL_WSDL_URL Ljava/lang/String;

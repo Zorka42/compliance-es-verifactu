@@ -16,6 +16,7 @@ The host application must own:
 - retry scheduling;
 - user warnings while records remain pending;
 - certificate and private-key storage;
+- providing opaque certificate handles to platform transport adapters; VeriFactu KMP neither reads certificate bytes nor owns key-store paths or passwords;
 - final invoice rendering;
 - QR placement;
 - operational security;
