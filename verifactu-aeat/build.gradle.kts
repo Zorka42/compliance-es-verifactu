@@ -1,12 +1,15 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
 }
 
 kotlin {
     explicitApi()
-    androidTarget {
-        publishLibraryVariants("release")
+    android {
+        namespace = "dev.verifactu.aeat"
+        compileSdk = 36
+        minSdk = 26
+        withHostTest {}
     }
     jvm()
     iosX64()
@@ -26,10 +29,4 @@ kotlin {
             implementation(kotlin("test"))
         }
     }
-}
-
-android {
-    namespace = "dev.verifactu.aeat"
-    compileSdk = 36
-    defaultConfig { minSdk = 26 }
 }

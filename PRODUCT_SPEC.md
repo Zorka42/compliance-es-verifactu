@@ -206,7 +206,7 @@ commonTest
 jvmMain
 jvmTest
 androidMain
-androidUnitTest
+androidHostTest
 iosMain
 iosX64Test
 iosArm64Test
@@ -224,7 +224,7 @@ Initial CI acceptance:
 ./gradlew check
 ./gradlew compileKotlinMetadata
 ./gradlew jvmTest
-./gradlew testDebugUnitTest
+./gradlew testAndroidHostTest
 ./gradlew iosSimulatorArm64Test
 ./gradlew macosX64Test or macosArm64Test
 ```

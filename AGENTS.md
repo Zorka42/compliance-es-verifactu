@@ -140,7 +140,7 @@ Once the Gradle KMP project exists, expected checks are:
 ./gradlew check
 ./gradlew compileKotlinMetadata
 ./gradlew jvmTest
-./gradlew testDebugUnitTest
+./gradlew testAndroidHostTest
 ./gradlew iosSimulatorArm64Test
 ./gradlew macosX64Test
 ```
@@ -285,7 +285,7 @@ commonTest
 jvmMain
 jvmTest
 androidMain
-androidUnitTest
+androidHostTest
 iosMain
 iosX64Test
 iosArm64Test
