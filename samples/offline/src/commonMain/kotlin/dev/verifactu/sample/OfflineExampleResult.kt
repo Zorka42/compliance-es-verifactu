@@ -176,6 +176,7 @@ internal fun interpretExampleAttempt(
         is AeatTransportResult.UnknownDelivery,
         -> ExampleAttemptOutcome.UnknownDelivery(transportResult)
         is AeatTransportResult.NonXmlResponse -> ExampleAttemptOutcome.UnexpectedHttpResponse(transportResult.statusCode)
+        is AeatTransportResult.ResponseTooLarge -> ExampleAttemptOutcome.UnexpectedHttpResponse(transportResult.statusCode)
         is AeatTransportResult.XmlResponse -> interpretExampleXml(submitted, transportResult)
     }
 

@@ -52,14 +52,13 @@ public object AeatErrorCatalogue {
             "2001",
             "2002",
             "2003",
+            "2004",
             "2005",
             "2006",
             "2007",
             "2008",
-            -> acceptedWithErrors(normalizedCode, description, AeatSubsanationRequirement.REQUIRED)
-            "2004",
             "2009",
-            -> acceptedWithErrors(normalizedCode, description, AeatSubsanationRequirement.NOT_REQUIRED)
+            -> acceptedWithErrors(normalizedCode, description, AeatSubsanationRequirement.REQUIRED)
             "3000",
             "3001",
             "3002",

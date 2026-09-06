@@ -13,6 +13,7 @@ Validation covers the implemented fields and structural rules. It cannot establi
 | `InvalidEndpoint`, `NotSent` | `deliveryState=NOT_SENT`; local preparation/preflight failed |
 | `Timeout`, `NetworkFailure` | `deliveryState=UNKNOWN`; request delivery may have occurred |
 | `XmlResponse`, `NonXmlResponse` | `deliveryState=RESPONSE_RECEIVED`; HTTP reception is not fiscal acceptance |
+| `ResponseTooLarge` | `deliveryState=RESPONSE_RECEIVED`; the HTTP body exceeded the local cap and was not retained or parsed |
 | `AeatResponseParseResult.InvalidXml` | Unsafe, malformed, oversized or structurally ambiguous XML; preserve the original only through explicit diagnostics |
 | `AeatResponseCorrelationResult.Mismatch` | Response cannot be reconciled with the submitted identities and operations; do not mark the batch accepted |
 
@@ -28,17 +29,19 @@ Persist the prepared fiscal record, next chain head and exact request before del
 
 The offline sample demonstrates typed attempt handling and explicit reuse of saved request bytes, without a database, queue or scheduler. It is an application integration example, not a durable runtime implementation.
 
-## Diagnostics and XML boundaries
-
 ## AEAT Catalogue Semantics
 
-Known AEAT error codes are exposed as a typed incidence with its catalogue source, disposition, and whether the catalogue expressly requires subsanation. Unknown codes remain typed with an `UNKNOWN` disposition and no inferred correction or retry. An invoice identity and the operation returned in a response line are correlation data; neither is treated as acceptance.
+Known AEAT error codes are exposed as a typed incidence with its catalogue source, disposition, and whether the catalogue expressly requires subsanation. The archived `errores.properties` baseline groups codes `2000`–`2009` as accepted records that must subsequently be subsanated; the library maps all of them to `ACCEPTED_WITH_ERRORS` and `REQUIRED`. It maps `3000`–`3004` and the published per-record validation range to `RECORD_REJECTED`, and the published technical/header codes to `WHOLE_SUBMISSION_REJECTED`.
+
+`AeatResponseOperation` preserves the exact `Subsanacion`, `RechazoPrevio`, and `SinRegistroPrevio` values returned in the response. The library does not generate correction records, select a corrective operation, schedule a retry, or change invoice state. The current submission models cannot represent affirmative correction flags, so `AeatResponseCorrelation` returns `UNSUPPORTED_OPERATION_FLAGS` rather than silently matching them. An integrating application must retain the response, determine the applicable legal/operational action, and create a new submission only when its own source-backed workflow permits it.
+
+Unknown codes remain typed with an `UNKNOWN` disposition and no inferred correction or retry. A future catalogue version, an unknown flag value, and the relation between an application invoice and a correction are unresolved at library level; update the archived source and mapping deliberately before automating any such policy. An invoice identity and the operation returned in a response line are correlation data; neither is treated as acceptance.
 
 ## Unicode and XML Lengths
 
 The W3C XML Schema `length` facets are defined in characters. The JVM provider used to validate the published AEAT XSD measures a supplementary Unicode character as two UTF-16 units at these boundaries. Common validation deliberately uses the same UTF-16 unit count on JVM, Android, and Apple Kotlin targets, so it never accepts text that the supported JVM schema fixture rejects. JVM fixture tests record that behaviour; production code does not configure a global XML provider and Android/Apple do not rely on a platform XSD validator.
 
-## Diagnostics
+## Diagnostics and XML boundaries
 
 Transport request/result, response, duplicate, invoice reference, SOAP fault and prepared-request summaries redact fiscal data. Explicit fields remain unredacted; domain records also contain fiscal data. The JVM adapter uses fixed exception reasons. Do not log raw XML, identifiers, remote messages or arbitrary domain objects by default.
 
