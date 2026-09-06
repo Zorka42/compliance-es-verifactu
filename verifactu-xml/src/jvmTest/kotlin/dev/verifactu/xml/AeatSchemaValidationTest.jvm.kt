@@ -91,6 +91,19 @@ class AeatSchemaValidationTest {
     }
 
     @Test
+    fun countsSupplementaryUnicodeUtf16UnitsAtTheSameBoundaryAsCommonValidation() {
+        val atBoundary = "a".repeat(118) + "\uD83D\uDE00"
+        val overBoundary = atBoundary + "\uD83D\uDE00"
+        val validXml = REGISTRO_ALTA_V1_GOLDEN_XML.replace("Issuer &amp; Co", atBoundary)
+        val invalidXml = REGISTRO_ALTA_V1_GOLDEN_XML.replace("Issuer &amp; Co", overBoundary)
+
+        schema().newValidator().validate(StreamSource(StringReader(validXml)))
+        assertFailsWith<SAXException> {
+            schema().newValidator().validate(StreamSource(StringReader(invalidXml)))
+        }
+    }
+
+    @Test
     fun schemaAndLocalParserRejectImpossibleTimestampValues() {
         val validator = schema().newValidator()
         listOf("0000-01-01T00:00:00+00:00", "1900-02-29T00:00:00+00:00", "2024-02-29T24:00:01+00:00", "2024-02-29T00:00:00+14:01")

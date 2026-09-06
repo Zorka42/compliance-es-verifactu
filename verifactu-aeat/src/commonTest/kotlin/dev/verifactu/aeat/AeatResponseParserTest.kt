@@ -60,6 +60,7 @@ class AeatResponseParserTest {
         assertEquals("old-1", parsed.lines[1].duplicateRequestId)
         assertEquals(AeatDuplicateStatus.CANCELLED, parsed.lines[1].duplicate?.status)
         assertEquals("99999999999999999999", parsed.lines[1].duplicate?.errorCode)
+        assertEquals(AeatIncidenceDisposition.UNKNOWN, parsed.lines[1].incidence?.disposition)
     }
 
     @Test
@@ -156,6 +157,33 @@ class AeatResponseParserTest {
             assertEquals(raw, assertIs<AeatFlowControl.Unknown>(parsed.flowControl).rawValue)
             assertNull(parsed.retryAfterSeconds)
         }
+    }
+
+    @Test
+    fun classifiesKnownAcceptedErrorsWithoutInferringReplacementOrRetry() {
+        val incidence = AeatErrorCatalogue.classify("2000", "Hash mismatch")
+
+        assertEquals(AeatIncidenceDisposition.ACCEPTED_WITH_ERRORS, incidence.disposition)
+        assertEquals(AeatSubsanationRequirement.REQUIRED, incidence.subsanationRequirement)
+        assertEquals(AeatErrorCatalogue.VERSION, incidence.source?.version)
+    }
+
+    @Test
+    fun retainsUnknownCodesAsTypedInspectableIncidences() {
+        val line =
+            parsed(
+                response(
+                    line(
+                        diagnostics =
+                            "<CodigoErrorRegistro>9999</CodigoErrorRegistro>" +
+                                "<DescripcionErrorRegistro>Future catalogue entry</DescripcionErrorRegistro>",
+                    ),
+                ),
+            ).lines.single()
+        assertEquals("9999", line.incidence?.code)
+        assertEquals(AeatIncidenceDisposition.UNKNOWN, line.incidence?.disposition)
+        assertEquals(AeatSubsanationRequirement.UNKNOWN, line.incidence?.subsanationRequirement)
+        assertNull(line.incidence?.source)
     }
 
     @Test

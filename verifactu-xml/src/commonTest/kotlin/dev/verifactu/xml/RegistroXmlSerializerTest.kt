@@ -2,6 +2,8 @@ package dev.verifactu.xml
 
 import dev.verifactu.core.ChainState
 import dev.verifactu.core.FiscalAmount
+import dev.verifactu.core.FiscalParty
+import dev.verifactu.core.FiscalPartyIdentifier
 import dev.verifactu.core.FiscalRecordFactory
 import dev.verifactu.core.InvoiceIdentifier
 import dev.verifactu.core.InvoiceIssueDate
@@ -11,6 +13,7 @@ import dev.verifactu.core.Qualification
 import dev.verifactu.core.RecordCreationResult
 import dev.verifactu.core.RecordGenerationTimestamp
 import dev.verifactu.core.RecordVersion
+import dev.verifactu.core.RegistrationConditionalData
 import dev.verifactu.core.RegistroAlta
 import dev.verifactu.core.RegistroAltaDraft
 import dev.verifactu.core.RegistroAnulacion
@@ -310,6 +313,10 @@ class RegistroXmlSerializerTest {
                     chainState = ChainState.FirstRecord,
                     system = SistemaInformatico("Producer", taxId(), "VeriFactu", "VF", "1.0", "install-1", true, false, false),
                     generatedAt = timestamp(),
+                    conditionalData =
+                        RegistrationConditionalData(
+                            recipients = listOf(FiscalParty("Recipient", FiscalPartyIdentifier.SpanishNif(taxId()))),
+                        ),
                 ),
             )
         return (result as RecordCreationResult.Created<RegistroAlta>).record

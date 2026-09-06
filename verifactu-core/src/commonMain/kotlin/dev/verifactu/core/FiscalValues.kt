@@ -179,9 +179,9 @@ private fun isCalendarDate(
     return month in 1..12 && day in 1..daysInMonth
 }
 
-// XML 1.0 Fifth Edition, 2.2 [2] Char; XSD string length counts characters, not UTF-16 code units.
+// XML 1.0 Fifth Edition, 2.2 [2] Char. The supported AEAT JVM schema provider measures length
+// facets in UTF-16 units, so valid supplementary characters count as two units on every target.
 internal fun String.xmlCharacterCountOrNull(): Int? {
-    var count = 0
     var index = 0
     while (index < length) {
         val character = this[index]
@@ -194,8 +194,7 @@ internal fun String.xmlCharacterCountOrNull(): Int? {
             character in '\u0020'..'\uD7FF' || character in '\uE000'..'\uFFFD' -> Unit
             else -> return null
         }
-        count++
         index++
     }
-    return count
+    return length
 }

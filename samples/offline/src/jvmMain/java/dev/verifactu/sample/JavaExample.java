@@ -26,6 +26,7 @@ import dev.verifactu.core.InvoiceType;
 import dev.verifactu.core.Qualification;
 import dev.verifactu.core.RecordGenerationTimestamp;
 import dev.verifactu.core.RecordVersion;
+import dev.verifactu.core.RegistrationConditionalData;
 import dev.verifactu.core.RegistroAlta;
 import dev.verifactu.core.RegistroAltaDraft;
 import dev.verifactu.core.SistemaInformatico;
@@ -60,7 +61,8 @@ public final class JavaExample {
             value(FiscalAmount.parse("21.00")), value(FiscalAmount.parse("121.00")), "Synthetic Java example",
             new TaxBreakdown(List.of(detail)), ChainState.FirstRecord.INSTANCE,
             new SistemaInformatico("Example producer", issuer, "Java sample", "VF", "0.1", "sample-1", true, false, false),
-            value(RecordGenerationTimestamp.parse("2024-01-01T12:00:00+01:00"))
+            value(RecordGenerationTimestamp.parse("2024-01-01T12:00:00+01:00")),
+            new RegistrationConditionalData()
         );
         RegistrationPreparationResult result = FiscalSubmissionPreparation.prepareRegistration(draft, QrEnvironment.TEST);
         if (!(result instanceof RegistrationPreparationResult.Prepared)) {

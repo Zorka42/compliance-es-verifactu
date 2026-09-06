@@ -84,7 +84,7 @@ public sealed interface AeatFlowControl {
     }
 }
 
-/** A response line with preserved identity, declared status, and duplicate diagnostics. */
+/** A response line with preserved identity, declared status, duplicate diagnostics, and catalogue incidence. */
 public data class AeatResponseLine(
     public val status: AeatRecordStatus,
     public val errorCode: String? = null,
@@ -96,6 +96,7 @@ public data class AeatResponseLine(
     public val rawStatus: String? = null,
     public val duplicate: AeatDuplicateRecord? = null,
     public val externalReference: String? = null,
+    public val incidence: AeatIncidence? = null,
 ) {
     /** Summarizes the state without printing remote diagnostics or identifiers. */
     override fun toString(): String = "AeatResponseLine(status=$status, declaredStatus=$declaredStatus, diagnostics=redacted)"
@@ -244,10 +245,12 @@ private fun AeatXmlFields.responseLine(line: AeatXmlElement): AeatResponseLine? 
     val rawStatus = text(line, RESPONSE_NAMESPACE, "EstadoRegistro")
     val declared = rawStatus.toRecordStatus()
     val duplicate = child(line, RESPONSE_NAMESPACE, "RegistroDuplicado")?.let { duplicateRecord(it) }
+    val errorCode = text(line, RESPONSE_NAMESPACE, "CodigoErrorRegistro")
+    val errorDescription = text(line, RESPONSE_NAMESPACE, "DescripcionErrorRegistro")
     return AeatResponseLine(
         status = if (duplicate != null) AeatRecordStatus.DUPLICATE else declared,
-        errorCode = text(line, RESPONSE_NAMESPACE, "CodigoErrorRegistro"),
-        errorDescription = text(line, RESPONSE_NAMESPACE, "DescripcionErrorRegistro"),
+        errorCode = errorCode,
+        errorDescription = errorDescription,
         duplicateRequestId = duplicate?.requestId,
         invoice = AeatInvoiceReference(issuer, number, date),
         operation = operation,
@@ -255,6 +258,7 @@ private fun AeatXmlFields.responseLine(line: AeatXmlElement): AeatResponseLine? 
         rawStatus = rawStatus,
         duplicate = duplicate,
         externalReference = text(line, RESPONSE_NAMESPACE, "RefExterna"),
+        incidence = errorCode?.let { AeatErrorCatalogue.classify(it, errorDescription) },
     )
 }
 
