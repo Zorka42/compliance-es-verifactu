@@ -8,27 +8,22 @@ Project-specific instructions for coding agents reviewing code or making changes
 
 ## Working Principles
 
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with the project-specific conventions below as needed.
+Behavioral guidelines to reduce common LLM coding mistakes. For trivial tasks, use judgment. The project-specific compliance and architecture rules below add stricter constraints where needed.
 
-**Tradeoff:** These guidelines bias toward correctness and traceability over speed. For trivial tasks, use judgment.
+**Tradeoff:** These guidelines bias toward correctness and traceability over speed.
 
 ### 1. Think Before Coding
 
-Do not assume compliance behavior. Do not hide uncertainty.
-
-Before implementing:
-
-- State assumptions explicitly when they affect public API, compliance behavior, module boundaries, or tests.
-- If multiple interpretations exist, name them instead of silently choosing.
-- If a simpler approach exists, say so.
-- If a legal, AEAT, BOE, schema, or protocol requirement is unclear, stop and ask.
+- State assumptions explicitly when they affect public API, compliance behavior, module boundaries, or tests. If a legal, AEAT, BOE, schema, or protocol requirement is unclear, stop and ask.
+- If multiple interpretations exist, present them — do not pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
 
 ### 2. Simplicity First
 
 Minimum code that solves the requested problem.
 
-- No features beyond what was asked.
-- No abstractions for single-use code.
+- No features beyond what was asked; no speculative abstractions.
+- If an implementation is materially larger than a simpler equivalent, rewrite it.
 - No configurability that is not required by the product spec or compliance sources.
 - No hidden global state, background work, persistence, network calls, or certificate handling.
 - If an API can stay smaller without losing required behavior, keep it smaller.
@@ -37,16 +32,14 @@ Minimum code that solves the requested problem.
 
 Touch only what the task requires.
 
-- Do not reformat or refactor adjacent code unless it is necessary for the requested change.
-- Match nearby style and module boundaries.
-- Remove imports, declarations, fixtures, or docs that your own change made obsolete.
-- Do not remove pre-existing dead code unless asked.
+- Match nearby style and module boundaries, even if you would choose differently. Do not reformat or refactor adjacent code unless it is necessary for the requested change.
+- Remove imports, declarations, fixtures, or docs that your own change made obsolete; do not remove pre-existing dead code unless asked.
 
 Every changed line should trace to the user's request, a failing check, or an official compliance source.
 
 ### 4. Goal-Driven Execution
 
-Turn tasks into verifiable goals:
+Turn tasks into verifiable goals. For example, replace “make it work” with a concrete behavior and deterministic check.
 
 ```text
 1. Change behavior -> verify with deterministic tests.
@@ -54,7 +47,7 @@ Turn tasks into verifiable goals:
 3. Change compliance logic -> verify source traceability + fixtures.
 ```
 
-For multi-step tasks, state a brief plan and loop until the relevant checks pass or the blocker is concrete.
+For multi-step tasks, state a brief plan with a verification step for each part, then loop until the relevant checks pass or the blocker is concrete.
 
 ---
 
