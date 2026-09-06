@@ -5,7 +5,7 @@ ktlint = "13.1.0"
 detekt = "1.23.8"
 dokka = "2.0.0"
 binary-compatibility = "0.17.0"
-kover = "0.9.3"
+kover = "0.9.9"
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "android-gradle" }
