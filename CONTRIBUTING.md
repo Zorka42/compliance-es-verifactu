@@ -84,9 +84,11 @@ Pull requests should:
 - update docs when public behavior changes;
 - avoid committing secrets, certificates, private keys, or production credentials.
 
+Before requesting merge, the author must review the rendered diff and confirm that the relevant local gate passed. For compliance-sensitive changes, the pull request description must name the exact source and traceability/test updates. While the repository has one maintainer, this recorded self-review is the available review step; when a second trusted maintainer joins, `main` must be changed to require one independent approval.
+
 ## Release Changes
 
-No external release workflow is enabled yet. Publishing credentials and signing are separate from local development. Official releases must be built by CI from reviewed tags after the platform checks and compliance baseline are verified.
+The tag-triggered release workflow is deliberately guarded by Central Portal and signing secrets that are absent from normal development. Publishing credentials and signing are separate from local development. Official releases must be built by CI from reviewed tags after the platform checks and compliance baseline are verified. See [release governance](docs/release-governance.md).
 
 Release-related changes must preserve:
 

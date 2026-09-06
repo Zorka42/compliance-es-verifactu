@@ -8,7 +8,11 @@ The checkout contained five KMP modules with core records/hash/validation, XML, 
 
 A `To verify` status was not treated as evidence that every acceptance criterion had passed. This run found and fixed a pre-existing common-metadata compilation failure in the response parser and an external W3C DTD dependency in JVM schema tests. It also identified production gaps listed below.
 
-Notion was read but not modified; no task was marked Done. The first implementation package was committed as `29106f9`, merged into main as `1ddab07` and pushed after explicit authorization. Subsequent review/query work uses the same local-only operational boundary: no AEAT SOAP endpoint, authenticated portal or personal certificate/key access. Public static contracts were retrieved and archived. Gradle builds use the existing cache with `--offline`; no Maven Central release was made.
+The first implementation package was committed as `29106f9`, merged into main as `1ddab07` and pushed after explicit authorization. Later offline batches moved ZA-77, ZA-108, and ZA-110 to `To verify`; no task has been marked `Done` solely from local work. Subsequent review/query work uses the same local-only operational boundary: no AEAT SOAP endpoint, authenticated portal or personal certificate/key access. Public static contracts were retrieved and archived. Gradle builds use the existing cache with `--offline`; no Maven Central release was made.
+
+## Release Readiness Update
+
+`main` now requires the Linux/JVM/Android, Apple, CodeQL, and static-analysis GitHub checks through a pull request; force-push and deletion are disabled. A tag-only Central Portal release workflow and in-memory PGP signing configuration are present, and a local disposable-key signing test verifies the JVM publication path. Namespace ownership, the dedicated signing identity, CI secrets, Central staging/release, and producer approval remain external verification steps. They do not access AEAT and have not been attempted.
 
 ## First Ten-Task Batch
 
@@ -23,7 +27,7 @@ Notion was read but not modified; no task was marked Done. The first implementat
 | [ZA-81 Integration docs](https://app.notion.com/3bd4f30223098188bec3f918201d1934) | Implemented locally | Getting started, core concepts, integration/error flow, platform/testkit/publication guidance, explicit production gaps |
 | [ZA-83 OSS documents](https://app.notion.com/3bd4f3022309817caab9e5b717f6b85f) | Implemented locally | Toolchain/check instructions, meaningful changelog, security reporting guidance, existing Apache-2.0 license |
 | [ZA-84 Compile-tested examples](https://app.notion.com/3bd4f30223098100ae00dfc9be6ecf6c) | Implemented locally | Shared Kotlin flow, Java 11 consumer, testkit-only fake submission, CI sample runs |
-| [ZA-85 Maven publishing and signed release](https://app.notion.com/3bd4f302230981d7a36df58e66723e9b) | Partial; keep open | Unsigned JVM preview, all-module POM configuration, sources/Dokka/license packaging, independent POM-based Java consumer; signing/Central/tag release not configured |
+| [ZA-85 Maven publishing and signed release](https://app.notion.com/3bd4f302230981d7a36df58e66723e9b) | Prepared; keep open | Unsigned JVM preview, POM/source/Dokka/license packaging, guarded Central Portal tag workflow and in-memory signing configuration; namespace, credentials and first external release remain unverified |
 | [ZA-87 English API/KDoc pass](https://app.notion.com/3bd4f302230981feac88ce0e57120874) | Implemented locally | Java static entry points, corrected validation/immutability/parser promises, explained official terms and host responsibilities, regenerated API baselines |
 | [ZA-92 Runnable consumer](https://app.notion.com/3be4f302230981739dc9d776234e69b7) | Implemented locally | Registration → XML/QR → fake response, cancellation with continuous chain, deterministic result output, CI execution |
 
@@ -39,7 +43,7 @@ Notion was read but not modified; no task was marked Done. The first implementat
 | ZA-89 preparation facade | Pure registration/cancellation/batch preparation with record, next head, XML/QR/SOAP | Final full-scope runtime API review and missing fiscal modes |
 | ZA-90/91 integration contracts | Shared Kotlin and Java examples, typed attempt interpretation, matching before acceptance, fake failure branches and manual replay | Durable app integration, real adapters and full incidence branches |
 | Query utility (issued and received) | JVM CLI prepares XSD-validated SOAP and inspects saved pages; no network/certificate code | Explicitly authorized live read, selected identity/period/credential |
-| OSS release hardening | Java 11 runtime consumer configured in CI; 14 archived source files with hash verification | Signing/Central publishing, actual remote CI verification, branch settings and release readiness |
+| OSS release hardening | Java 11 runtime consumer configured in CI; archived source files with hash verification; protected `main` and guarded release workflow | First signed Central release, dependency/license audit, producer review and release readiness |
 
 The code/architecture review retained the five-module structure. It fixed XML-invalid text, serialized-length checks, calendar/offset validation, regime membership, CR preservation, mutable factory input/output lists, unescaped header identifiers, unsafe diagnostic summaries, dropped response lines and sample invoice mismatches. The response parser uses platform readers behind a common interpretation boundary; core still performs no I/O.
 

@@ -13,8 +13,10 @@ Assessment: 2026-09-06. This is a pre-release open-source Kotlin/Java library, n
 | ZA-93 app adapter | Map finalized app invoice DTOs, explicit SIF metadata and fiscal result states to library types | App-side contract tests against the local preview; preserve app ownership of DB, queue, UI and credentials |
 | Parser/resource review | Fuzz malformed XML, resource limits, unsupported protocol additions and Unicode boundaries; finalize API compatibility policy and native API checks | Same input corpus on JVM, Android and Apple; Java consumer tests and versioned API baselines |
 | JVM transport completion | Verify SOAPAction/header behavior, bound response-body reads, reuse/close client resources appropriately and test cancellation/timeouts before live use | Loopback request capture and oversized-response tests, then separately authorized AEAT interoperability |
-| ZA-85 Maven release preparation | Confirm Central namespace ownership; dedicated release signing identity, CI credentials, release tag/version flow, root KMP and platform publications | Local publication/consumer checks first; external staging only after explicit publication authorization |
-| ZA-86/88 governance/readiness | Required CI/review settings, release checklist, dependency/license audit, legal/technical snapshot review, producer/component declaration | Actual remote CI and repository-setting verification, producer review; no task marked Done solely from local implementation |
+| ZA-85 Maven release preparation | Protected tag workflow, Central Portal staging endpoint, in-memory signing and GitHub Release automation are configured | Confirm namespace ownership, provide dedicated secrets, then perform the separately authorized first staging/release |
+| ZA-86/88 governance/readiness | `main` protection and release governance are configured | Release checklist, dependency/license audit, legal/technical snapshot review, producer/component declaration and actual signed-release evidence |
+
+The executable preparation checklist is [release-readiness-checklist.md](release-readiness-checklist.md). It distinguishes completed offline evidence from the secrets, producer decision, source refresh, and first external release that must remain manually controlled.
 
 The current public unchecked record constructors remain low-level APIs. Creating an object is not proof that all conditional fiscal requirements are represented. The core NIF parser still supplies structural validation rather than a complete identity/checksum service.
 

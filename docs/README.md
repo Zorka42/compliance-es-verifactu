@@ -20,6 +20,8 @@ The README stays short. Product scope, integration details, and compliance expla
 - [Android transport integration](android-aeat-transport.md)
 - [JVM transport integration](jvm-mtls-testing.md)
 - [Local Maven publishing](publishing.md)
+- [Release governance and tag workflow](release-governance.md)
+- [First public release readiness checklist](release-readiness-checklist.md)
 - [Implementation status and local backlog report](implementation-status.md)
 - [Offline issued/received invoice query tool](../tools/query/README.md)
 - [Query scope, access and testing plan](compliance/query-access.md)

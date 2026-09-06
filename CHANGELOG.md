@@ -20,6 +20,8 @@ This project follows Semantic Versioning.
 - Synthetic KMP testkit with record/XML/QR fixtures, response scenarios, and scripted transport.
 - Executable Kotlin registration/cancellation flow and Java consumer, plus a separate build consuming local published JVM artifacts.
 - Unsigned local Maven publications with POM metadata, source JARs, and Dokka JARs.
+- Guarded Maven Central Portal release workflow with in-memory artifact signing and GitHub Release creation; it remains inactive until dedicated release credentials are configured.
+- Protected `main` governance with required cross-platform CI checks.
 
 ### Changed
 
@@ -38,5 +40,5 @@ This project follows Semantic Versioning.
 ### Notes
 
 - No Maven Central release exists. Local previews are unsigned and not production-ready.
-- Conditional fiscal fields, incidence/correction policy, real AEAT/mTLS verification, app-specific integration and signed release automation remain pending.
+- Real AEAT verification, credentialed Central publication, producer review, and an integrating application's durable deployment remain pending.
 - The repository is not production-ready for VERI*FACTU compliance.

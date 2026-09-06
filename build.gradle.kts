@@ -3,6 +3,7 @@ import kotlinx.kover.gradle.plugin.dsl.AggregationType
 import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 import kotlinx.kover.gradle.plugin.dsl.KoverProjectExtension
 import org.gradle.jvm.tasks.Jar
+import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -16,11 +17,72 @@ plugins {
     alias(libs.plugins.dokka) apply false
     alias(libs.plugins.binary.compatibility) apply false
     alias(libs.plugins.kover) apply false
+    alias(libs.plugins.nexus.publish)
+}
+
+val releaseVersion: String = providers.gradleProperty("releaseVersion").orElse("0.1.0-SNAPSHOT").get()
+val centralPublishing: Boolean = providers.gradleProperty("centralPublishing").orNull == "true"
+
+if (centralPublishing) {
+    check(!releaseVersion.endsWith("-SNAPSHOT")) {
+        "Central publishing requires a non-SNAPSHOT releaseVersion."
+    }
+
+    val missingEnvironment = listOf(
+        "CENTRAL_NAMESPACE",
+        "CENTRAL_PORTAL_USERNAME",
+        "CENTRAL_PORTAL_PASSWORD",
+        "SIGNING_KEY",
+        "SIGNING_PASSWORD",
+    ).filter { System.getenv(it).isNullOrBlank() }
+    check(missingEnvironment.isEmpty()) {
+        "Central publishing requires environment variables: ${missingEnvironment.joinToString()}"
+    }
 }
 
 allprojects {
     group = "io.github.zorka42"
-    version = "0.1.0-SNAPSHOT"
+    version = releaseVersion
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
+            username.set(providers.environmentVariable("CENTRAL_PORTAL_USERNAME"))
+            password.set(providers.environmentVariable("CENTRAL_PORTAL_PASSWORD"))
+            stagingProfileId.set(providers.environmentVariable("CENTRAL_NAMESPACE"))
+        }
+    }
+}
+
+tasks.register("verifyCentralPublishingConfiguration") {
+    group = "publishing"
+    description = "Verifies that an explicitly requested Central release is non-SNAPSHOT and fully credentialed."
+
+    doLast {
+        check(centralPublishing) {
+            "Pass -PcentralPublishing=true only from the protected release workflow."
+        }
+        check(!releaseVersion.endsWith("-SNAPSHOT")) {
+            "Central publishing requires a non-SNAPSHOT releaseVersion."
+        }
+    }
+}
+
+tasks.register("publishToSonatype") {
+    group = "publishing"
+    description = "Publishes every library publication to the configured Central Portal staging repository."
+    dependsOn(
+        listOf("core", "xml", "qr", "aeat", "testkit").map {
+            ":verifactu-$it:publishToSonatype"
+        },
+    )
+}
+
+tasks.named("closeAndReleaseStagingRepositories") {
+    dependsOn("publishToSonatype")
 }
 
 tasks.register("publishJvmPreview") {
@@ -56,6 +118,18 @@ subprojects {
 
     if (name.startsWith("verifactu-")) {
         apply(plugin = "maven-publish")
+        if (centralPublishing) {
+            apply(plugin = "signing")
+            val signingKey = System.getenv("SIGNING_KEY")
+            val signingPassword = System.getenv("SIGNING_PASSWORD")
+            val signing = extensions.getByType<SigningExtension>()
+            signing.useInMemoryPgpKeys(signingKey, signingPassword)
+            extensions.getByType<PublishingExtension>().publications
+                .withType<MavenPublication>()
+                .configureEach {
+                    signing.sign(this)
+                }
+        }
         tasks.withType<Jar>().configureEach {
             isPreserveFileTimestamps = false
             isReproducibleFileOrder = true
