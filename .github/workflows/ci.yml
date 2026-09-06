@@ -22,7 +22,10 @@ jobs:
       - name: Build and test common, JVM, and Android code
         run: ./gradlew check compileKotlinMetadata jvmTest testDebugUnitTest apiCheck dokkaHtml koverXmlReportJvm koverVerifyJvm
       - name: Upload JVM coverage
+        if: ${{ secrets.CODECOV_TOKEN != '' }}
         uses: codecov/codecov-action@v5
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           files: verifactu-core/build/reports/kover/reportJvm.xml,verifactu-xml/build/reports/kover/reportJvm.xml,verifactu-qr/build/reports/kover/reportJvm.xml,verifactu-aeat/build/reports/kover/reportJvm.xml
           fail_ci_if_error: true
