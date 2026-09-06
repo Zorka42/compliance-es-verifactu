@@ -16,7 +16,7 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
@@ -26,7 +26,7 @@ jobs:
       - name: Build local JVM publications
         run: ./gradlew publishJvmPreview
       - name: Select Java 11 for the independent consumer
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '11'
@@ -46,7 +46,7 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
