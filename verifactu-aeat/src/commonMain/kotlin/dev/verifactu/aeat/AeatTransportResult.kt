@@ -24,6 +24,16 @@ public sealed interface AeatTransportResult {
         public val reason: String,
     ) : AeatTransportResult
 
+    /**
+     * The request may have reached AEAT, but the host could not determine its delivery outcome.
+     *
+     * Callers must reconcile this result using the fiscal-record correlation data before deciding
+     * whether a new submission is appropriate.
+     */
+    public data class UnknownDelivery(
+        public val reason: String,
+    ) : AeatTransportResult
+
     /** AEAT or an intermediary returned a response that was not XML. */
     public data class NonXmlResponse(
         public val statusCode: Int,

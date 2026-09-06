@@ -23,6 +23,19 @@ class AeatSchemaValidationTest {
         }
     }
 
+    @Test
+    fun countsSupplementaryUnicodeUtf16UnitsAtTheSameBoundaryAsCommonValidation() {
+        val atBoundary = "a".repeat(118) + "\uD83D\uDE00"
+        val overBoundary = atBoundary + "\uD83D\uDE00"
+        val validXml = REGISTRO_ALTA_V1_GOLDEN_XML.replace("Issuer &amp; Co", atBoundary)
+        val invalidXml = REGISTRO_ALTA_V1_GOLDEN_XML.replace("Issuer &amp; Co", overBoundary)
+
+        schema().newValidator().validate(StreamSource(StringReader(validXml)))
+        assertFailsWith<SAXException> {
+            schema().newValidator().validate(StreamSource(StringReader(invalidXml)))
+        }
+    }
+
     private fun schema() =
         SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(
             javaClass.classLoader.getResource("aeat-xsd/SuministroInformacion.xsd"),

@@ -1,6 +1,9 @@
 package dev.verifactu.xml
 
 import dev.verifactu.core.ChainState
+import dev.verifactu.core.FiscalParty
+import dev.verifactu.core.FiscalPartyIdentifier
+import dev.verifactu.core.InvoiceRectification
 import dev.verifactu.core.RegistroAlta
 import dev.verifactu.core.RegistroAnulacion
 import dev.verifactu.core.TaxBreakdownDetail
@@ -14,9 +17,13 @@ public object RegistroXmlSerializer {
             val draft = record.draft
             element("IDVersion", draft.version.xmlValue)
             invoiceId("IDFactura", draft.invoice, false)
+            val conditional = draft.conditionalData
+            registrationExternalReference(conditional)
             element("NombreRazonEmisor", draft.issuerName)
+            registrationConditionalPrefix(conditional)
             element("TipoFactura", draft.invoiceType.name)
             element("DescripcionOperacion", draft.operationDescription)
+            registrationConditionalDetails(conditional)
             element("Desglose") {
                 draft.taxBreakdown.details.forEach { taxDetail ->
                     element("DetalleDesglose") { breakdownDetail(taxDetail) }
@@ -27,6 +34,7 @@ public object RegistroXmlSerializer {
             chain(draft.chainState)
             system(draft.system)
             element("FechaHoraHusoGenRegistro", draft.generatedAt.value)
+            registrationConditionalAgreements(conditional)
             element("TipoHuella", "01")
             element("Huella", record.hash)
         }
@@ -49,6 +57,7 @@ private const val AEAT_NAMESPACE: String =
     "https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/" +
         "aeat/tike/cont/ws/SuministroInformacion.xsd"
 
+@Suppress("TooManyFunctions")
 private class XmlWriter {
     private val output: StringBuilder = StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
 
@@ -100,6 +109,70 @@ private class XmlWriter {
             element("IDEmisorFactura$suffix", invoice.issuer.value)
             element("NumSerieFactura$suffix", invoice.number.value)
             element("FechaExpedicionFactura$suffix", invoice.issueDate.value)
+        }
+    }
+
+    fun rectification(rectification: InvoiceRectification) {
+        element("TipoRectificativa", rectification.type.xmlValue)
+        if (rectification.rectifiedInvoices.isNotEmpty()) {
+            element("FacturasRectificadas") {
+                rectification.rectifiedInvoices.forEach { invoiceId("IDFacturaRectificada", it, false) }
+            }
+        }
+        rectification.replacedAmounts?.let { amounts ->
+            element("ImporteRectificacion") {
+                element("BaseRectificada", amounts.taxableBase.value)
+                element("CuotaRectificada", amounts.chargedTax.value)
+                amounts.equivalenceSurcharge?.let { element("CuotaRecargoRectificado", it.value) }
+            }
+        }
+    }
+
+    fun registrationConditionalPrefix(conditional: dev.verifactu.core.RegistrationConditionalData) {
+        conditional.subsanation?.let { element("Subsanacion", it.xmlValue) }
+        conditional.previousRejection?.let { element("RechazoPrevio", it.xmlValue) }
+        conditional.rectification?.let { rectification(it) }
+        if (conditional.replacedInvoices.isNotEmpty()) {
+            element("FacturasSustituidas") {
+                conditional.replacedInvoices.forEach { invoiceId("IDFacturaSustituida", it, false) }
+            }
+        }
+        conditional.operationDate?.let { element("FechaOperacion", it.value) }
+    }
+
+    fun registrationExternalReference(conditional: dev.verifactu.core.RegistrationConditionalData) {
+        conditional.externalReference?.let { element("RefExterna", it) }
+    }
+
+    fun registrationConditionalDetails(conditional: dev.verifactu.core.RegistrationConditionalData) {
+        conditional.simplifiedInvoiceQualification?.let { element("FacturaSimplificadaArt7273", it.xmlValue) }
+        conditional.recipientIdentificationExemption?.let { element("FacturaSinIdentifDestinatarioArt61d", it.xmlValue) }
+        conditional.macroData?.let { element("Macrodato", it.xmlValue) }
+        conditional.generatedBy?.let { element("EmitidaPorTerceroODestinatario", it.xmlValue) }
+        conditional.thirdParty?.let { element("Tercero") { fiscalParty(it) } }
+        if (conditional.recipients.isNotEmpty()) {
+            element("Destinatarios") {
+                conditional.recipients.forEach { recipient -> element("IDDestinatario") { fiscalParty(recipient) } }
+            }
+        }
+        conditional.coupon?.let { element("Cupon", it.xmlValue) }
+    }
+
+    fun registrationConditionalAgreements(conditional: dev.verifactu.core.RegistrationConditionalData) {
+        conditional.taxationAgreementRegistrationNumber?.let { element("NumRegistroAcuerdoFacturacion", it) }
+        conditional.systemAgreementIdentifier?.let { element("IdAcuerdoSistemaInformatico", it) }
+    }
+
+    fun fiscalParty(party: FiscalParty) {
+        element("NombreRazon", party.name)
+        when (val identifier = party.identifier) {
+            is FiscalPartyIdentifier.SpanishNif -> element("NIF", identifier.value.value)
+            is FiscalPartyIdentifier.Other ->
+                element("IDOtro") {
+                    identifier.countryCode?.let { element("CodigoPais", it) }
+                    element("IDType", identifier.type.xmlValue)
+                    element("ID", identifier.value)
+                }
         }
     }
 

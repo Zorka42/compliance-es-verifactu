@@ -15,12 +15,34 @@ public enum class AeatRecordStatus {
     DUPLICATE,
 }
 
+/** The record operation returned by AEAT independently from its acceptance state. */
+public enum class AeatResponseOperation {
+    REGISTRATION,
+    CANCELLATION,
+    UNKNOWN,
+}
+
+/** Invoice identity returned by AEAT for correlating a response line with a submitted record. */
+public data class AeatResponseInvoiceIdentifier(
+    public val issuerTaxIdentifier: String?,
+    public val invoiceNumber: String?,
+    public val issueDate: String?,
+)
+
+/** Response metadata that correlates an invoice identity and operation without implying acceptance. */
+public data class AeatResponseCorrelation(
+    public val invoice: AeatResponseInvoiceIdentifier?,
+    public val operation: AeatResponseOperation?,
+)
+
 /** A single typed response line, without retaining the raw response XML. */
 public data class AeatResponseLine(
     public val status: AeatRecordStatus,
     public val errorCode: String? = null,
     public val errorDescription: String? = null,
     public val duplicateRequestId: String? = null,
+    public val correlation: AeatResponseCorrelation? = null,
+    public val incidence: AeatIncidence? = null,
 )
 
 /** Typed AEAT response data needed by submission-flow callers. */
@@ -104,12 +126,30 @@ public object AeatResponseParser {
 private fun String.parseLine(): AeatResponseLine? {
     val declaredStatus = elementText("EstadoRegistro").toRecordStatus() ?: return null
     val duplicate = elementBlock("RegistroDuplicado")
+    val errorCode = elementText("CodigoErrorRegistro")
+    val errorDescription = elementText("DescripcionErrorRegistro")
     return AeatResponseLine(
         status = if (duplicate != null) AeatRecordStatus.DUPLICATE else declaredStatus,
-        errorCode = elementText("CodigoErrorRegistro"),
-        errorDescription = elementText("DescripcionErrorRegistro"),
+        errorCode = errorCode,
+        errorDescription = errorDescription,
         duplicateRequestId = duplicate?.elementText("IdPeticionRegistroDuplicado"),
+        correlation = responseCorrelation(),
+        incidence = errorCode?.let { AeatErrorCatalogue.classify(it, errorDescription) },
     )
+}
+
+private fun String.responseCorrelation(): AeatResponseCorrelation? {
+    val invoiceBlock = elementBlock("IDFactura")
+    val invoice =
+        invoiceBlock?.let {
+            AeatResponseInvoiceIdentifier(
+                issuerTaxIdentifier = it.elementText("IDEmisorFactura"),
+                invoiceNumber = it.elementText("NumSerieFactura"),
+                issueDate = it.elementText("FechaExpedicionFactura"),
+            )
+        }
+    val operation = elementBlock("Operacion")?.elementText("TipoOperacion")?.toResponseOperation()
+    return if (invoice == null && operation == null) null else AeatResponseCorrelation(invoice, operation)
 }
 
 private fun String?.toSubmissionStatus(): AeatSubmissionStatus? =
@@ -126,6 +166,13 @@ private fun String?.toRecordStatus(): AeatRecordStatus? =
         "AceptadoConErrores" -> AeatRecordStatus.ACCEPTED_WITH_ERRORS
         "Incorrecto" -> AeatRecordStatus.REJECTED
         else -> null
+    }
+
+private fun String.toResponseOperation(): AeatResponseOperation =
+    when (this) {
+        "Alta" -> AeatResponseOperation.REGISTRATION
+        "Anulacion" -> AeatResponseOperation.CANCELLATION
+        else -> AeatResponseOperation.UNKNOWN
     }
 
 private fun String.elementText(name: String): String? = elementBlock(name)?.trim()?.decodeXml()

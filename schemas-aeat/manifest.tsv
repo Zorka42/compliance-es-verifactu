@@ -1,0 +1,4 @@
+artifact	version_or_retrieval	sha256	official_source	used_by
+SuministroInformacion.xsd	tikeV1.0 retrieved 2026-08-16	34ef72b3f5ba2c6c5cd2d9a7c3b5b7b226b59d754e569c5c74a04d1c27762989	https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroInformacion.xsd	Conditional registration fields and XML order
+errores.properties	catalogue 1.2.2 retrieved 2026-09-06	06519ceb23422bd6b0ad3bfb659e3007615050da4920781d12cff536481d5902	https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/errores.properties	Typed AEAT incidence classification
+Validaciones_Errores_Veri-Factu.pdf	1.2.2 dated 2026-04-08	unpublished by AEAT	https://www.agenciatributaria.es/static_files/AEAT_Desarrolladores/EEDD/IVA/VERI-FACTU/Validaciones_Errores_Veri-Factu.pdf	Conditional validation rules and subsanation semantics

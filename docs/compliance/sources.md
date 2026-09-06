@@ -39,6 +39,8 @@ Retrieved on 2026-08-16. These sources are the input baseline for the initial im
 | Submission service specification | retrieved 2026-08-16 | https://sede.agenciatributaria.gob.es/static_files/AEAT_Desarrolladores/EEDD/IVA/VERI-FACTU/Veri-Factu_Descripcion_SWeb.pdf | SOAP submission and flow-control behaviour |
 | Validation and error catalogue | retrieved 2026-08-16 | https://www.agenciatributaria.es/static_files/AEAT_Desarrolladores/EEDD/IVA/VERI-FACTU/Validaciones_Errores_Veri-Factu.pdf | AEAT validation/error codes |
 
+The archived-input manifest at `schemas-aeat/manifest.tsv` records the exact source URLs and digests used by conditional validation and typed incidence mappings. The current validation catalogue baseline is v1.2.2, dated 2026-04-08.
+
 ## Explicit Initial Assumptions and Open Questions
 
 - The remote technical pages expose mutable `tikeV1.0` endpoints. `SuministroInformacion.xsd` and its W3C XML Signature dependency are vendored for JVM test validation; the release process must re-download and review their digests.

@@ -50,5 +50,8 @@ last reviewed date
 | Submission and flow control | AEAT submission specification; `RespuestaSuministro.xsd` | retrieved 2026-08-16 | `verifactu-aeat` | response parsing fixtures | Planned | 2026-08-16 |
 | AEAT submission environment defaults | AEAT `SistemaFacturacion.wsdl` | tikeV1.0; production/test and standard/seal endpoint ports | `verifactu-aeat/.../AeatEndpointConfiguration.kt` | `AeatEnvironmentConfigurationTest` | Implemented | 2026-08-16 |
 | Local validation issues | AEAT schemas and validation catalogue | tikeV1.0; validation catalogue retrieved 2026-08-16 | `verifactu-core` | deterministic validation tests | Implemented | 2026-08-16 |
+| Conditional registration models and validation | AEAT `SuministroInformacion.xsd`; validation catalogue | tikeV1.0; catalogue 1.2.2, sections 3.1.3 and 4.4 | `ConditionalFiscalModels.kt`; `FiscalRecords.kt` | `FiscalRecordFactoryTest` on common/JVM/Android/Apple targets | Implemented | 2026-09-06 |
+| Typed incidence and subsanation interpretation | AEAT validation catalogue and `errores.properties` | catalogue 1.2.2, sections 4.2–4.4 | `AeatErrorCatalogue.kt`; `AeatResponseParser.kt` | `AeatResponseParserTest` | Implemented | 2026-09-06 |
+| Supplementary-Unicode XSD length compatibility | W3C XML Schema `length` facets; AEAT XSD; observed JVM provider behaviour | `SuministroInformacion.xsd` `TextMax*Type` facets | `XmlCharacterCount.kt` | common validator boundary test and JVM schema fixture | Implemented | 2026-09-06 |
 
 Future implementation pull requests must replace `TBD` cells with exact source versions, implementation paths, and test paths.
