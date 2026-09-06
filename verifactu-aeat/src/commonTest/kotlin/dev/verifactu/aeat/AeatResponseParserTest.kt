@@ -169,6 +169,27 @@ class AeatResponseParserTest {
     }
 
     @Test
+    fun preservesSubsanationFlagsAndKnownIncidencesWithoutChoosingAnApplicationWorkflow() {
+        val diagnostics =
+            "<CodigoErrorRegistro>2004</CodigoErrorRegistro><DescripcionErrorRegistro>Clock mismatch</DescripcionErrorRegistro>"
+        val flags =
+            "<sf:Subsanacion>S</sf:Subsanacion><sf:RechazoPrevio>S</sf:RechazoPrevio>" +
+                "<sf:SinRegistroPrevio>S</sf:SinRegistroPrevio>"
+        val xml =
+            response(line(state = "AceptadoConErrores", diagnostics = diagnostics), "ParcialmenteCorrecto")
+                .replace("</sf:TipoOperacion>", "</sf:TipoOperacion>$flags")
+        val parsed = parsed(xml)
+        val line = parsed.lines.single()
+
+        assertEquals(AeatRecordStatus.ACCEPTED_WITH_ERRORS, line.status)
+        assertEquals("2004", line.incidence?.code)
+        assertEquals(AeatSubsanationRequirement.REQUIRED, line.incidence?.subsanationRequirement)
+        assertEquals("S", line.operation?.subsanacion)
+        assertEquals("S", line.operation?.rechazoPrevio)
+        assertEquals("S", line.operation?.sinRegistroPrevio)
+    }
+
+    @Test
     fun retainsUnknownCodesAsTypedInspectableIncidences() {
         val line =
             parsed(

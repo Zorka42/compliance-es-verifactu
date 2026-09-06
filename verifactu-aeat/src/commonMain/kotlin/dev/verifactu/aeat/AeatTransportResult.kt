@@ -19,7 +19,7 @@ public sealed interface AeatTransportResult {
         get() =
             when (this) {
                 is InvalidEndpoint, is NotSent -> AeatDeliveryState.NOT_SENT
-                is XmlResponse, is NonXmlResponse -> AeatDeliveryState.RESPONSE_RECEIVED
+                is XmlResponse, is NonXmlResponse, is ResponseTooLarge -> AeatDeliveryState.RESPONSE_RECEIVED
                 is Timeout, is NetworkFailure, is UnknownDelivery -> AeatDeliveryState.UNKNOWN
             }
 
@@ -85,5 +85,15 @@ public sealed interface AeatTransportResult {
     ) : AeatTransportResult {
         /** Omits remote media-type text from diagnostic output. */
         override fun toString(): String = "NonXmlResponse(statusCode=$statusCode, contentType=redacted)"
+    }
+
+    /** An HTTP response whose body exceeded the configured local safety limit before it was retained. */
+    public data class ResponseTooLarge(
+        public val statusCode: Int,
+        public val contentType: String?,
+        public val maxBodyBytes: Int,
+    ) : AeatTransportResult {
+        /** Omits remote media-type text and body bytes from diagnostic output. */
+        override fun toString(): String = "ResponseTooLarge(statusCode=$statusCode, maxBodyBytes=$maxBodyBytes)"
     }
 }

@@ -17,6 +17,10 @@ class AeatTransportResultTest {
             AeatTransportResult.XmlResponse(500, "text/xml", "<Fault/>").deliveryState,
         )
         assertEquals(AeatDeliveryState.RESPONSE_RECEIVED, AeatTransportResult.NonXmlResponse(502, "text/html").deliveryState)
+        assertEquals(
+            AeatDeliveryState.RESPONSE_RECEIVED,
+            AeatTransportResult.ResponseTooLarge(200, "text/xml", 1_024).deliveryState,
+        )
         val unknown: AeatTransportResult = AeatTransportResult.UnknownDelivery("connection closed after request write")
         assertEquals(AeatDeliveryState.UNKNOWN, unknown.deliveryState)
         assertEquals("connection closed after request write", assertIs<AeatTransportResult.UnknownDelivery>(unknown).reason)
@@ -33,6 +37,7 @@ class AeatTransportResultTest {
                 request,
                 response,
                 AeatTransportResult.NonXmlResponse(502, privateText),
+                AeatTransportResult.ResponseTooLarge(200, privateText, 1_024),
                 AeatTransportResult.InvalidEndpoint(privateText),
                 AeatTransportResult.NotSent(privateText),
                 AeatTransportResult.Timeout(privateText),

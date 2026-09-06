@@ -18,7 +18,8 @@ public enum class AeatResponseScenario {
 /**
  * Schema-checked synthetic responses for consumer tests, not captured AEAT replies.
  *
- * The numeric 999999 diagnostic is synthetic and does not claim an official error-code mapping.
+ * The documents and descriptions are synthetic. The 2000 and 3002 code values intentionally
+ * exercise their published catalogue classifications; they do not claim a remote AEAT response.
  */
 public object AeatResponseFixtures {
     /** Returns one response line with fixed diagnostics and a 60-second wait for FLOW_CONTROL. */
@@ -42,9 +43,9 @@ public object AeatResponseFixtures {
         val diagnostics =
             when (scenario) {
                 AeatResponseScenario.REJECTED ->
-                    "<CodigoErrorRegistro>999999</CodigoErrorRegistro><DescripcionErrorRegistro>Synthetic rejection</DescripcionErrorRegistro>"
+                    "<CodigoErrorRegistro>3002</CodigoErrorRegistro><DescripcionErrorRegistro>Synthetic rejection</DescripcionErrorRegistro>"
                 AeatResponseScenario.ACCEPTED_WITH_ERRORS ->
-                    "<CodigoErrorRegistro>999999</CodigoErrorRegistro><DescripcionErrorRegistro>Synthetic warning</DescripcionErrorRegistro>"
+                    "<CodigoErrorRegistro>2000</CodigoErrorRegistro><DescripcionErrorRegistro>Synthetic warning</DescripcionErrorRegistro>"
                 AeatResponseScenario.DUPLICATE ->
                     "<RegistroDuplicado><sf:IdPeticionRegistroDuplicado>TEST-REQUEST</sf:IdPeticionRegistroDuplicado>" +
                         "<sf:EstadoRegistroDuplicado>Correcta</sf:EstadoRegistroDuplicado></RegistroDuplicado>"
