@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
+      - uses: github/codeql-action/init@v4
         with:
           languages: java-kotlin
       - uses: actions/setup-java@v6
@@ -26,4 +26,4 @@ jobs:
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew jvmTest
-      - uses: github/codeql-action/analyze@v3
+      - uses: github/codeql-action/analyze@v4
