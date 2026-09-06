@@ -184,29 +184,30 @@ public sealed interface RecordCreationResult<out T> {
  *
  * Validation is structural and incomplete; creation does not guarantee AEAT acceptance.
  * The host must serialize creation per chain and atomically persist each record with its next
- * chain head. Keep supplied collections unchanged; Kotlin read-only lists are not deep copies.
+ * chain head. Registration creation snapshots the supplied tax-breakdown list.
  */
 public object FiscalRecordFactory {
     /** Validates and creates a registration record. */
     @JvmStatic
     public fun createRegistration(draft: RegistroAltaDraft): RecordCreationResult<RegistroAlta> {
-        val report = RegistroAltaValidator.validate(draft)
+        val snapshot = draft.copy(taxBreakdown = TaxBreakdown(TaxBreakdownSnapshot(draft.taxBreakdown.details)))
+        val report = RegistroAltaValidator.validate(snapshot)
         if (!report.isValid) return RecordCreationResult.Invalid(report)
         val hash =
             RecordHashCalculator.sha256(
                 RegistrationHashInput(
-                    issuerId = draft.invoice.issuer.value,
-                    invoiceNumber = draft.invoice.number.value,
-                    issueDate = draft.invoice.issueDate.value,
-                    invoiceType = draft.invoiceType.name,
-                    totalTax = draft.totalTax.value,
-                    totalAmount = draft.totalAmount.value,
-                    previousHash = draft.chainState.hashOrNull(),
-                    generatedAt = draft.generatedAt.value,
+                    issuerId = snapshot.invoice.issuer.value,
+                    invoiceNumber = snapshot.invoice.number.value,
+                    issueDate = snapshot.invoice.issueDate.value,
+                    invoiceType = snapshot.invoiceType.name,
+                    totalTax = snapshot.totalTax.value,
+                    totalAmount = snapshot.totalAmount.value,
+                    previousHash = snapshot.chainState.hashOrNull(),
+                    generatedAt = snapshot.generatedAt.value,
                 ).canonicalString(),
             )
-        val record = RegistroAlta(draft, hash)
-        return RecordCreationResult.Created(record, ChainState.PreviousRecord(draft.invoice, hash))
+        val record = RegistroAlta(snapshot, hash)
+        return RecordCreationResult.Created(record, ChainState.PreviousRecord(snapshot.invoice, hash))
     }
 
     /** Validates and creates a cancellation record. */
@@ -227,6 +228,17 @@ public object FiscalRecordFactory {
         val record = RegistroAnulacion(draft, hash)
         return RecordCreationResult.Created(record, ChainState.PreviousRecord(draft.cancelledInvoice, hash))
     }
+}
+
+private class TaxBreakdownSnapshot(
+    details: List<TaxBreakdownDetail>,
+) : AbstractList<TaxBreakdownDetail>() {
+    private val entries: List<TaxBreakdownDetail> = details.toList()
+
+    override val size: Int
+        get() = entries.size
+
+    override fun get(index: Int): TaxBreakdownDetail = entries[index]
 }
 
 /** Local structural validation for `RegistroAlta` drafts. */
@@ -293,12 +305,12 @@ private fun taxBreakdownIssues(breakdown: TaxBreakdown): List<ValidationIssue> {
     }
     return breakdown.details.flatMapIndexed { index, detail ->
         listOfNotNull(
-            detail.regimeCode?.takeUnless { Regex("\\d{2}").matches(it) }?.let {
+            detail.regimeCode?.takeUnless { it in REGIME_CODES }?.let {
                 ValidationIssue(
                     "VF-RECORD-003",
                     "taxBreakdown.details[$index].regimeCode",
                     ValidationSeverity.ERROR,
-                    "The regime code must contain two digits.",
+                    "The regime code must be one of the values in the AEAT schema.",
                     source = XSD_SOURCE,
                 )
             },
@@ -329,8 +341,19 @@ private fun requiredTextIssue(
     value: String,
     maxLength: Int,
 ): List<ValidationIssue> {
-    val normalized = value.trim()
-    return if (normalized.isEmpty() || normalized.length > maxLength) {
+    val characterCount = value.xmlCharacterCountOrNull()
+    if (characterCount == null) {
+        return listOf(
+            ValidationIssue(
+                "VF-RECORD-006",
+                fieldPath,
+                ValidationSeverity.ERROR,
+                "The field must contain only XML 1.0 characters.",
+                source = XML_CHARACTERS_SOURCE,
+            ),
+        )
+    }
+    return if (value.isBlank() || characterCount > maxLength) {
         listOf(
             ValidationIssue(
                 "VF-RECORD-001",
@@ -345,6 +368,11 @@ private fun requiredTextIssue(
     }
 }
 
+private val REGIME_CODES: Set<String> =
+    setOf("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "17", "18", "19", "20", "21")
+
 private val HASH_SOURCE: ComplianceSourceReference = ComplianceSourceReference("AEAT hash specification", "Section 5", "0.1.2")
 private val XSD_SOURCE: ComplianceSourceReference =
     ComplianceSourceReference("AEAT SuministroInformacion.xsd", "tikeV1.0", "retrieved 2026-08-16")
+private val XML_CHARACTERS_SOURCE: ComplianceSourceReference =
+    ComplianceSourceReference("W3C XML 1.0", "Section 2.2, production [2] Char", "Fifth Edition, 2008-11-26")

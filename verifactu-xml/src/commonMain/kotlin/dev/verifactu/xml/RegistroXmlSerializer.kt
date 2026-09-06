@@ -166,3 +166,4 @@ private fun String.escapeXml(): String =
         .replace(">", "&gt;")
         .replace("\"", "&quot;")
         .replace("'", "&apos;")
+        .replace("\r", "&#13;")

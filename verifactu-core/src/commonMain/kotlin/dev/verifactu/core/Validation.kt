@@ -29,7 +29,8 @@ public data class ValidationReport(
     public val issues: List<ValidationIssue>,
 ) {
     /** Whether this report contains no error-severity issues. */
-    public val isValid: Boolean = issues.none { issue -> issue.severity == ValidationSeverity.ERROR }
+    public val isValid: Boolean
+        get() = issues.none { issue -> issue.severity == ValidationSeverity.ERROR }
 }
 
 /** A deterministic validator that performs no I/O. */
