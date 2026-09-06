@@ -56,7 +56,7 @@ The [offline invoice query tool](tools/query/README.md) prepares issued/received
 
 ## Host application boundary
 
-The library does not provide a database, invoice store, durable queue, scheduler, certificate vault, UI, invoice PDF renderer, accounting system, hosted API, or legal/tax advice. The host owns invoice finalization, durable records, concurrency, credentials, and operating the complete SIF.
+The library does not provide a database, invoice store, durable queue, scheduler, certificate vault, UI, invoice PDF renderer, accounting system, hosted API, or legal/tax advice. The host owns invoice finalization, durable records, concurrency, credentials, and operating the complete SIF. See the compile-tested [app-accounting adapter contract](docs/app-accounting-adapter-contract.md) for the persistence and replay boundary.
 
 ## Documentation and contributing
 

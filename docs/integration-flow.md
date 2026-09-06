@@ -10,7 +10,7 @@ The [shared executable example](../samples/offline/src/commonMain/kotlin/dev/ver
 4. The host atomically persists the invoice, original fiscal record, exact prepared request and next head under its durability policy.
 5. The host renders the invoice and separately queues delivery. It releases its concurrency guard only after committing the new head.
 
-The sample uses an in-memory value to illustrate persistence ownership. A real integration needs durable storage and recovery. The library neither writes data nor starts a worker.
+The compile-tested [app-accounting adapter contract](app-accounting-adapter-contract.md) uses a fake host store to verify this compare-and-set boundary and exact-request replay. A real integration needs durable storage and recovery. The library neither writes data nor starts a worker.
 
 ## Cancellation
 

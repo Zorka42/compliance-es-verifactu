@@ -12,6 +12,7 @@ The README stays short. Product scope, integration details, and compliance expla
 - [Protocol behavior](protocol-behavior.md)
 - [Error handling](error-handling.md)
 - [Integration responsibilities](integration-responsibilities.md)
+- [App-accounting adapter contract](app-accounting-adapter-contract.md)
 - [Testkit and synthetic fixtures](testkit.md)
 - [Offline Kotlin and Java examples](../samples/offline/README.md)
 - [Platform support matrix](platform-support.md)

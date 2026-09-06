@@ -12,9 +12,10 @@ The host application must own:
 - durable invoice and fiscal-record storage;
 - latest chain-state persistence;
 - per-chain concurrency control;
+- invoice finalization and per-chain locks;
 - durable queueing of unsent records;
 - retry scheduling;
-- user warnings while records remain pending;
+- user interface and warnings while records remain pending;
 - certificate and private-key storage;
 - providing opaque certificate handles to platform transport adapters; VeriFactu KMP neither reads certificate bytes nor owns key-store paths or passwords;
 - final invoice rendering;
@@ -38,7 +39,7 @@ The current library provides building blocks for:
 - transport adapters where supported;
 - test utilities for downstream integrations.
 
-Production workflow orchestration, complete fiscal validation, response reconciliation, and source-backed retry/correction semantics are still pending. See [implementation status](implementation-status.md) before selecting an integration scope.
+Production workflow orchestration, complete fiscal validation, source-backed automatic retry/correction policy, and live interoperability are still pending. The response parser and correlation boundary preserve evidence; they do not make application state transitions. See [implementation status](implementation-status.md) before selecting an integration scope.
 
 ## Concurrency Contract
 
