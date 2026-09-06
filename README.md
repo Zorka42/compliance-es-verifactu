@@ -10,7 +10,7 @@ Apache-2.0 Kotlin Multiplatform building blocks for VERI*FACTU fiscal records, h
 
 **Pre-release implementation; not ready for production fiscal compliance.** Five modules are implemented and a runnable offline consumer exercises record creation, chaining, XML, QR, fake submission, and response parsing. No Maven Central version has been released.
 
-Validated batch/SOAP preparation, a local workflow facade, namespace-aware response parsing and response correlation are implemented. Conditional fiscal models, source-backed retry/correction policies, real AEAT verification and release signing remain incomplete. See [implementation status](docs/implementation-status.md).
+Validated batch/SOAP preparation, a local workflow facade, namespace-aware response parsing and response correlation are implemented. Real AEAT verification and the first credentialed signed release remain pending. See [implementation status](docs/implementation-status.md).
 
 ## Installation
 

@@ -1,6 +1,6 @@
 # Publishing
 
-No Maven Central release exists. Local publication is unsigned and cannot contact a remote repository: the only configured publishing destination is `build/maven-repository` in this checkout. No signing plugin, credential lookup, or external release workflow is enabled.
+No Maven Central release exists. Local publication is unsigned and cannot contact a remote repository: the default publishing destination is `build/maven-repository` in this checkout. Central credentials and signing keys are read only when the protected tag workflow explicitly passes `-PcentralPublishing=true`.
 
 ## Coordinates and artifacts
 
@@ -33,8 +33,8 @@ Java consumers can use this dependency after installing a matching local preview
 
 The local preview directory must be configured as a Maven repository; `mavenLocal()` is not used by these commands. See the [standalone consumer build](../samples/maven-consumer/build.gradle.kts) for repository and module declarations.
 
-## External release work remains separate
+## Central Portal release preparation
 
-ZA-85 is only partially implemented. Namespace verification, CI signing secrets, Central Portal upload/staging, tag-triggered publishing, and GitHub Release creation are still pending and have not been tested. No personal certificates or signing keys are required for the local preview.
+The protected tag workflow configures the Central Portal's official OSSRH-staging compatibility endpoint through the Central-tested Gradle Nexus Publish plugin. A release tag reruns the KMP/API/docs/coverage gate, signs every Maven publication in memory, uploads and closes/releases the Central staging repository, then creates a GitHub Release. It cannot run successfully with a `SNAPSHOT` version or missing credentials.
 
-Before enabling a release workflow, verify the publishing namespace and current Central requirements, configure dedicated signing/publishing secrets, pin/review the official compliance artifacts, and require all platform/API/consumer checks. Build official releases from reviewed tags in CI. Do not present a local unsigned snapshot as an official compliant release.
+Before enabling the first release, verify the publishing namespace and current Central requirements, create a dedicated PGP signing identity and distribute its public key, then configure the five secrets listed in [release governance](release-governance.md). A Central Portal user token—not a portal password or an AEAT certificate—is required for CI. Use the local preview first; the first external Central staging/release is still a separately authorized operation.

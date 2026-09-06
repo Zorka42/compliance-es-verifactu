@@ -1,0 +1,122 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    name: Validate release tag
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+      commit: ${{ steps.release.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
+      - name: Verify release tag and main ancestry
+        id: release
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          if [[ "$version" == "$GITHUB_REF_NAME" || "$version" == *"SNAPSHOT" || ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Expected a non-SNAPSHOT SemVer tag in the form vX.Y.Z." >&2
+            exit 1
+          fi
+          tag_commit="$(git rev-list -n 1 "$GITHUB_SHA")"
+          if ! git merge-base --is-ancestor "$tag_commit" origin/main; then
+            echo "Release tags must point to a commit already merged into main." >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "commit=$tag_commit" >> "$GITHUB_OUTPUT"
+
+  verify-linux:
+    name: Verify Linux JVM and Android release artifacts
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
+      - name: Verify release build
+        run: >-
+          ./gradlew --no-daemon
+          -PreleaseVersion=${{ needs.tag.outputs.version }}
+          check compileKotlinMetadata jvmTest testAndroidHostTest
+          apiCheck dokkaHtml koverXmlReportJvm koverVerifyJvm publishJvmPreview
+      - name: Build the independent consumer distribution
+        run: ./gradlew --no-daemon -p samples/maven-consumer installDist
+      - name: Select Java 11 for the independent consumer
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '11'
+      - name: Verify published artifacts on a Java 11 runtime
+        run: samples/maven-consumer/build/install/verifactu-java-consumer/bin/verifactu-java-consumer
+
+  verify-apple:
+    name: Verify Apple release artifacts
+    needs: tag
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
+      - name: Verify Apple release build
+        run: >-
+          ./gradlew --no-daemon
+          -PreleaseVersion=${{ needs.tag.outputs.version }}
+          compileKotlinMetadata compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test
+
+  publish:
+    name: Publish signed release
+    needs: [tag, verify-linux, verify-apple]
+    runs-on: ubuntu-latest
+    environment: release
+    env:
+      CENTRAL_NAMESPACE: ${{ secrets.CENTRAL_NAMESPACE }}
+      CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
+      CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
+      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+      SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
+      - name: Verify Central configuration and publish
+        run: >-
+          ./gradlew --no-daemon
+          -PreleaseVersion=${{ needs.tag.outputs.version }}
+          -PcentralPublishing=true
+          verifyCentralPublishingConfiguration publishToSonatype closeAndReleaseStagingRepositories
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --target "${{ needs.tag.outputs.commit }}" --title "$GITHUB_REF_NAME" --generate-notes
