@@ -46,7 +46,7 @@ Implementation requirements include:
 
 XML generation must be deterministic and compatible with the pinned AEAT schemas for the release.
 
-JVM record-schema validation and shared XML golden tests are implemented. Full batch/response-schema validation is still pending because those source artifacts are not vendored. The existing batch serializer does not construct SOAP or enforce all batch invariants.
+Shared record golden tests and JVM record/batch/response XSD checks use archived public contracts. `SubmissionBatchBuilder` validates currently modeled records and builds SOAP 1.1 document/literal requests. Runtime response parsing enforces XML well-formedness and namespace identity while preserving unknown protocol values; it does not claim full XSD or business-rule validation.
 
 ## QR
 
@@ -58,4 +58,4 @@ Invoice layout and QR rendering belong to the host application unless an optiona
 
 AEAT may return a wait value for subsequent submissions.
 
-The minimal response parser exposes a nullable `retryAfterSeconds`. Complete validation and preservation of unknown flow-control variants are pending. The host application owns scheduling and queueing; the library never sleeps or retries automatically.
+The parser exposes `AeatFlowControl.Known` or `Unknown`, preserving unrecognized text, alongside the `retryAfterSeconds` convenience getter. The host application owns scheduling and queueing; the library never sleeps or retries automatically.

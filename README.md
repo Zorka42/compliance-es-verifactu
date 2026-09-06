@@ -10,7 +10,7 @@ Apache-2.0 Kotlin Multiplatform building blocks for VERI*FACTU fiscal records, h
 
 **Pre-release implementation; not ready for production fiscal compliance.** Five modules are implemented and a runnable offline consumer exercises record creation, chaining, XML, QR, fake submission, and response parsing. No Maven Central version has been released.
 
-Local validation and response parsing remain incomplete. The validated batch builder, complete submission outcomes, retry/correction semantics, production workflow facade, and release signing are still pending. See [implementation status](docs/implementation-status.md).
+Validated batch/SOAP preparation, a local workflow facade, namespace-aware response parsing and response correlation are implemented. Conditional fiscal models, source-backed retry/correction policies, real AEAT verification and release signing remain incomplete. See [implementation status](docs/implementation-status.md).
 
 ## Installation
 
@@ -45,12 +45,14 @@ The [shared Kotlin example](samples/offline/src/commonMain/kotlin/dev/verifactu/
 | Module | Provides |
 | --- | --- |
 | `verifactu-core` | Fiscal values, structural validation, alta/anulación records, SHA-256, caller-owned chain state; no I/O |
-| `verifactu-xml` | Deterministic record and batch XML; pinned record XSD tests on JVM |
+| `verifactu-xml` | Deterministic record XML, validated batch/SOAP preparation; archived XSD tests |
 | `verifactu-qr` | Test/production QR URL payloads as data; no image rendering |
-| `verifactu-aeat` | Endpoint metadata, minimal response/fault extraction, JVM transport, injected Android/Apple boundaries |
+| `verifactu-aeat` | Local preparation facade, typed response/fault parsing and correlation, optional transport adapters |
 | `verifactu-testkit` | Synthetic fixtures and scripted fake transport for downstream tests |
 
 JVM, Android local unit tests, iOS arm64 simulator, and macOS arm64 have CI test coverage. iOS device code is compiled; on-device execution is not verified. Intel Apple targets remain configured but are not advertised as supported. See the [platform matrix](docs/platform-support.md).
+
+The [offline invoice query tool](tools/query/README.md) prepares issued/received consultations and inspects saved responses without network or certificates. [Public contracts](schemas-aeat/README.md) are archived with source URLs and digests.
 
 ## Host application boundary
 

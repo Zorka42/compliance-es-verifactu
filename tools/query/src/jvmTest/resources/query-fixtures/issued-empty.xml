@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:RespuestaConsultaFactuSistemaFacturacion xmlns:r="https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/RespuestaConsultaLR.xsd" xmlns:sf="https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/SuministroInformacion.xsd">
+<r:Cabecera><sf:IDVersion>1.0</sf:IDVersion><sf:ObligadoEmision><sf:NombreRazon>Synthetic taxpayer</sf:NombreRazon><sf:NIF>89890001K</sf:NIF></sf:ObligadoEmision></r:Cabecera>
+<r:PeriodoImputacion><r:Ejercicio>2026</r:Ejercicio><r:Periodo>09</r:Periodo></r:PeriodoImputacion>
+<r:IndicadorPaginacion>N</r:IndicadorPaginacion><r:ResultadoConsulta>SinDatos</r:ResultadoConsulta>
+
+</r:RespuestaConsultaFactuSistemaFacturacion>

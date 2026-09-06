@@ -2,6 +2,8 @@ package dev.verifactu.xml
 
 import dev.verifactu.core.ChainState
 import dev.verifactu.core.FiscalAmount
+import dev.verifactu.core.FiscalParty
+import dev.verifactu.core.FiscalPartyIdentifier
 import dev.verifactu.core.FiscalRecordFactory
 import dev.verifactu.core.InvoiceIdentifier
 import dev.verifactu.core.InvoiceIssueDate
@@ -11,6 +13,7 @@ import dev.verifactu.core.Qualification
 import dev.verifactu.core.RecordCreationResult
 import dev.verifactu.core.RecordGenerationTimestamp
 import dev.verifactu.core.RecordVersion
+import dev.verifactu.core.RegistrationConditionalData
 import dev.verifactu.core.RegistroAlta
 import dev.verifactu.core.RegistroAltaDraft
 import dev.verifactu.core.RegistroAnulacion
@@ -25,6 +28,7 @@ import dev.verifactu.core.ValueResult
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class RegistroXmlSerializerTest {
@@ -75,6 +79,214 @@ class RegistroXmlSerializerTest {
         assertContains(xml, "<RegistroAnulacion xmlns=")
     }
 
+    @Test
+    fun preservesCarriageReturnsAndEscapesSpecialCharactersInRecordText() {
+        val original = createdRegistration()
+        val invoice = original.draft.invoice.copy(number = invoiceNumber("INV\r\n\t<&>\"'1"))
+        val created =
+            assertIs<RecordCreationResult.Created<RegistroAlta>>(
+                FiscalRecordFactory.createRegistration(original.draft.copy(invoice = invoice, issuerName = "Issuer\rName")),
+            )
+
+        val xml = RegistroXmlSerializer.serialize(created.record)
+
+        assertContains(xml, "<NumSerieFactura>INV&#13;\n\t&lt;&amp;&gt;&quot;&apos;1</NumSerieFactura>")
+        assertContains(xml, "<NombreRazonEmisor>Issuer&#13;Name</NombreRazonEmisor>")
+        assertTrue('\r' !in xml)
+    }
+
+    @Test
+    fun escapesHeaderTaxIdentifiersAndPreservesHeaderCarriageReturns() {
+        val xml =
+            SubmissionBatchXmlSerializer.serialize(
+                SubmissionHeader("Issuer\rName", assertIs<ValueResult.Valid<TaxIdentifier>>(TaxIdentifier.parse("12&345678")).value),
+                listOf(SubmissionRecord.Registration(createdRegistration())),
+            )
+
+        assertContains(xml, "<NombreRazon>Issuer&#13;Name</NombreRazon>")
+        assertContains(xml, "<NIF>12&amp;345678</NIF>")
+        assertTrue('\r' !in xml)
+    }
+
+    @Test
+    fun serializesTheSameCreatedRecordAfterTheCallerChangesItsInputList() {
+        val draft = createdRegistration().draft
+        val details = draft.taxBreakdown.details.toMutableList()
+        val created =
+            assertIs<RecordCreationResult.Created<RegistroAlta>>(
+                FiscalRecordFactory.createRegistration(draft.copy(taxBreakdown = TaxBreakdown(details))),
+            ).record
+        val before = RegistroXmlSerializer.serialize(created)
+
+        details.clear()
+
+        assertEquals(before, RegistroXmlSerializer.serialize(created))
+    }
+
+    @Test
+    fun buildsAnOrderedBatchWithAnExactSoapBodyAndRedactedDiagnostics() {
+        val header = SubmissionHeader("Issuer & Co", taxId())
+        val records = listOf(SubmissionRecord.Registration(createdRegistration()), SubmissionRecord.Cancellation(createdCancellation()))
+        val created = assertIs<SubmissionBatchBuildResult.Created>(SubmissionBatchBuilder.build(header, records))
+
+        assertEquals(SubmissionBatchXmlSerializer.serialize(header, records), created.xml)
+        assertTrue(created.xml.indexOf("<RegistroAlta ") < created.xml.indexOf("<RegistroAnulacion "))
+        assertEquals(
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>" +
+                created.xml.removePrefix("<?xml version=\"1.0\" encoding=\"UTF-8\"?>") +
+                "</soap:Body></soap:Envelope>",
+            created.soapEnvelope,
+        )
+        assertEquals("SubmissionBatchBuildResult.Created(xml=<redacted>, soapEnvelope=<redacted>)", created.toString())
+    }
+
+    @Test
+    fun rejectsInvalidBatchSizesAndAcceptsTheMaximumSize() {
+        val header = SubmissionHeader("Issuer", taxId())
+        val record = SubmissionRecord.Registration(createdRegistration())
+        listOf(emptyList(), List(1001) { record }).forEach { records ->
+            val invalid = assertIs<SubmissionBatchBuildResult.Invalid>(SubmissionBatchBuilder.build(header, records))
+            assertEquals(
+                "VF-BATCH-001",
+                invalid.report.issues
+                    .single()
+                    .code,
+            )
+            assertEquals(
+                "records",
+                invalid.report.issues
+                    .single()
+                    .fieldPath,
+            )
+        }
+
+        val created = assertIs<SubmissionBatchBuildResult.Created>(SubmissionBatchBuilder.build(header, List(1000) { record }))
+        assertEquals(1000, "<RegistroFactura>".toRegex().findAll(created.xml).count())
+    }
+
+    @Test
+    fun rejectsInvalidBatchHeaderNames() {
+        val records = listOf(SubmissionRecord.Registration(createdRegistration()))
+        listOf("", " \t\r\n", " ${"A".repeat(120)} ", "Issuer\u0000", "Issuer\uD800", "Issuer\uDC00", "Issuer\uFFFE")
+            .forEach { name ->
+                val invalid =
+                    assertIs<SubmissionBatchBuildResult.Invalid>(SubmissionBatchBuilder.build(SubmissionHeader(name, taxId()), records))
+                assertEquals(
+                    "VF-BATCH-002",
+                    invalid.report.issues
+                        .single()
+                        .code,
+                )
+                assertEquals(
+                    "header.issuerName",
+                    invalid.report.issues
+                        .single()
+                        .fieldPath,
+                )
+            }
+        assertIs<SubmissionBatchBuildResult.Created>(
+            SubmissionBatchBuilder.build(SubmissionHeader("\uD83D\uDE00".repeat(120), taxId()), records),
+        )
+    }
+
+    @Test
+    fun rejectsBothRegistrationAndCancellationIssuerMismatches() {
+        val otherId = assertIs<ValueResult.Valid<TaxIdentifier>>(TaxIdentifier.parse("12345678Z")).value
+        val registration = createdRegistration()
+        val otherRegistration =
+            assertIs<RecordCreationResult.Created<RegistroAlta>>(
+                FiscalRecordFactory.createRegistration(
+                    registration.draft.copy(invoice = registration.draft.invoice.copy(issuer = otherId)),
+                ),
+            ).record
+        val cancellation = createdCancellation()
+        val otherCancellation =
+            assertIs<RecordCreationResult.Created<RegistroAnulacion>>(
+                FiscalRecordFactory.createCancellation(
+                    cancellation.draft.copy(cancelledInvoice = cancellation.draft.cancelledInvoice.copy(issuer = otherId)),
+                ),
+            ).record
+        val invalid =
+            assertIs<SubmissionBatchBuildResult.Invalid>(
+                SubmissionBatchBuilder.build(
+                    SubmissionHeader("Issuer", taxId()),
+                    listOf(SubmissionRecord.Registration(otherRegistration), SubmissionRecord.Cancellation(otherCancellation)),
+                ),
+            )
+
+        assertEquals(
+            listOf("records[0].draft.invoice.issuer", "records[1].draft.cancelledInvoice.issuer"),
+            invalid.report.issues.map { it.fieldPath },
+        )
+        assertTrue(invalid.report.issues.all { it.code == "VF-BATCH-003" })
+    }
+
+    @Test
+    fun rejectsForgedHashesForBothRecordTypes() {
+        val invalid =
+            assertIs<SubmissionBatchBuildResult.Invalid>(
+                SubmissionBatchBuilder.build(
+                    SubmissionHeader("Issuer", taxId()),
+                    listOf(
+                        SubmissionRecord.Registration(createdRegistration().copy(hash = "0".repeat(64))),
+                        SubmissionRecord.Cancellation(createdCancellation().copy(hash = "F".repeat(64))),
+                    ),
+                ),
+            )
+
+        assertEquals(listOf("records[0].hash", "records[1].hash"), invalid.report.issues.map { it.fieldPath })
+        assertTrue(invalid.report.issues.all { it.code == "VF-BATCH-004" })
+    }
+
+    @Test
+    fun prefixesDraftValidationIssuesForUncheckedRecords() {
+        val registration = createdRegistration()
+        val cancellation = createdCancellation()
+        val invalid =
+            assertIs<SubmissionBatchBuildResult.Invalid>(
+                SubmissionBatchBuilder.build(
+                    SubmissionHeader("Issuer", taxId()),
+                    listOf(
+                        SubmissionRecord.Registration(registration.copy(draft = registration.draft.copy(issuerName = ""))),
+                        SubmissionRecord.Cancellation(
+                            cancellation.copy(draft = cancellation.draft.copy(system = cancellation.draft.system.copy(producerName = ""))),
+                        ),
+                    ),
+                ),
+            )
+
+        assertEquals(
+            listOf("records[0].draft.issuerName", "records[1].draft.system.producerName"),
+            invalid.report.issues.map { it.fieldPath },
+        )
+    }
+
+    @Test
+    fun keepsPreparedPayloadsAfterCallerOwnedListsChange() {
+        val original = createdRegistration()
+        val details =
+            original.draft.taxBreakdown.details
+                .toMutableList()
+        val records =
+            mutableListOf<SubmissionRecord>(
+                SubmissionRecord.Registration(original.copy(draft = original.draft.copy(taxBreakdown = TaxBreakdown(details)))),
+            )
+        val prepared =
+            assertIs<SubmissionBatchBuildResult.Created>(
+                SubmissionBatchBuilder.build(SubmissionHeader("Issuer", taxId()), records),
+            )
+        val xml = prepared.xml
+        val soap = prepared.soapEnvelope
+
+        details.clear()
+        records.clear()
+
+        assertEquals(xml, prepared.xml)
+        assertEquals(soap, prepared.soapEnvelope)
+        assertContains(prepared.xml, "<DetalleDesglose>")
+    }
+
     private fun createdRegistration(): RegistroAlta {
         val result =
             FiscalRecordFactory.createRegistration(
@@ -101,6 +313,10 @@ class RegistroXmlSerializerTest {
                     chainState = ChainState.FirstRecord,
                     system = SistemaInformatico("Producer", taxId(), "VeriFactu", "VF", "1.0", "install-1", true, false, false),
                     generatedAt = timestamp(),
+                    conditionalData =
+                        RegistrationConditionalData(
+                            recipients = listOf(FiscalParty("Recipient", FiscalPartyIdentifier.SpanishNif(taxId()))),
+                        ),
                 ),
             )
         return (result as RecordCreationResult.Created<RegistroAlta>).record

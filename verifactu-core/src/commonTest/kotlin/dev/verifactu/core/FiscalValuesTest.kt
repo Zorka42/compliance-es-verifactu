@@ -25,4 +25,60 @@ class FiscalValuesTest {
         assertIs<ValueResult.Invalid>(FiscalAmount.parse("1,20"))
         assertIs<ValueResult.Invalid>(RecordGenerationTimestamp.parse("2024-01-01T19:20:30Z"))
     }
+
+    @Test
+    fun preservesValidTimestampRepresentationsAtCalendarAndOffsetBoundaries() {
+        listOf(
+            "2000-02-29T23:59:59+13:59",
+            "1900-02-28T00:00:00-00:00",
+            "2024-02-29T24:00:00+14:00",
+            "2024-12-31T24:00:00-14:00",
+        ).forEach { value ->
+            assertEquals(value, assertIs<ValueResult.Valid<RecordGenerationTimestamp>>(RecordGenerationTimestamp.parse(value)).value.value)
+        }
+    }
+
+    @Test
+    fun rejectsImpossibleTimestampsBeforeRecordCreation() {
+        listOf(
+            "0000-01-01T00:00:00+00:00",
+            "1900-02-29T00:00:00+00:00",
+            "2023-02-29T00:00:00+00:00",
+            "2024-02-30T00:00:00+00:00",
+            "2024-00-01T00:00:00+00:00",
+            "2024-13-01T00:00:00+00:00",
+            "2024-01-00T00:00:00+00:00",
+            "2024-04-31T00:00:00+00:00",
+            "2024-01-01T25:00:00+00:00",
+            "2024-01-01T24:01:00+00:00",
+            "2024-01-01T24:00:01+00:00",
+            "2024-01-01T00:60:00+00:00",
+            "2024-01-01T00:00:60+00:00",
+            "2024-01-01T00:00:00+14:01",
+            "2024-01-01T00:00:00-14:01",
+            "2024-01-01T00:00:00+15:00",
+            "2024-01-01T00:00:00+00:60",
+            "2024-99-99T99:99:99+99:99",
+        ).forEach { value ->
+            assertIs<ValueResult.Invalid>(RecordGenerationTimestamp.parse(value), value)
+        }
+    }
+
+    @Test
+    fun rejectsNonXmlCharactersInIdentifiers() {
+        listOf('\u0000', '\u000B', '\uD800', '\uDC00', '\uFFFE', '\uFFFF').forEach { character ->
+            assertIs<ValueResult.Invalid>(TaxIdentifier.parse("AB${character}123456"))
+            assertIs<ValueResult.Invalid>(InvoiceNumber.parse("INV${character}1"))
+        }
+    }
+
+    @Test
+    fun measuresSchemaTextLengthsInJvmSchemaUtf16Units() {
+        val supplementaryCharacter = "\uD83D\uDE00"
+        assertIs<ValueResult.Valid<TaxIdentifier>>(TaxIdentifier.parse("A${supplementaryCharacter}123456"))
+        assertIs<ValueResult.Invalid>(TaxIdentifier.parse("A${supplementaryCharacter}1234567"))
+        assertIs<ValueResult.Valid<InvoiceNumber>>(InvoiceNumber.parse(supplementaryCharacter.repeat(30)))
+        assertIs<ValueResult.Invalid>(InvoiceNumber.parse(supplementaryCharacter.repeat(31)))
+        assertEquals("INV\r\n\t1", assertIs<ValueResult.Valid<InvoiceNumber>>(InvoiceNumber.parse("INV\r\n\t1")).value.value)
+    }
 }

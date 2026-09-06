@@ -34,4 +34,17 @@ class ValidationTest {
 
         assertTrue(report.isValid)
     }
+
+    @Test
+    fun validityAlwaysMatchesTheExposedIssues() {
+        val issues = mutableListOf<ValidationIssue>()
+        val report = ValidationReport(issues)
+        assertTrue(report.isValid)
+
+        issues.add(ValidationIssue("VF-TEST-001", "record", ValidationSeverity.ERROR, "Invalid record."))
+        assertFalse(report.isValid)
+
+        issues.clear()
+        assertTrue(report.isValid)
+    }
 }
