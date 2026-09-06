@@ -7,7 +7,7 @@ VeriFactu KMP has a local implementation and offline examples. No version is pub
 Use JDK 21 to build, Android SDK platform 36 with accepted SDK licenses, and an `ANDROID_HOME` environment variable or a gitignored `local.properties` containing `sdk.dir=/your/android/sdk`. JVM artifacts target Java 11. Apple compilation/tests additionally require macOS, Xcode, and an installed arm64 iOS simulator runtime.
 
 ```bash
-./gradlew jvmTest testDebugUnitTest
+./gradlew jvmTest testAndroidHostTest
 ./gradlew :samples:offline:runKotlinSample :samples:offline:runJavaSample
 ```
 

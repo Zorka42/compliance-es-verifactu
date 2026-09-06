@@ -22,9 +22,11 @@ jobs:
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
       - name: Build and test common, JVM, and Android code
-        run: ./gradlew check compileKotlinMetadata jvmTest testDebugUnitTest apiCheck dokkaHtml koverXmlReportJvm koverVerifyJvm
+        run: ./gradlew check compileKotlinMetadata jvmTest testAndroidHostTest apiCheck dokkaHtml koverXmlReportJvm koverVerifyJvm
       - name: Build local JVM publications
         run: ./gradlew publishJvmPreview
+      - name: Build the independent consumer distribution
+        run: ./gradlew --no-daemon -p samples/maven-consumer installDist
       - name: Select Java 11 for the independent consumer
         uses: actions/setup-java@v6
         with:
@@ -33,7 +35,7 @@ jobs:
       - name: Verify published artifacts on a Java 11 runtime
         run: |
           java -version
-          ./gradlew --no-daemon -p samples/maven-consumer run
+          samples/maven-consumer/build/install/verifactu-java-consumer/bin/verifactu-java-consumer
       - name: Upload JVM coverage
         if: ${{ env.CODECOV_TOKEN != '' }}
         uses: codecov/codecov-action@v7

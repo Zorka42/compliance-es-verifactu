@@ -27,7 +27,7 @@ Run the standard local gate before opening a pull request:
 ./gradlew check
 ```
 
-For a focused JVM/Android iteration, run `./gradlew jvmTest testDebugUnitTest ktlintCheck detekt apiCheck`. On a Mac, run `./gradlew compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test` for the advertised Apple targets. Configured Intel Apple targets are experimental and may require additional SDK/runtime support for the aggregate `check` task.
+For a focused JVM/Android iteration, run `./gradlew jvmTest testAndroidHostTest ktlintCheck detekt apiCheck`. On a Mac, run `./gradlew compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test` for the advertised Apple targets. Configured Intel Apple targets are experimental and may require additional SDK/runtime support for the aggregate `check` task.
 
 Use `./gradlew dokkaHtml` to generate API documentation. Dokka is configured in offline mode. Add `--offline` to Gradle commands when dependencies are cached; normal tests and examples never require AEAT or real certificates.
 

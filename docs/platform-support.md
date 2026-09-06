@@ -6,7 +6,7 @@ Compilation and runtime verification are distinct. The repository is pre-release
 | --- | --- | --- | --- |
 | common metadata | `compileKotlinMetadata` | Shared tests on concrete targets | `AeatTransportAdapter` |
 | JVM | `jvmTest`, Java 11 bytecode | Core/XML/QR/AEAT/testkit tests; Kotlin and Java samples | JVM HTTP client with a supplied SSL context |
-| Android | SDK 36, minimum API 26 | `testDebugUnitTest`; shared testkit tests | Injected Android adapter; no device mTLS verification |
+| Android | SDK 36, minimum API 26 | `testAndroidHostTest`; shared testkit tests | Injected Android adapter; no device mTLS verification |
 | iOS arm64 | `compileKotlinIosArm64` | Shared behavior tested on arm64 simulator; no device execution | Injected Apple adapter |
 | iOS simulator arm64 | Test compilation | `iosSimulatorArm64Test`, including `appleTest` and shared example | Injected Apple adapter |
 | macOS arm64 | Test compilation | `macosArm64Test`, including `appleTest` and shared example | Injected Apple adapter |

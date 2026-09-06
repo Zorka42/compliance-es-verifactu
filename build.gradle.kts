@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform) apply false
-    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.android.kotlin.multiplatform.library) apply false
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.dokka) apply false
@@ -61,7 +61,7 @@ subprojects {
             isReproducibleFileOrder = true
             from(rootProject.file("LICENSE")) { into("META-INF") }
         }
-        val javadocJar by tasks.registering(Jar::class) {
+        val javadocJar = tasks.register<Jar>("javadocJar") {
             archiveClassifier.set("javadoc")
             from(tasks.named("dokkaHtml"))
         }
@@ -112,7 +112,7 @@ subprojects {
             "src/jvmAndAndroidMain/kotlin",
             "src/jvmTest/kotlin",
             "src/androidMain/kotlin",
-            "src/androidUnitTest/kotlin",
+            "src/androidHostTest/kotlin",
             "src/appleMain/kotlin",
             "src/appleTest/kotlin",
         )
