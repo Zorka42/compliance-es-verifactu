@@ -1,5 +1,6 @@
 package dev.verifactu.testkit
 
+import dev.verifactu.aeat.AeatOperationType
 import java.io.StringReader
 import javax.xml.XMLConstants
 import javax.xml.parsers.DocumentBuilderFactory
@@ -9,6 +10,38 @@ import javax.xml.validation.SchemaFactory
 import kotlin.test.Test
 
 class FixtureSchemaTest {
+    @Test
+    fun validatesEverySyntheticSubmissionResponseAgainstTheArchivedContract() {
+        val factory =
+            SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).apply {
+                setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "")
+                setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "")
+            }
+        val documents =
+            DocumentBuilderFactory.newInstance().apply {
+                isNamespaceAware = true
+                setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+                setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "")
+                setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "")
+            }
+        val sources =
+            listOf("xmldsig-core-schema.xsd", "SuministroInformacion.xsd", "SuministroLR.xsd", "RespuestaSuministro.xsd").map { name ->
+                checkNotNull(javaClass.classLoader.getResourceAsStream(name)).use { DOMSource(documents.newDocumentBuilder().parse(it)) }
+            }
+        val schema = factory.newSchema(sources.toTypedArray())
+        AeatResponseScenario.entries.forEach { scenario ->
+            listOf(AeatOperationType.REGISTRATION, AeatOperationType.CANCELLATION).forEach { operation ->
+                val xml = AeatResponseFixtures.response(scenario, VerifactuFixtures.invoice("ESC<&\r😀"), operation).xml
+                schema
+                    .newValidator()
+                    .apply {
+                        setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "")
+                        setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "")
+                    }.validate(StreamSource(StringReader(xml)))
+            }
+        }
+    }
+
     @Test
     fun validatesSyntheticRegistrationAndCancellationAgainstVendoredRecordSchema() {
         val factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)

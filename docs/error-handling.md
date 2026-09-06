@@ -1,37 +1,47 @@
 # Error Handling
 
-## Local construction and validation
+## Local preparation
 
-Handle `ValueResult.Valid`/`Invalid` for value parsing and `RecordCreationResult.Created`/`Invalid` for record creation. An invalid record result carries `ValidationReport`, with stable issue codes, field paths, severity, messages, and optional source references. The factory performs these checks before calculating the hash.
+Value parsers return `ValueResult`; record factories return `RecordCreationResult`. `FiscalSubmissionPreparation` composes record, hash, XML, QR, batch and SOAP preparation. Its invalid results and `SubmissionBatchBuildResult.Invalid` carry `ValidationReport` with stable codes and field paths. Batch preparation checks the header, count, issuer consistency, drafts and supplied hashes before producing request strings.
 
-Local validation is incomplete and cannot establish remote acceptance. Do not use `Boolean success` as an application-wide fiscal state.
+Validation covers the implemented fields and structural rules. It cannot establish remote acceptance or validate currently unmodeled conditional fiscal fields. Public unchecked record constructors and the low-level serializer remain available; prefer the validated factory/facade. `FakeAeatTransport` exhaustion throws as a test setup error.
 
-The low-level `SubmissionBatchXmlSerializer.serialize` currently throws `IllegalArgumentException` for an empty batch or more than 1,000 records. Typed batch validation is pending. `FakeAeatTransport` throws `IllegalStateException` on exhausted test scripts; that is a test setup error, not a simulated AEAT rejection.
-
-## Current transport and parser results
+## Delivery and response states
 
 | Result | Meaning and host action |
 | --- | --- |
-| `XmlResponse` | XML media type at any HTTP status, including SOAP faults; inspect status and parse the body |
-| `InvalidEndpoint` | Local HTTPS precheck failed before delegation |
-| `Timeout` / `NetworkFailure` | No usable response; these legacy types do not prove non-delivery |
-| `NonXmlResponse` | HTTP response with an unrecognized media type; no fiscal acceptance can be inferred |
-| `AeatResponseParseResult.InvalidXml` | Known fields could not be extracted; preserve the response for explicit diagnostics |
+| `InvalidEndpoint`, `NotSent` | `deliveryState=NOT_SENT`; local preparation/preflight failed |
+| `Timeout`, `NetworkFailure` | `deliveryState=UNKNOWN`; request delivery may have occurred |
+| `XmlResponse`, `NonXmlResponse` | `deliveryState=RESPONSE_RECEIVED`; HTTP reception is not fiscal acceptance |
+| `AeatResponseParseResult.InvalidXml` | Unsafe, malformed, oversized or structurally ambiguous XML; preserve the original only through explicit diagnostics |
+| `AeatResponseCorrelationResult.Mismatch` | Response cannot be reconciled with the submitted identities and operations; do not mark the batch accepted |
 
-`AeatSubmissionResponse` exposes aggregate status, CSV, wait seconds, and parsed response lines. Known line states are accepted, accepted-with-errors, rejected, and duplicate. This is a minimal field extractor: it can drop unsupported lines, does not enforce XML namespaces/full well-formedness, and does not expose per-record identifiers or the original duplicate's status. It must not drive production batch reconciliation.
+The namespace-aware parser preserves each readable line's invoice identity, operation, declared state, raw unknown state and duplicate's earlier state. Unknown states become `UNKNOWN_STATE`. Missing identifiers or repeated critical fields invalidate the complete parse. A parsed response is not a full XSD/business-validation result. Match it to the submitted records with `AeatResponseCorrelation` before changing application state.
 
-`SoapFault` contains decoded remote text, not sanitized text. The raw envelope is not retained by the parser, but remains available in `XmlResponse.xml` to a caller that explicitly chooses to store it.
+A duplicate's current declared rejection and earlier stored state are separate. `Correcta`, `AceptadaConErrores` and `Anulada` describe that earlier record; they do not justify automatically accepting a changed submission. A batch containing accepted-with-errors lines has aggregate `ParcialmenteCorrecto`; fully rejected submissions do not receive a new CSV. These semantics follow the archived service specification v1.0.3 §3 and response/common XSDs.
 
-## Delivery uncertainty and duplicate handling
+`AeatFlowControl.Known` preserves a recognized wait in seconds; `Unknown` preserves missing or unrecognized text. `retryAfterSeconds` remains a convenience for known values. The host schedules the next attempt; the library neither sleeps nor retries automatically.
 
-Keep immutable records and delivery attempts as separate application state. A timeout can occur after a server received a request. Do not generate a replacement fiscal record, reset the chain, or infer rejection from transport failure alone.
+## Persistence and retries
 
-Duplicate handling, safe retry decisions, and incident/subsanation code mappings require the pending source-backed runtime tasks. The current duplicate marker does not establish the previous record's acceptance state. No exactly-once behavior is promised.
+Persist the prepared fiscal record, next chain head and exact request before delivery, under the application's per-chain concurrency boundary. Keep attempts separate from records. After ambiguous delivery, retain the same hash, timestamp and XML; reconcile before deciding whether to resend. Do not generate a replacement record or roll back the fiscal chain merely because HTTP failed. Correction, incidence and automatic retry decisions still require the remaining source-backed policies; no exactly-once delivery is promised.
 
-The parser's nullable `retryAfterSeconds` exposes a known field but does not validate all flow-control variants. Unknown variants are not yet preserved structurally. The application owns scheduling; the library neither waits nor retries automatically.
+The offline sample demonstrates typed attempt handling and explicit reuse of saved request bytes, without a database, queue or scheduler. It is an application integration example, not a durable runtime implementation.
+
+## Diagnostics and XML boundaries
+
+## AEAT Catalogue Semantics
+
+Known AEAT error codes are exposed as a typed incidence with its catalogue source, disposition, and whether the catalogue expressly requires subsanation. Unknown codes remain typed with an `UNKNOWN` disposition and no inferred correction or retry. An invoice identity and the operation returned in a response line are correlation data; neither is treated as acceptance.
+
+## Unicode and XML Lengths
+
+The W3C XML Schema `length` facets are defined in characters. The JVM provider used to validate the published AEAT XSD measures a supplementary Unicode character as two UTF-16 units at these boundaries. Common validation deliberately uses the same UTF-16 unit count on JVM, Android, and Apple Kotlin targets, so it never accepts text that the supported JVM schema fixture rejects. JVM fixture tests record that behaviour; production code does not configure a global XML provider and Android/Apple do not rely on a platform XSD validator.
 
 ## Diagnostics
 
-No logging is enabled by the core. XML, remote messages, identifiers, and data-class string representations can contain personal/fiscal data. Keep diagnostics opt-in and redact them before logging. JVM transport exception reasons currently also need review before production logging.
+Transport request/result, response, duplicate, invoice reference, SOAP fault and prepared-request summaries redact fiscal data. Explicit fields remain unredacted; domain records also contain fiscal data. The JVM adapter uses fixed exception reasons. Do not log raw XML, identifiers, remote messages or arbitrary domain objects by default.
 
-Never put passwords, keys, certificate material, real fiscal records, or production responses in fixtures or issue reports. Use the [synthetic testkit](testkit.md) to demonstrate a problem.
+The submission String parser accepts UTF-8 declarations (or no encoding declaration), rejects DTD/entity declarations and malformed UTF-16, and limits documents to 8 Mi characters, depth 64 and 100,000 elements. JVM/Android SAX and Apple Foundation adapters feed the same common response interpretation. The standalone query tool has its own 64 MiB file limit and validates against the archived query XSD.
+
+Never put passwords, keys, certificate material, actual fiscal records or production responses in fixtures or issue reports. Use the [synthetic testkit](testkit.md).

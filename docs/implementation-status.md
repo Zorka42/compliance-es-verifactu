@@ -1,6 +1,6 @@
 # Implementation Status
 
-Local assessment and implementation batch: 2026-09-06. **Nine selected tasks are implemented and locally verified; Maven publishing is partially implemented.** The authoritative backlog remains [Zorka Accounting – Tasks](https://app.notion.com/p/3bd4f302230980d3bb72ffbd0068aa8b), project `Verifactu`.
+Local assessment and implementation batches: 2026-09-06. **The offline foundation, review fixes, validated preparation, response handling and query utility are locally verified. External acceptance and release remain open.** The authoritative backlog remains [Zorka Accounting – Tasks](https://app.notion.com/p/3bd4f302230980d3bb72ffbd0068aa8b), project `Verifactu`.
 
 ## Starting point
 
@@ -8,9 +8,9 @@ The checkout contained five KMP modules with core records/hash/validation, XML, 
 
 A `To verify` status was not treated as evidence that every acceptance criterion had passed. This run found and fixed a pre-existing common-metadata compilation failure in the response parser and an external W3C DTD dependency in JVM schema tests. It also identified production gaps listed below.
 
-All changes are local. Notion was read but not modified. No commit, push, external publication, AEAT interaction, or personal certificate/key access was part of this work. Local Gradle caches and toolchains were used with `--offline`.
+Notion was read but not modified; no task was marked Done. The first implementation package was committed as `29106f9`, merged into main as `1ddab07` and pushed after explicit authorization. Subsequent review/query work uses the same local-only operational boundary: no AEAT SOAP endpoint, authenticated portal or personal certificate/key access. Public static contracts were retrieved and archived. Gradle builds use the existing cache with `--offline`; no Maven Central release was made.
 
-## Selected ten-task batch
+## First Ten-Task Batch
 
 “Implemented locally” is a handoff recommendation for external verification, not `Done`. The final aggregate check is recorded below separately.
 
@@ -27,29 +27,39 @@ All changes are local. Notion was read but not modified. No commit, push, extern
 | [ZA-87 English API/KDoc pass](https://app.notion.com/3bd4f302230981feac88ce0e57120874) | Implemented locally | Java static entry points, corrected validation/immutability/parser promises, explained official terms and host responsibilities, regenerated API baselines |
 | [ZA-92 Runnable consumer](https://app.notion.com/3be4f302230981739dc9d776234e69b7) | Implemented locally | Registration → XML/QR → fake response, cancellation with continuous chain, deterministic result output, CI execution |
 
-The sample composes module APIs directly; it does not close ZA-89 (production workflow facade), ZA-90 (persistence orchestration), or ZA-91 (complete end-to-end runtime contract suite). The published preview likewise does not complete ZA-85's external criteria.
+## Review and Query Batch
 
-## Verification
+| Backlog area | Current local result | Still open |
+| --- | --- | --- |
+| ZA-73 validated batches | Typed header/count/issuer/draft/hash validation, snapshots, deterministic XML and SOAP; XSD checks | Additional fiscal fields remain part of model completeness |
+| ZA-74 response model | Namespace-aware parsing, every readable identity/operation, declared and earlier duplicate states, explicit unknowns, pure matching | Full incidence/business outcome policy |
+| ZA-75 flow control | Known wait seconds and preserved unknown values; no sleeping or hidden retries | Live interoperability evidence |
+| ZA-76 delivery uncertainty | Known preflight not-sent versus ambiguous send failure; immutable replay and correlation tests | Application retry/recovery policy with durable evidence |
+| ZA-82 declaration materials | Archived official sources, component/host guidance, unsigned worksheet, dependency acknowledgements | Final producer identity, release evidence and declaration review |
+| ZA-89 preparation facade | Pure registration/cancellation/batch preparation with record, next head, XML/QR/SOAP | Final full-scope runtime API review and missing fiscal modes |
+| ZA-90/91 integration contracts | Shared Kotlin and Java examples, typed attempt interpretation, matching before acceptance, fake failure branches and manual replay | Durable app integration, real adapters and full incidence branches |
+| Query utility (issued and received) | JVM CLI prepares XSD-validated SOAP and inspects saved pages; no network/certificate code | Explicitly authorized live read, selected identity/period/credential |
+| OSS release hardening | Java 11 runtime consumer configured in CI; 14 archived source files with hash verification | Signing/Central publishing, actual remote CI verification, branch settings and release readiness |
 
-- Initial JVM and Android tests passed before changes.
-- `ktlintCheck`, `detekt`, `apiCheck`, JVM/Android tests and `koverVerifyJvm` passed after implementation.
-- `compileKotlinMetadata`, `compileKotlinIosArm64`, `iosSimulatorArm64Test`, and `macosArm64Test` passed after replacing the platform-only regex option.
-- Both Kotlin and Java sample commands passed. The independent Java build resolved local Maven POMs without project dependencies or Gradle metadata redirection and compiled with `--release 11`, `-Xlint:all`, and `-Werror`.
-- Final `./gradlew --offline --no-daemon check publishJvmPreview` passed (671 tasks, 327 executed). The separate POM-based Java consumer also passed.
-- Final test reports contain 39 JVM tests, 35 Android debug tests, 35 Android release tests, 36 iOS simulator tests, and 36 macOS tests: zero failures or skipped tests in those reports. Configured unsupported Intel-native tasks can be skipped by Gradle; they are not included in that runtime claim.
-- All five JVM publications were inspected for POM license/SCM/developer metadata, Java 11 bytecode, source files, Dokka `index.html`, and `META-INF/LICENSE` in runtime/source/documentation JARs.
-- Registration/cancellation testkit XML passes the vendored record XSD. Both schema suites preload the local schemas and disable external DTD/schema access. Vendored source bytes were not changed.
-- `git diff --check` and all relative documentation links passed local inspection.
-- Core JVM line coverage: 400/440 lines (90.9%), above the configured 90% gate. Coverage is not evidence of complete fiscal compliance.
+The code/architecture review retained the five-module structure. It fixed XML-invalid text, serialized-length checks, calendar/offset validation, regime membership, CR preservation, mutable factory input/output lists, unescaped header identifiers, unsafe diagnostic summaries, dropped response lines and sample invoice mismatches. The response parser uses platform readers behind a common interpretation boundary; core still performs no I/O.
 
-Dokka 2.0 V1 tasks are marked incompatible with configuration cache. Builds may report cache-discard diagnostics for those tasks; this is not a successful cache reuse claim. The normal compilation/test configuration can still use the cache.
+## Latest Local Verification
 
-## Next work toward a release
+- `./gradlew --offline --no-daemon ktlintFormat check compileKotlinMetadata compileKotlinIosArm64 koverXmlReportJvm koverVerifyJvm publishJvmPreview --continue` passed: **776 tasks, 408 executed**.
+- `check` includes formatting/static analysis, API baselines, JVM/Android/Apple tests, Kotlin/Java samples and platform checks configured by the project. The separate metadata/device compilation and coverage gates also passed.
+- Reports contain **100 JVM, 76 Android debug, 76 Android release, 83 iOS simulator and 83 macOS tests**, with zero failures, errors or skipped tests in those reports. Configured Intel-native tasks can be skipped and are not covered by this claim.
+- Core JVM line coverage: **456/488 (93.4%)**, above the 90% gate. This is test coverage, not complete fiscal compliance.
+- `./gradlew --offline --no-daemon -p samples/maven-consumer run` passed against the newly built POM-based JVM artifacts with Java 11 source/bytecode constraints, including Java getter-mutation protection and response matching. Local runtime was JDK 22; CI explicitly selects Temurin 11 for the independent consumer, whose remote run remains to be verified.
+- Query tests cover both roles, XSD validation, stored states, sparse cancellation, paging, unsafe XML, local file behavior and all archived SHA-256 entries. The documented CLI inspection command runs against the committed received-page fixture.
+- Full batch and synthetic submission-response XSD tests pass with external resolution disabled. The normative Unicode boundaries remain in core tests; the JAXP supplementary-character length limitation is explicit in the test and [release plan](release-plan.md).
+- Maven preview includes the five JVM modules, sources, Dokka and POM metadata. API baselines reflect the pre-release additions. External publishing/signing did not run.
 
-1. **Pin missing official sources.** Only the record/common schema and its XML Signature dependency are vendored. Batch/response schemas, WSDL, submission specification, and error catalogue need an explicit reviewed offline baseline. No source refresh occurred during this run.
-2. **ZA-73–77 runtime correctness.** Implement a typed validated batch builder, complete per-record response correlation, XML namespace/well-formedness handling, explicit not-sent versus unknown-delivery states, conservative duplicate handling, typed flow control, and source-backed correction/incidence rules.
-3. **Complete fiscal models and validation.** NIF checks currently enforce length, timestamps enforce format only, and conditional F1/F3/R1–R5 fields/validation are incomplete. Public record constructors and caller-mutable lists can bypass the intended validated/immutable record boundary. QR restrictions and amount representations need review against the pinned sources.
-4. **ZA-89–91 integration API.** Compose validated records and artifacts into a production workflow, with an explicit persistence-before-delivery contract and full failure-branch tests. No hidden storage, queueing, or sleeping.
-5. **ZA-85/86/88 external release.** Confirm namespace ownership, configure dedicated signing and Central publishing in CI, protect/review release branches, recheck the legal/technical baseline, verify real transport separately, and execute release readiness. These actions require a separate authorized session.
+Dokka 2.0 V1 tasks remain incompatible with configuration cache. Their successful build reports cache-discard warnings; this is not a successful cache reuse claim.
 
-Production transport, certificate handling, live acceptance, on-device behavior, and a Java 11 runtime (as opposed to Java 11 compilation) remain unverified. The current XML extractor can omit unsupported response lines and must not be used for production reconciliation.
+## Remaining Plan
+
+See [the complete release and testing plan](release-plan.md) for the ordered work, required credentials and evidence at each stage. The immediate offline priorities are complete conditional fiscal models, catalogue-backed incidence/correction behavior, final workflow/API review and the app adapter. Existing constructors are intentionally low-level; not every supported XML field or fiscal rule is modeled.
+
+After those local contracts are ready, exercise transports with disposable loopback test identities. Real AEAT test calls, actual issued/received history and personal certificates require the separate operational discussion requested by the owner. The query utility is ready for local preparation and saved-response inspection only; it has not retrieved this taxpayer's invoices.
+
+Maven Central publication needs its own namespace/credentials/signing setup; producer/component declaration review and repository governance remain release prerequisites. None of these stages is reported as Done from local tests alone.

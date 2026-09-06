@@ -39,6 +39,8 @@ Retrieved on 2026-08-16. These sources are the input baseline for the initial im
 | Submission service specification | retrieved 2026-08-16 | https://sede.agenciatributaria.gob.es/static_files/AEAT_Desarrolladores/EEDD/IVA/VERI-FACTU/Veri-Factu_Descripcion_SWeb.pdf | SOAP submission and flow-control behaviour |
 | Validation and error catalogue | retrieved 2026-08-16 | https://www.agenciatributaria.es/static_files/AEAT_Desarrolladores/EEDD/IVA/VERI-FACTU/Validaciones_Errores_Veri-Factu.pdf | AEAT validation/error codes |
 
+The archived-input manifest at `schemas-aeat/manifest.tsv` records the exact source URLs and digests used by conditional validation and typed incidence mappings. The current validation catalogue baseline is v1.2.2, dated 2026-04-08.
+
 ## Explicit Initial Assumptions and Open Questions
 
 - The remote technical pages expose mutable `tikeV1.0` endpoints. `SuministroInformacion.xsd` and its W3C XML Signature dependency are vendored for JVM test validation; the release process must re-download and review their digests.
@@ -72,3 +74,13 @@ Each release should record exact versions for:
 ## Non-Normative Sources
 
 Third-party libraries, vendor documents, blog posts, and examples may be useful for engineering comparisons, but they must not define compliance behavior.
+
+## Archived Snapshot, 2026-09-06
+
+The original batch/common/submission-response/query schemas, WSDL, `errores.properties`, service specification v1.0.3 (2025-07-28), and validation specification v1.2.2 (2026-04-08) are now checked in under [`schemas-aeat`](../../schemas-aeat/README.md). The archive also includes the BOE/declaration sources used by the unsigned component guidance. [`manifest.tsv`](../../schemas-aeat/manifest.tsv) is the authoritative inventory of original bytes, source URL, retrieval date and SHA-256 for this snapshot; tests verify its entries without downloading them.
+
+The original common schema digest is `ee4c1655175644de44c4c25055ffeb8e5f4bb4bc3834ce8254d4222ef18c8aa1`. The older `34ef72b3f5ba2c6c5cd2d9a7c3b5b7b226b59d754e569c5c74a04d1c27762989` identifies the existing adapted test copy: only the XML Signature import location was replaced with a local filename. These are different provenance records, not a fiscal schema change.
+
+The review also uses [XML 1.0 Fifth Edition §2.2/2.11](https://www.w3.org/TR/REC-xml/) and [XML Schema Part 2 (2004), §3.2.7 and §4.3](https://www.w3.org/TR/2004/REC-xmlschema-2-20041028/) for character, timestamp, whitespace and length semantics. The runtime String parser's UTF-8 and resource limits are library engineering boundaries.
+
+This snapshot does not certify that every archived rule is implemented or that every release prerequisite has been revalidated. Public static sources were accessed; operational AEAT services and personal certificates were not.

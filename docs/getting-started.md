@@ -22,7 +22,9 @@ Read the complete, compiled [Kotlin example](../samples/offline/src/commonMain/k
 3. Supply `ChainState.FirstRecord` only for an empty chain, otherwise the persisted `ChainState.PreviousRecord`.
 4. Call `FiscalRecordFactory.createRegistration`. `RecordCreationResult.Invalid` contains structural validation issues. `Created` contains the record and next chain head.
 5. Serialize with `RegistroXmlSerializer.serialize` and build the QR URL with `QrPayloadBuilder.build`.
-6. Atomically persist the original record and next head in your application before arranging delivery. Do not change collections supplied to the record after creation.
+6. Atomically persist the original record and next head in your application before arranging delivery. Factory-created records snapshot the tax breakdown.
+
+For the composed path used by the examples, call `FiscalSubmissionPreparation.prepareRegistration(draft, qrEnvironment)` to prepare the record, next head, record XML, QR, batch XML and SOAP together. Preparation performs no delivery or persistence.
 
 The factory runs local validation before hashing. It does not establish full fiscal validity or remote acceptance. Current parsing/validation gaps are listed in [implementation status](implementation-status.md).
 
@@ -30,7 +32,7 @@ The factory runs local validation before hashing. It does not establish full fis
 
 The Kotlin example passes the persisted registration head into `RegistroAnulacionDraft`, then calls `createCancellation`. Both record kinds share the chronological chain. Cancellation neither deletes the registration nor rewinds the head.
 
-`SubmissionBatchXmlSerializer` currently produces the batch document only. It checks count, but does not implement the planned validated batch builder or a wire-ready SOAP request. The example deliberately sends this document to `FakeAeatTransport`; it is not a template for connecting a production HTTP client.
+`FiscalSubmissionPreparation.prepareCancellation(draft, header)` produces a cancellation and request artifacts; `SubmissionBatchBuilder.build(header, records)` validates multi-record batches. Use the resulting `soapEnvelope` for an explicit transport call. Examples inject `FakeAeatTransport`, then parse and correlate responses before inspecting acceptance states. Live transport remains separately unverified.
 
 ## Java and local artifacts
 
