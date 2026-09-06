@@ -73,11 +73,12 @@ class FiscalValuesTest {
     }
 
     @Test
-    fun measuresSchemaTextLengthsInUnicodeCharacters() {
+    fun measuresSchemaTextLengthsInJvmSchemaUtf16Units() {
         val supplementaryCharacter = "\uD83D\uDE00"
-        assertIs<ValueResult.Valid<TaxIdentifier>>(TaxIdentifier.parse("A${supplementaryCharacter}1234567"))
-        assertIs<ValueResult.Valid<InvoiceNumber>>(InvoiceNumber.parse(supplementaryCharacter.repeat(60)))
-        assertIs<ValueResult.Invalid>(InvoiceNumber.parse(supplementaryCharacter.repeat(61)))
+        assertIs<ValueResult.Valid<TaxIdentifier>>(TaxIdentifier.parse("A${supplementaryCharacter}123456"))
+        assertIs<ValueResult.Invalid>(TaxIdentifier.parse("A${supplementaryCharacter}1234567"))
+        assertIs<ValueResult.Valid<InvoiceNumber>>(InvoiceNumber.parse(supplementaryCharacter.repeat(30)))
+        assertIs<ValueResult.Invalid>(InvoiceNumber.parse(supplementaryCharacter.repeat(31)))
         assertEquals("INV\r\n\t1", assertIs<ValueResult.Valid<InvoiceNumber>>(InvoiceNumber.parse("INV\r\n\t1")).value.value)
     }
 }

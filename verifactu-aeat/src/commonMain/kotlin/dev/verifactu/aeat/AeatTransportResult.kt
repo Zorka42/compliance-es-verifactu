@@ -20,7 +20,7 @@ public sealed interface AeatTransportResult {
             when (this) {
                 is InvalidEndpoint, is NotSent -> AeatDeliveryState.NOT_SENT
                 is XmlResponse, is NonXmlResponse -> AeatDeliveryState.RESPONSE_RECEIVED
-                is Timeout, is NetworkFailure -> AeatDeliveryState.UNKNOWN
+                is Timeout, is NetworkFailure, is UnknownDelivery -> AeatDeliveryState.UNKNOWN
             }
 
     /** An HTTP response whose body declares an XML media type, including non-success status codes. */
@@ -63,6 +63,19 @@ public sealed interface AeatTransportResult {
     ) : AeatTransportResult {
         /** Omits caller-provided diagnostic text. */
         override fun toString(): String = "NetworkFailure(reason=redacted)"
+    }
+
+    /**
+     * The request may have reached AEAT, but the host could not determine its delivery outcome.
+     *
+     * Callers must reconcile this result using the fiscal-record correlation data before deciding
+     * whether a new submission is appropriate.
+     */
+    public data class UnknownDelivery(
+        public val reason: String,
+    ) : AeatTransportResult {
+        /** Omits caller-provided diagnostic text. */
+        override fun toString(): String = "UnknownDelivery(reason=redacted)"
     }
 
     /** AEAT or an intermediary returned a response that was not XML. */

@@ -3,6 +3,7 @@ package dev.verifactu.aeat
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 
 class AeatTransportResultTest {
     @Test
@@ -16,6 +17,9 @@ class AeatTransportResultTest {
             AeatTransportResult.XmlResponse(500, "text/xml", "<Fault/>").deliveryState,
         )
         assertEquals(AeatDeliveryState.RESPONSE_RECEIVED, AeatTransportResult.NonXmlResponse(502, "text/html").deliveryState)
+        val unknown: AeatTransportResult = AeatTransportResult.UnknownDelivery("connection closed after request write")
+        assertEquals(AeatDeliveryState.UNKNOWN, unknown.deliveryState)
+        assertEquals("connection closed after request write", assertIs<AeatTransportResult.UnknownDelivery>(unknown).reason)
     }
 
     @Test

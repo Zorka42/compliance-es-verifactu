@@ -171,7 +171,10 @@ internal fun interpretExampleAttempt(
 ): ExampleAttemptOutcome =
     when (transportResult) {
         is AeatTransportResult.InvalidEndpoint, is AeatTransportResult.NotSent -> ExampleAttemptOutcome.NotSent(transportResult)
-        is AeatTransportResult.Timeout, is AeatTransportResult.NetworkFailure -> ExampleAttemptOutcome.UnknownDelivery(transportResult)
+        is AeatTransportResult.Timeout,
+        is AeatTransportResult.NetworkFailure,
+        is AeatTransportResult.UnknownDelivery,
+        -> ExampleAttemptOutcome.UnknownDelivery(transportResult)
         is AeatTransportResult.NonXmlResponse -> ExampleAttemptOutcome.UnexpectedHttpResponse(transportResult.statusCode)
         is AeatTransportResult.XmlResponse -> interpretExampleXml(submitted, transportResult)
     }

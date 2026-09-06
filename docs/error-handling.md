@@ -30,6 +30,16 @@ The offline sample demonstrates typed attempt handling and explicit reuse of sav
 
 ## Diagnostics and XML boundaries
 
+## AEAT Catalogue Semantics
+
+Known AEAT error codes are exposed as a typed incidence with its catalogue source, disposition, and whether the catalogue expressly requires subsanation. Unknown codes remain typed with an `UNKNOWN` disposition and no inferred correction or retry. An invoice identity and the operation returned in a response line are correlation data; neither is treated as acceptance.
+
+## Unicode and XML Lengths
+
+The W3C XML Schema `length` facets are defined in characters. The JVM provider used to validate the published AEAT XSD measures a supplementary Unicode character as two UTF-16 units at these boundaries. Common validation deliberately uses the same UTF-16 unit count on JVM, Android, and Apple Kotlin targets, so it never accepts text that the supported JVM schema fixture rejects. JVM fixture tests record that behaviour; production code does not configure a global XML provider and Android/Apple do not rely on a platform XSD validator.
+
+## Diagnostics
+
 Transport request/result, response, duplicate, invoice reference, SOAP fault and prepared-request summaries redact fiscal data. Explicit fields remain unredacted; domain records also contain fiscal data. The JVM adapter uses fixed exception reasons. Do not log raw XML, identifiers, remote messages or arbitrary domain objects by default.
 
 The submission String parser accepts UTF-8 declarations (or no encoding declaration), rejects DTD/entity declarations and malformed UTF-16, and limits documents to 8 Mi characters, depth 64 and 100,000 elements. JVM/Android SAX and Apple Foundation adapters feed the same common response interpretation. The standalone query tool has its own 64 MiB file limit and validates against the archived query XSD.
