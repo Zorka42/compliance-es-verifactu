@@ -1,12 +1,12 @@
 public final class dev/verifactu/xml/RegistroXmlSerializer {
 	public static final field INSTANCE Ldev/verifactu/xml/RegistroXmlSerializer;
-	public final fun serialize (Ldev/verifactu/core/RegistroAlta;)Ljava/lang/String;
-	public final fun serialize (Ldev/verifactu/core/RegistroAnulacion;)Ljava/lang/String;
+	public static final fun serialize (Ldev/verifactu/core/RegistroAlta;)Ljava/lang/String;
+	public static final fun serialize (Ldev/verifactu/core/RegistroAnulacion;)Ljava/lang/String;
 }
 
 public final class dev/verifactu/xml/SubmissionBatchXmlSerializer {
 	public static final field INSTANCE Ldev/verifactu/xml/SubmissionBatchXmlSerializer;
-	public final fun serialize (Ldev/verifactu/xml/SubmissionHeader;Ljava/util/List;)Ljava/lang/String;
+	public static final fun serialize (Ldev/verifactu/xml/SubmissionHeader;Ljava/util/List;)Ljava/lang/String;
 }
 
 public final class dev/verifactu/xml/SubmissionHeader {

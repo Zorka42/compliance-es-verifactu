@@ -22,4 +22,5 @@ include(
     ":verifactu-qr",
     ":verifactu-aeat",
     ":verifactu-testkit",
+    ":samples:offline",
 )

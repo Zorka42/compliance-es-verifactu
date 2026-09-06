@@ -5,7 +5,9 @@ plugins {
 
 kotlin {
     explicitApi()
-    androidTarget()
+    androidTarget {
+        publishLibraryVariants("release")
+    }
     jvm()
     iosX64()
     iosArm64()

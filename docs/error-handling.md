@@ -1,44 +1,37 @@
 # Error Handling
 
-The library should expose structured outcomes. A generic `Boolean success` is not enough for VERI*FACTU integration.
+## Local construction and validation
 
-## Local Validation
+Handle `ValueResult.Valid`/`Invalid` for value parsing and `RecordCreationResult.Created`/`Invalid` for record creation. An invalid record result carries `ValidationReport`, with stable issue codes, field paths, severity, messages, and optional source references. The factory performs these checks before calculating the hash.
 
-Local validation should return:
+Local validation is incomplete and cannot establish remote acceptance. Do not use `Boolean success` as an application-wide fiscal state.
 
-- stable library issue code;
-- field path;
-- severity;
-- human-readable message;
-- optional AEAT code;
-- optional compliance source reference.
+The low-level `SubmissionBatchXmlSerializer.serialize` currently throws `IllegalArgumentException` for an empty batch or more than 1,000 records. Typed batch validation is pending. `FakeAeatTransport` throws `IllegalStateException` on exhausted test scripts; that is a test setup error, not a simulated AEAT rejection.
 
-Validation can only cover deterministic local rules. AEAT remains authoritative for remote validation.
+## Current transport and parser results
 
-## Submission Outcomes
+| Result | Meaning and host action |
+| --- | --- |
+| `XmlResponse` | XML media type at any HTTP status, including SOAP faults; inspect status and parse the body |
+| `InvalidEndpoint` | Local HTTPS precheck failed before delegation |
+| `Timeout` / `NetworkFailure` | No usable response; these legacy types do not prove non-delivery |
+| `NonXmlResponse` | HTTP response with an unrecognized media type; no fiscal acceptance can be inferred |
+| `AeatResponseParseResult.InvalidXml` | Known fields could not be extracted; preserve the response for explicit diagnostics |
 
-Submission results should distinguish:
+`AeatSubmissionResponse` exposes aggregate status, CSV, wait seconds, and parsed response lines. Known line states are accepted, accepted-with-errors, rejected, and duplicate. This is a minimal field extractor: it can drop unsupported lines, does not enforce XML namespaces/full well-formedness, and does not expose per-record identifiers or the original duplicate's status. It must not drive production batch reconciliation.
 
-- accepted records;
-- accepted records with errors;
-- rejected records;
-- SOAP protocol faults;
-- transport failures where the request was not sent;
-- transport failures with unknown delivery;
-- parsed AEAT flow-control information.
+`SoapFault` contains decoded remote text, not sanitized text. The raw envelope is not retained by the parser, but remains available in `XmlResponse.xml` to a caller that explicitly chooses to store it.
 
-## Unknown Delivery
+## Delivery uncertainty and duplicate handling
 
-A lost HTTP/SOAP response can mean the request reached AEAT.
+Keep immutable records and delivery attempts as separate application state. A timeout can occur after a server received a request. Do not generate a replacement fiscal record, reset the chain, or infer rejection from transport failure alone.
 
-The host application should be able to retry the same immutable records and parse duplicate or already-known semantics.
+Duplicate handling, safe retry decisions, and incident/subsanation code mappings require the pending source-backed runtime tasks. The current duplicate marker does not establish the previous record's acceptance state. No exactly-once behavior is promised.
 
-The library must not generate a replacement fiscal record solely because delivery is unknown.
+The parser's nullable `retryAfterSeconds` exposes a known field but does not validate all flow-control variants. Unknown variants are not yet preserved structurally. The application owns scheduling; the library neither waits nor retries automatically.
 
 ## Diagnostics
 
-Core functionality should not log by default.
+No logging is enabled by the core. XML, remote messages, identifiers, and data-class string representations can contain personal/fiscal data. Keep diagnostics opt-in and redact them before logging. JVM transport exception reasons currently also need review before production logging.
 
-Raw XML logging must be opt-in because XML can contain personal and fiscal data.
-
-Credentials, certificate bytes, private keys, and secrets must never appear in normal logs, exceptions, or string representations.
+Never put passwords, keys, certificate material, real fiscal records, or production responses in fixtures or issue reports. Use the [synthetic testkit](testkit.md) to demonstrate a problem.

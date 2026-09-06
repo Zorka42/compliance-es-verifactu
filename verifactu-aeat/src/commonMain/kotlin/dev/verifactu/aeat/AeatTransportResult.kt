@@ -2,7 +2,7 @@ package dev.verifactu.aeat
 
 /** Outcome of one attempted delivery of an AEAT SOAP payload. */
 public sealed interface AeatTransportResult {
-    /** A successful HTTP response whose body declares an XML media type. */
+    /** An HTTP response whose body declares an XML media type, including non-success status codes. */
     public data class XmlResponse(
         public val statusCode: Int,
         public val contentType: String?,
@@ -14,12 +14,12 @@ public sealed interface AeatTransportResult {
         public val reason: String,
     ) : AeatTransportResult
 
-    /** The request exceeded the caller-configured timeout. */
+    /** The request exceeded the caller-configured timeout; delivery may have occurred. */
     public data class Timeout(
         public val reason: String,
     ) : AeatTransportResult
 
-    /** The connection failed before a response was available. */
+    /** No response was available. This legacy result cannot prove that the request was not sent. */
     public data class NetworkFailure(
         public val reason: String,
     ) : AeatTransportResult

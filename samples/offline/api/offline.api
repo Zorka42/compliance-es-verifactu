@@ -1,0 +1,9 @@
+public final class dev/verifactu/sample/JavaExample {
+	public static fun main ([Ljava/lang/String;)V
+}
+
+public final class dev/verifactu/sample/MainKt {
+	public static final fun main ()V
+	public static synthetic fun main ([Ljava/lang/String;)V
+}
+

@@ -52,3 +52,11 @@ last reviewed date
 | Local validation issues | AEAT schemas and validation catalogue | tikeV1.0; validation catalogue retrieved 2026-08-16 | `verifactu-core` | deterministic validation tests | Implemented | 2026-08-16 |
 
 Future implementation pull requests must replace `TBD` cells with exact source versions, implementation paths, and test paths.
+
+## Offline integration work, 2026-09-06
+
+The Apple adapter boundary, synthetic testkit, Java entry points, offline consumer samples, and local publication configuration add no new fiscal rules or official error-code mappings. They compose the existing baseline above. Hash/XML/QR golden and local XSD checks remain the source-backed verification; new synthetic fixtures are consumer-testing aids, not official response samples. A platform-specific regex dot-all option in the existing response extractor was replaced with the equivalent common-compatible character class; multiline parser fixtures run on JVM, Android, and supported Apple test targets.
+
+No AEAT endpoint, website, or certificate was used for this work. The listed remote source versions were not refreshed. The response/batch schemas, WSDL, and error catalogue still need to be vendored and reviewed before new submission/correction semantics or an external release. See [implementation status](../implementation-status.md).
+
+JVM schema tests now preload both vendored schemas and disable external DTD/schema access, avoiding the W3C DTD reference in the XML Signature schema. The vendored bytes and existing digest are unchanged. `FixtureSchemaTest` also validates the new synthetic registration and cancellation XML locally; this is structural schema evidence only.

@@ -19,11 +19,19 @@ Official Spanish VERI*FACTU terms may remain where they map directly to AEAT pro
 
 ## Local Development
 
+Use JDK 21, Android SDK platform 36, and the checked-in Gradle Wrapper. Point `ANDROID_HOME` or the gitignored `local.properties` `sdk.dir` to the SDK. Apple checks need macOS, Xcode, and an installed iOS arm64 simulator runtime. JVM publications target Java 11.
+
 Run the standard local gate before opening a pull request:
 
 ```bash
 ./gradlew check
 ```
+
+For a focused JVM/Android iteration, run `./gradlew jvmTest testDebugUnitTest ktlintCheck detekt apiCheck`. On a Mac, run `./gradlew compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test` for the advertised Apple targets. Configured Intel Apple targets are experimental and may require additional SDK/runtime support for the aggregate `check` task.
+
+Use `./gradlew dokkaHtml` to generate API documentation. Dokka is configured in offline mode. Add `--offline` to Gradle commands when dependencies are cached; normal tests and examples never require AEAT or real certificates.
+
+Run `./gradlew :samples:offline:runKotlinSample :samples:offline:runJavaSample` for the canonical compiled examples. Local artifact verification uses `./gradlew publishJvmPreview` followed by `./gradlew -p samples/maven-consumer run`. See [publishing](docs/publishing.md).
 
 The CI workflow also runs:
 
@@ -34,6 +42,8 @@ The CI workflow also runs:
 - `dokkaHtml` for generated API documentation.
 
 The remaining modules publish JVM Kover reports without pretending that target-specific coverage is equivalent to JVM coverage.
+
+For an intentional public API change, inspect the generated diff from `./gradlew apiDump`, commit the reviewed baselines, and rerun `apiCheck`. Do not refresh baselines merely to hide an accidental incompatible change. API stability before the first release is still under development.
 
 ## Compliance-Sensitive Changes
 
@@ -75,6 +85,8 @@ Pull requests should:
 - avoid committing secrets, certificates, private keys, or production credentials.
 
 ## Release Changes
+
+No external release workflow is enabled yet. Publishing credentials and signing are separate from local development. Official releases must be built by CI from reviewed tags after the platform checks and compliance baseline are verified.
 
 Release-related changes must preserve:
 

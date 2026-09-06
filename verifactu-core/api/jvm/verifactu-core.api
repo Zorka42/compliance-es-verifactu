@@ -78,6 +78,7 @@ public final class dev/verifactu/core/FiscalAmount {
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
+	public static final fun parse (Ljava/lang/String;)Ldev/verifactu/core/ValueResult;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -87,8 +88,8 @@ public final class dev/verifactu/core/FiscalAmount$Companion {
 
 public final class dev/verifactu/core/FiscalRecordFactory {
 	public static final field INSTANCE Ldev/verifactu/core/FiscalRecordFactory;
-	public final fun createCancellation (Ldev/verifactu/core/RegistroAnulacionDraft;)Ldev/verifactu/core/RecordCreationResult;
-	public final fun createRegistration (Ldev/verifactu/core/RegistroAltaDraft;)Ldev/verifactu/core/RecordCreationResult;
+	public static final fun createCancellation (Ldev/verifactu/core/RegistroAnulacionDraft;)Ldev/verifactu/core/RecordCreationResult;
+	public static final fun createRegistration (Ldev/verifactu/core/RegistroAltaDraft;)Ldev/verifactu/core/RecordCreationResult;
 }
 
 public final class dev/verifactu/core/InvoiceIdentifier {
@@ -113,6 +114,7 @@ public final class dev/verifactu/core/InvoiceIssueDate {
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
+	public static final fun parse (Ljava/lang/String;)Ldev/verifactu/core/ValueResult;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -127,6 +129,7 @@ public final class dev/verifactu/core/InvoiceNumber {
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
+	public static final fun parse (Ljava/lang/String;)Ldev/verifactu/core/ValueResult;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -193,6 +196,7 @@ public final class dev/verifactu/core/RecordGenerationTimestamp {
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
+	public static final fun parse (Ljava/lang/String;)Ldev/verifactu/core/ValueResult;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -202,7 +206,7 @@ public final class dev/verifactu/core/RecordGenerationTimestamp$Companion {
 
 public final class dev/verifactu/core/RecordHashCalculator {
 	public static final field INSTANCE Ldev/verifactu/core/RecordHashCalculator;
-	public final fun sha256 (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun sha256 (Ljava/lang/String;)Ljava/lang/String;
 }
 
 public final class dev/verifactu/core/RecordVersion : java/lang/Enum {
@@ -398,6 +402,7 @@ public final class dev/verifactu/core/TaxIdentifier {
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
+	public static final fun parse (Ljava/lang/String;)Ldev/verifactu/core/ValueResult;
 	public fun toString ()Ljava/lang/String;
 }
 

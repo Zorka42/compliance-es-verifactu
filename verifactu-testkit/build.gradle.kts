@@ -5,7 +5,9 @@ plugins {
 
 kotlin {
     explicitApi()
-    androidTarget()
+    androidTarget {
+        publishLibraryVariants("release")
+    }
     jvm()
     iosX64()
     iosArm64()
@@ -15,9 +17,15 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":verifactu-core"))
+            api(project(":verifactu-xml"))
+            api(project(":verifactu-qr"))
+            api(project(":verifactu-aeat"))
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
+        }
+        jvmTest {
+            resources.srcDir(rootProject.file("verifactu-xml/src/jvmTest/resources"))
         }
     }
 }

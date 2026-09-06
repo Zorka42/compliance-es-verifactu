@@ -5,6 +5,7 @@ import dev.verifactu.core.InvoiceIdentifier
 import dev.verifactu.core.ValidationIssue
 import dev.verifactu.core.ValidationReport
 import dev.verifactu.core.ValidationSeverity
+import kotlin.jvm.JvmStatic
 
 /** AEAT environments that define the QR verification endpoint. */
 public enum class QrEnvironment {
@@ -40,6 +41,7 @@ public sealed interface QrPayloadResult {
 /** Builds deterministic AEAT QR verification URLs using the v0.5.0 parameter order. */
 public object QrPayloadBuilder {
     /** Builds a QR payload or returns local typed validation issues. */
+    @JvmStatic
     public fun build(input: QrPayloadInput): QrPayloadResult {
         val serial = input.invoice.number.value
         if (serial.any { character -> character.code !in 32..126 }) {

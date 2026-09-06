@@ -21,6 +21,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Build and test common, JVM, and Android code
         run: ./gradlew check compileKotlinMetadata jvmTest testDebugUnitTest apiCheck dokkaHtml koverXmlReportJvm koverVerifyJvm
+      - name: Build local JVM publications
+        run: ./gradlew publishJvmPreview
+      - name: Verify an independent Java consumer against published artifacts
+        run: ./gradlew -p samples/maven-consumer run
       - name: Upload JVM coverage
         uses: codecov/codecov-action@v5
         with:
@@ -38,4 +42,4 @@ jobs:
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
       - name: Compile and test Apple targets
-        run: ./gradlew iosSimulatorArm64Test macosArm64Test
+        run: ./gradlew compileKotlinMetadata compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test

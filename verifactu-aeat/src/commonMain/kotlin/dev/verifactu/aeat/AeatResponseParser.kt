@@ -1,5 +1,7 @@
 package dev.verifactu.aeat
 
+import kotlin.jvm.JvmStatic
+
 /** Aggregate AEAT submission states defined by `RespuestaSuministro.xsd`. */
 public enum class AeatSubmissionStatus {
     ACCEPTED,
@@ -44,7 +46,7 @@ public sealed interface AeatResponseParseResult {
     ) : AeatResponseParseResult
 }
 
-/** Sanitized SOAP fault fields, intentionally excluding the raw envelope. */
+/** Remote SOAP fault text, excluding the raw envelope. Fields are not redacted for logging. */
 public data class SoapFault(
     public val code: String?,
     public val message: String?,
@@ -68,9 +70,15 @@ public sealed interface SoapFaultParseResult {
  *
  * It deliberately ignores unknown elements so schema additions do not make known
  * submission states unreadable. It does not retain or log raw XML.
+ *
+ * This is a field extractor, not a validating XML parser: namespace identity and full document
+ * well-formedness are not enforced. Unsupported response lines can be omitted, and record IDs
+ * and the status of an earlier duplicate are not exposed. Do not use it to reconcile production
+ * batches yet. Keep the original response separately when diagnostics require it.
  */
 public object AeatResponseParser {
     /** Parses a `RespuestaRegFactuSistemaFacturacion` XML document. */
+    @JvmStatic
     public fun parseSubmission(xml: String): AeatResponseParseResult {
         val root =
             xml.elementBlock("RespuestaRegFactuSistemaFacturacion")
@@ -90,6 +98,7 @@ public object AeatResponseParser {
     }
 
     /** Parses a SOAP 1.1 or SOAP 1.2 fault without exposing its raw envelope. */
+    @JvmStatic
     public fun parseSoapFault(xml: String): SoapFaultParseResult {
         val fault =
             xml.elementBlock("Fault")
@@ -136,8 +145,7 @@ private fun String.elementBlock(name: String): String? = elementBlocks(name).fir
 
 private fun elementBlockRegex(name: String): Regex =
     Regex(
-        "<(?:(?:[A-Za-z_][A-Za-z0-9_.-]*):)?$name\\b[^>]*>(.*?)</(?:(?:[A-Za-z_][A-Za-z0-9_.-]*):)?$name\\s*>",
-        setOf(RegexOption.DOT_MATCHES_ALL),
+        "<(?:(?:[A-Za-z_][A-Za-z0-9_.-]*):)?$name\\b[^>]*>([\\s\\S]*?)</(?:(?:[A-Za-z_][A-Za-z0-9_.-]*):)?$name\\s*>",
     )
 
 private fun String.decodeXml(): String =

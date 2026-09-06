@@ -5,10 +5,16 @@ import dev.verifactu.core.RegistroAlta
 import dev.verifactu.core.RegistroAnulacion
 import dev.verifactu.core.TaxBreakdownDetail
 import dev.verifactu.core.TaxOperation
+import kotlin.jvm.JvmStatic
 
-/** Deterministically serializes completed fiscal records in the AEAT v1.0 element order. */
+/**
+ * Deterministically serializes completed fiscal records in the AEAT v1.0 element order.
+ * This does not revalidate records or construct a SOAP envelope. The returned XML can contain
+ * personal and fiscal data; storage and opt-in diagnostics belong to the host application.
+ */
 public object RegistroXmlSerializer {
     /** Serializes an immutable registration record as a UTF-8 XML document. */
+    @JvmStatic
     public fun serialize(record: RegistroAlta): String =
         document("RegistroAlta") {
             val draft = record.draft
@@ -32,6 +38,7 @@ public object RegistroXmlSerializer {
         }
 
     /** Serializes an immutable cancellation record as a UTF-8 XML document. */
+    @JvmStatic
     public fun serialize(record: RegistroAnulacion): String =
         document("RegistroAnulacion") {
             val draft = record.draft

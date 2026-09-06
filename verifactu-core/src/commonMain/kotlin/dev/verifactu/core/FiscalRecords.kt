@@ -1,6 +1,11 @@
 package dev.verifactu.core
 
-/** Invoice category values used by AEAT registration records. */
+import kotlin.jvm.JvmStatic
+
+/**
+ * Invoice category tokens from AEAT: F1 ordinary, F2 simplified, F3 replacement,
+ * and R1–R5 rectifying invoices. Category-specific conditional fields are not yet modeled fully.
+ */
 public enum class InvoiceType {
     F1,
     F2,
@@ -91,7 +96,10 @@ public data class InvoiceIdentifier(
     public val issueDate: InvoiceIssueDate,
 )
 
-/** Integrator-supplied metadata for the SIF that generated a record. */
+/**
+ * Integrator-supplied metadata for the SIF that generated a record (`SistemaInformatico`).
+ * This identifies the host invoicing system and its producer, not automatically this library.
+ */
 public data class SistemaInformatico(
     public val producerName: String,
     public val producerTaxIdentifier: TaxIdentifier,
@@ -131,7 +139,10 @@ public data class RegistroAltaDraft(
     public val generatedAt: RecordGenerationTimestamp,
 )
 
-/** Immutable registration record that has passed local validation and contains its hash. */
+/**
+ * Registration record (`RegistroAlta`) and its hash. Use [FiscalRecordFactory] for validation.
+ * The public constructor itself does not validate the draft or verify the supplied hash.
+ */
 public data class RegistroAlta(
     public val draft: RegistroAltaDraft,
     public val hash: String,
@@ -145,7 +156,10 @@ public data class RegistroAnulacionDraft(
     public val generatedAt: RecordGenerationTimestamp,
 )
 
-/** Immutable cancellation record that has passed local validation and contains its hash. */
+/**
+ * Cancellation record (`RegistroAnulacion`) and its hash. Cancellation does not delete an invoice.
+ * Use [FiscalRecordFactory]; the public constructor does not validate the draft or hash.
+ */
 public data class RegistroAnulacion(
     public val draft: RegistroAnulacionDraft,
     public val hash: String,
@@ -165,9 +179,16 @@ public sealed interface RecordCreationResult<out T> {
     ) : RecordCreationResult<Nothing>
 }
 
-/** Deterministic local record creator. It never reads or writes application state. */
+/**
+ * Deterministic local record creator. It never reads or writes application state.
+ *
+ * Validation is structural and incomplete; creation does not guarantee AEAT acceptance.
+ * The host must serialize creation per chain and atomically persist each record with its next
+ * chain head. Keep supplied collections unchanged; Kotlin read-only lists are not deep copies.
+ */
 public object FiscalRecordFactory {
     /** Validates and creates a registration record. */
+    @JvmStatic
     public fun createRegistration(draft: RegistroAltaDraft): RecordCreationResult<RegistroAlta> {
         val report = RegistroAltaValidator.validate(draft)
         if (!report.isValid) return RecordCreationResult.Invalid(report)
@@ -189,6 +210,7 @@ public object FiscalRecordFactory {
     }
 
     /** Validates and creates a cancellation record. */
+    @JvmStatic
     public fun createCancellation(draft: RegistroAnulacionDraft): RecordCreationResult<RegistroAnulacion> {
         val report = RegistroAnulacionValidator.validate(draft)
         if (!report.isValid) return RecordCreationResult.Invalid(report)

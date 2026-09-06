@@ -58,10 +58,10 @@ public final class dev/verifactu/aeat/AeatCredentialStrategy : java/lang/Enum {
 public final class dev/verifactu/aeat/AeatEndpointConfiguration {
 	public static final field INSTANCE Ldev/verifactu/aeat/AeatEndpointConfiguration;
 	public static final field OFFICIAL_WSDL_URL Ljava/lang/String;
-	public final fun defaultSubmissionEndpoint (Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
-	public static synthetic fun defaultSubmissionEndpoint$default (Ldev/verifactu/aeat/AeatEndpointConfiguration;Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
-	public final fun submissionEndpointWithAdvancedOverride (Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;Ldev/verifactu/aeat/AeatAdvancedEndpointConfiguration;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
-	public static synthetic fun submissionEndpointWithAdvancedOverride$default (Ldev/verifactu/aeat/AeatEndpointConfiguration;Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;Ldev/verifactu/aeat/AeatAdvancedEndpointConfiguration;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
+	public static final fun defaultSubmissionEndpoint (Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
+	public static synthetic fun defaultSubmissionEndpoint$default (Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
+	public static final fun submissionEndpointWithAdvancedOverride (Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;Ldev/verifactu/aeat/AeatAdvancedEndpointConfiguration;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
+	public static synthetic fun submissionEndpointWithAdvancedOverride$default (Ldev/verifactu/aeat/AeatEnvironment;Ldev/verifactu/aeat/AeatCertificateAccess;Ldev/verifactu/aeat/AeatAdvancedEndpointConfiguration;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatSubmissionEndpoint;
 }
 
 public final class dev/verifactu/aeat/AeatEnvironment : java/lang/Enum {
@@ -127,8 +127,8 @@ public final class dev/verifactu/aeat/AeatResponseParseResult$Parsed : dev/verif
 
 public final class dev/verifactu/aeat/AeatResponseParser {
 	public static final field INSTANCE Ldev/verifactu/aeat/AeatResponseParser;
-	public final fun parseSoapFault (Ljava/lang/String;)Ldev/verifactu/aeat/SoapFaultParseResult;
-	public final fun parseSubmission (Ljava/lang/String;)Ldev/verifactu/aeat/AeatResponseParseResult;
+	public static final fun parseSoapFault (Ljava/lang/String;)Ldev/verifactu/aeat/SoapFaultParseResult;
+	public static final fun parseSubmission (Ljava/lang/String;)Ldev/verifactu/aeat/AeatResponseParseResult;
 }
 
 public final class dev/verifactu/aeat/AeatServiceVersion : java/lang/Enum {

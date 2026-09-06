@@ -19,7 +19,7 @@ public final class dev/verifactu/qr/QrPayload {
 
 public final class dev/verifactu/qr/QrPayloadBuilder {
 	public static final field INSTANCE Ldev/verifactu/qr/QrPayloadBuilder;
-	public final fun build (Ldev/verifactu/qr/QrPayloadInput;)Ldev/verifactu/qr/QrPayloadResult;
+	public static final fun build (Ldev/verifactu/qr/QrPayloadInput;)Ldev/verifactu/qr/QrPayloadResult;
 }
 
 public final class dev/verifactu/qr/QrPayloadInput {

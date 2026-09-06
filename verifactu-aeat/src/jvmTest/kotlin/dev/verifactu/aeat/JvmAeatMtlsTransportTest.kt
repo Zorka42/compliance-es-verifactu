@@ -19,7 +19,7 @@ class JvmAeatMtlsTransportTest {
                                 strategy = AeatCredentialStrategy.JVM_KEY_STORE,
                                 reference = AeatCredentialReference.fromAlias("test-certificate"),
                             ),
-                        sslContext = SSLContext.getDefault(),
+                        sslContext = SSLContext.getInstance("TLS"),
                     ),
                 timeout = Duration.ofSeconds(1),
             )

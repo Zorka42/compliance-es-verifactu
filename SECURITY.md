@@ -12,6 +12,14 @@ Do not open public issues for vulnerabilities that expose credentials, certifica
 
 Until a private reporting channel is published, contact the maintainers privately through the repository owner.
 
+Include the affected version or commit, platform/JDK, a concise impact description, and a minimal synthetic example. Do not attach real invoices, full production XML, certificate files, keys, passwords, or tokens. No response-time commitment is made before the first supported release.
+
+## Pre-release limitations
+
+The current response parser is a minimal field extractor, not a validating XML parser. Transport delivery classification and redaction of remote/exception diagnostics need further work. See [implementation status](docs/implementation-status.md); these are reasons the library is not production-ready.
+
+Offline fixtures and test adapters must never be used as evidence of live AEAT acceptance. Normal test runs do not load personal certificates, contact AEAT, or require publishing/signing credentials.
+
 ## Security Principles
 
 - No secrets, certificates, private keys, or production credentials may be committed.

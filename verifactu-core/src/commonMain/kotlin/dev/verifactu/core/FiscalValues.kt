@@ -1,5 +1,7 @@
 package dev.verifactu.core
 
+import kotlin.jvm.JvmStatic
+
 /** A typed result for invalid primitive-domain construction without using exceptions. */
 public sealed interface ValueResult<out T> {
     /** The parsed value. */
@@ -20,13 +22,17 @@ public data class ValueError(
     public val message: String,
 )
 
-/** Spanish issuer NIF as required by the AEAT v1.0 schemas. */
+/**
+ * Spanish issuer NIF with the schema's nine-character length constraint.
+ * Parsing trims and uppercases input; it does not verify a checksum or taxpayer registration.
+ */
 @ConsistentCopyVisibility
 public data class TaxIdentifier private constructor(
     public val value: String,
 ) {
     public companion object {
         /** Parses the nine-character NIF representation accepted by the AEAT schema. */
+        @JvmStatic
         public fun parse(input: String): ValueResult<TaxIdentifier> {
             val normalized = input.trim().uppercase()
             return if (normalized.length == 9) {
@@ -38,13 +44,14 @@ public data class TaxIdentifier private constructor(
     }
 }
 
-/** Invoice serial number in the AEAT `TextoIDFacturaType` range. */
+/** Invoice serial number in the AEAT `TextoIDFacturaType` length range; parsing trims its edges. */
 @ConsistentCopyVisibility
 public data class InvoiceNumber private constructor(
     public val value: String,
 ) {
     public companion object {
         /** Parses a non-empty invoice serial number up to 60 characters. */
+        @JvmStatic
         public fun parse(input: String): ValueResult<InvoiceNumber> {
             val normalized = input.trim()
             return if (normalized.length in 1..60) {
@@ -63,6 +70,7 @@ public data class InvoiceIssueDate private constructor(
 ) {
     public companion object {
         /** Parses a calendar-valid date formatted as `DD-MM-YYYY`. */
+        @JvmStatic
         public fun parse(input: String): ValueResult<InvoiceIssueDate> {
             val normalized = input.trim()
             val match =
@@ -91,13 +99,17 @@ public data class InvoiceIssueDate private constructor(
     }
 }
 
-/** Signed monetary amount conforming to AEAT `ImporteSgn12.2Type`. */
+/**
+ * Signed monetary text in the AEAT `ImporteSgn12.2Type` format.
+ * Parsing preserves sign, leading zeros, and scale. It performs no arithmetic or tax calculation.
+ */
 @ConsistentCopyVisibility
 public data class FiscalAmount private constructor(
     public val value: String,
 ) {
     public companion object {
         /** Parses an amount with at most twelve integral and two fractional digits. */
+        @JvmStatic
         public fun parse(input: String): ValueResult<FiscalAmount> {
             val normalized = input.trim()
             return if (AMOUNT_PATTERN.matches(normalized)) {
@@ -113,13 +125,18 @@ public data class FiscalAmount private constructor(
     }
 }
 
-/** ISO 8601 date-time with a required numeric UTC offset. */
+/**
+ * Generation timestamp text with a required numeric UTC offset.
+ * The current parser checks format only, not calendar, time-of-day, or offset ranges.
+ * The caller must supply a valid timestamp; the library never reads the clock.
+ */
 @ConsistentCopyVisibility
 public data class RecordGenerationTimestamp private constructor(
     public val value: String,
 ) {
     public companion object {
         /** Parses an AEAT-compatible generation timestamp with an explicit offset. */
+        @JvmStatic
         public fun parse(input: String): ValueResult<RecordGenerationTimestamp> {
             val normalized = input.trim()
             return if (TIMESTAMP_PATTERN.matches(normalized)) {

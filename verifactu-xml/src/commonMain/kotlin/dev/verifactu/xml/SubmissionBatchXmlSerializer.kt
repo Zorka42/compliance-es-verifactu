@@ -3,6 +3,7 @@ package dev.verifactu.xml
 import dev.verifactu.core.RegistroAlta
 import dev.verifactu.core.RegistroAnulacion
 import dev.verifactu.core.TaxIdentifier
+import kotlin.jvm.JvmStatic
 
 /** Header data required by the AEAT `RegFactuSistemaFacturacion` batch root. */
 public data class SubmissionHeader(
@@ -23,9 +24,17 @@ public sealed interface SubmissionRecord {
     ) : SubmissionRecord
 }
 
-/** Deterministically serializes the AEAT batch envelope without transport behaviour. */
+/**
+ * Deterministically serializes the AEAT batch document without transport behaviour.
+ * This low-level API checks record count only. It does not enforce taxpayer consistency,
+ * revalidate record hashes, or wrap the document in SOAP. See the pending validated batch builder.
+ */
 public object SubmissionBatchXmlSerializer {
-    /** Serializes one to one thousand completed records in AEAT batch order. */
+    /**
+     * Serializes one to one thousand completed records in caller-supplied order.
+     * @throws IllegalArgumentException when the record count is outside that range.
+     */
+    @JvmStatic
     public fun serialize(
         header: SubmissionHeader,
         records: List<SubmissionRecord>,
