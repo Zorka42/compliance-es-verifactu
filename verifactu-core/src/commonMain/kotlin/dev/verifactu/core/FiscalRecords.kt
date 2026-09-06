@@ -2,7 +2,12 @@
 
 package dev.verifactu.core
 
-/** Invoice category values used by AEAT registration records. */
+import kotlin.jvm.JvmStatic
+
+/**
+ * Invoice category tokens from AEAT: F1 ordinary, F2 simplified, F3 replacement,
+ * and R1–R5 rectifying invoices. Category-specific conditional fields are not yet modeled fully.
+ */
 public enum class InvoiceType {
     F1,
     F2,
@@ -93,7 +98,10 @@ public data class InvoiceIdentifier(
     public val issueDate: InvoiceIssueDate,
 )
 
-/** Integrator-supplied metadata for the SIF that generated a record. */
+/**
+ * Integrator-supplied metadata for the SIF that generated a record (`SistemaInformatico`).
+ * This identifies the host invoicing system and its producer, not automatically this library.
+ */
 public data class SistemaInformatico(
     public val producerName: String,
     public val producerTaxIdentifier: TaxIdentifier,
@@ -134,7 +142,10 @@ public data class RegistroAltaDraft(
     public val conditionalData: RegistrationConditionalData = RegistrationConditionalData(),
 )
 
-/** Immutable registration record that has passed local validation and contains its hash. */
+/**
+ * Registration record (`RegistroAlta`) and its hash. Use [FiscalRecordFactory] for validation.
+ * The public constructor itself does not validate the draft or verify the supplied hash.
+ */
 public data class RegistroAlta(
     public val draft: RegistroAltaDraft,
     public val hash: String,
@@ -148,7 +159,10 @@ public data class RegistroAnulacionDraft(
     public val generatedAt: RecordGenerationTimestamp,
 )
 
-/** Immutable cancellation record that has passed local validation and contains its hash. */
+/**
+ * Cancellation record (`RegistroAnulacion`) and its hash. Cancellation does not delete an invoice.
+ * Use [FiscalRecordFactory]; the public constructor does not validate the draft or hash.
+ */
 public data class RegistroAnulacion(
     public val draft: RegistroAnulacionDraft,
     public val hash: String,
@@ -168,30 +182,39 @@ public sealed interface RecordCreationResult<out T> {
     ) : RecordCreationResult<Nothing>
 }
 
-/** Deterministic local record creator. It never reads or writes application state. */
+/**
+ * Deterministic local record creator. It never reads or writes application state.
+ *
+ * Validation is structural and incomplete; creation does not guarantee AEAT acceptance.
+ * The host must serialize creation per chain and atomically persist each record with its next
+ * chain head. Registration creation snapshots the supplied tax-breakdown list.
+ */
 public object FiscalRecordFactory {
     /** Validates and creates a registration record. */
+    @JvmStatic
     public fun createRegistration(draft: RegistroAltaDraft): RecordCreationResult<RegistroAlta> {
-        val report = RegistroAltaValidator.validate(draft)
+        val snapshot = draft.copy(taxBreakdown = TaxBreakdown(TaxBreakdownSnapshot(draft.taxBreakdown.details)))
+        val report = RegistroAltaValidator.validate(snapshot)
         if (!report.isValid) return RecordCreationResult.Invalid(report)
         val hash =
             RecordHashCalculator.sha256(
                 RegistrationHashInput(
-                    issuerId = draft.invoice.issuer.value,
-                    invoiceNumber = draft.invoice.number.value,
-                    issueDate = draft.invoice.issueDate.value,
-                    invoiceType = draft.invoiceType.name,
-                    totalTax = draft.totalTax.value,
-                    totalAmount = draft.totalAmount.value,
-                    previousHash = draft.chainState.hashOrNull(),
-                    generatedAt = draft.generatedAt.value,
+                    issuerId = snapshot.invoice.issuer.value,
+                    invoiceNumber = snapshot.invoice.number.value,
+                    issueDate = snapshot.invoice.issueDate.value,
+                    invoiceType = snapshot.invoiceType.name,
+                    totalTax = snapshot.totalTax.value,
+                    totalAmount = snapshot.totalAmount.value,
+                    previousHash = snapshot.chainState.hashOrNull(),
+                    generatedAt = snapshot.generatedAt.value,
                 ).canonicalString(),
             )
-        val record = RegistroAlta(draft, hash)
-        return RecordCreationResult.Created(record, ChainState.PreviousRecord(draft.invoice, hash))
+        val record = RegistroAlta(snapshot, hash)
+        return RecordCreationResult.Created(record, ChainState.PreviousRecord(snapshot.invoice, hash))
     }
 
     /** Validates and creates a cancellation record. */
+    @JvmStatic
     public fun createCancellation(draft: RegistroAnulacionDraft): RecordCreationResult<RegistroAnulacion> {
         val report = RegistroAnulacionValidator.validate(draft)
         if (!report.isValid) return RecordCreationResult.Invalid(report)
@@ -208,6 +231,17 @@ public object FiscalRecordFactory {
         val record = RegistroAnulacion(draft, hash)
         return RecordCreationResult.Created(record, ChainState.PreviousRecord(draft.cancelledInvoice, hash))
     }
+}
+
+private class TaxBreakdownSnapshot(
+    details: List<TaxBreakdownDetail>,
+) : AbstractList<TaxBreakdownDetail>() {
+    private val entries: List<TaxBreakdownDetail> = details.toList()
+
+    override val size: Int
+        get() = entries.size
+
+    override fun get(index: Int): TaxBreakdownDetail = entries[index]
 }
 
 /** Local structural validation for `RegistroAlta` drafts. */
@@ -278,12 +312,12 @@ private fun taxBreakdownIssues(
     }
     return breakdown.details.flatMapIndexed { index, detail ->
         listOfNotNull(
-            detail.regimeCode?.takeUnless { Regex("\\d{2}").matches(it) }?.let {
+            detail.regimeCode?.takeUnless { it in REGIME_CODES }?.let {
                 ValidationIssue(
                     "VF-RECORD-003",
                     "taxBreakdown.details[$index].regimeCode",
                     ValidationSeverity.ERROR,
-                    "The regime code must contain two digits.",
+                    "The regime code must be one of the values in the AEAT schema.",
                     source = XSD_SOURCE,
                 )
             },
@@ -697,7 +731,7 @@ private fun fiscalPartyIssues(
     when (val identifier = party.identifier) {
         is FiscalPartyIdentifier.SpanishNif -> Unit
         is FiscalPartyIdentifier.Other -> {
-            if (identifier.value.isBlank() || xmlSchemaCharacterCount(identifier.value) > 20) {
+            if (identifier.value.isBlank() || (identifier.value.xmlCharacterCountOrNull() ?: Int.MAX_VALUE) > 20) {
                 issues +=
                     conditionalIssue(
                         "VF-RECORD-028",
@@ -789,8 +823,19 @@ private fun requiredTextIssue(
     value: String,
     maxLength: Int,
 ): List<ValidationIssue> {
-    val normalized = value.trim()
-    return if (normalized.isEmpty() || xmlSchemaCharacterCount(normalized) > maxLength) {
+    val characterCount = value.xmlCharacterCountOrNull()
+    if (characterCount == null) {
+        return listOf(
+            ValidationIssue(
+                "VF-RECORD-006",
+                fieldPath,
+                ValidationSeverity.ERROR,
+                "The field must contain only XML 1.0 characters.",
+                source = XML_CHARACTERS_SOURCE,
+            ),
+        )
+    }
+    return if (value.isBlank() || characterCount > maxLength) {
         listOf(
             ValidationIssue(
                 "VF-RECORD-001",
@@ -805,8 +850,13 @@ private fun requiredTextIssue(
     }
 }
 
+private val REGIME_CODES: Set<String> =
+    setOf("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "17", "18", "19", "20", "21")
+
 private val HASH_SOURCE: ComplianceSourceReference = ComplianceSourceReference("AEAT hash specification", "Section 5", "0.1.2")
 private val XSD_SOURCE: ComplianceSourceReference =
     ComplianceSourceReference("AEAT SuministroInformacion.xsd", "tikeV1.0", "retrieved 2026-08-16")
 private val CATALOGUE_SOURCE: ComplianceSourceReference =
     ComplianceSourceReference("AEAT validation and error catalogue", "3.1.3", "1.2.2 (2026-04-08)")
+private val XML_CHARACTERS_SOURCE: ComplianceSourceReference =
+    ComplianceSourceReference("W3C XML 1.0", "Section 2.2, production [2] Char", "Fifth Edition, 2008-11-26")

@@ -1,0 +1,54 @@
+public final class dev/verifactu/testkit/AeatResponseFixtures {
+	public static final field INSTANCE Ldev/verifactu/testkit/AeatResponseFixtures;
+	public static final fun response (Ldev/verifactu/testkit/AeatResponseScenario;)Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;
+	public static final fun response (Ldev/verifactu/testkit/AeatResponseScenario;Ldev/verifactu/core/InvoiceIdentifier;)Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;
+	public static final fun response (Ldev/verifactu/testkit/AeatResponseScenario;Ldev/verifactu/core/InvoiceIdentifier;Ldev/verifactu/aeat/AeatOperationType;)Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;
+	public static synthetic fun response$default (Ldev/verifactu/testkit/AeatResponseScenario;Ldev/verifactu/core/InvoiceIdentifier;Ldev/verifactu/aeat/AeatOperationType;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;
+	public static final fun soapFault ()Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;
+}
+
+public final class dev/verifactu/testkit/AeatResponseScenario : java/lang/Enum {
+	public static final field ACCEPTED Ldev/verifactu/testkit/AeatResponseScenario;
+	public static final field ACCEPTED_WITH_ERRORS Ldev/verifactu/testkit/AeatResponseScenario;
+	public static final field DUPLICATE Ldev/verifactu/testkit/AeatResponseScenario;
+	public static final field FLOW_CONTROL Ldev/verifactu/testkit/AeatResponseScenario;
+	public static final field REJECTED Ldev/verifactu/testkit/AeatResponseScenario;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/testkit/AeatResponseScenario;
+	public static fun values ()[Ldev/verifactu/testkit/AeatResponseScenario;
+}
+
+public final class dev/verifactu/testkit/FakeAeatTransport : dev/verifactu/aeat/AeatTransportAdapter {
+	public fun <init> (Ljava/util/List;)V
+	public fun execute (Ldev/verifactu/aeat/AeatTransportRequest;)Ldev/verifactu/aeat/AeatTransportResult;
+	public final fun getRemainingResults ()I
+	public final fun getRequests ()Ljava/util/List;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/testkit/VerifactuFixtures {
+	public static final field INSTANCE Ldev/verifactu/testkit/VerifactuFixtures;
+	public static final fun cancellation ()Ldev/verifactu/core/RecordCreationResult$Created;
+	public static final fun cancellation (Ldev/verifactu/core/ChainState;)Ldev/verifactu/core/RecordCreationResult$Created;
+	public static synthetic fun cancellation$default (Ldev/verifactu/core/ChainState;ILjava/lang/Object;)Ldev/verifactu/core/RecordCreationResult$Created;
+	public static final fun cancellationDraft ()Ldev/verifactu/core/RegistroAnulacionDraft;
+	public static final fun cancellationDraft (Ldev/verifactu/core/ChainState;)Ldev/verifactu/core/RegistroAnulacionDraft;
+	public static synthetic fun cancellationDraft$default (Ldev/verifactu/core/ChainState;ILjava/lang/Object;)Ldev/verifactu/core/RegistroAnulacionDraft;
+	public static final fun cancellationXml ()Ljava/lang/String;
+	public static final fun chainState ()Ldev/verifactu/core/ChainState$PreviousRecord;
+	public static final fun invoice ()Ldev/verifactu/core/InvoiceIdentifier;
+	public static final fun invoice (Ljava/lang/String;)Ldev/verifactu/core/InvoiceIdentifier;
+	public static synthetic fun invoice$default (Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/core/InvoiceIdentifier;
+	public static final fun qrPayload ()Ldev/verifactu/qr/QrPayload;
+	public static final fun registration ()Ldev/verifactu/core/RecordCreationResult$Created;
+	public static final fun registration (Ldev/verifactu/core/ChainState;)Ldev/verifactu/core/RecordCreationResult$Created;
+	public static final fun registration (Ldev/verifactu/core/ChainState;Ljava/lang/String;)Ldev/verifactu/core/RecordCreationResult$Created;
+	public static synthetic fun registration$default (Ldev/verifactu/core/ChainState;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/core/RecordCreationResult$Created;
+	public static final fun registrationDraft ()Ldev/verifactu/core/RegistroAltaDraft;
+	public static final fun registrationDraft (Ldev/verifactu/core/ChainState;)Ldev/verifactu/core/RegistroAltaDraft;
+	public static final fun registrationDraft (Ldev/verifactu/core/ChainState;Ljava/lang/String;)Ldev/verifactu/core/RegistroAltaDraft;
+	public static synthetic fun registrationDraft$default (Ldev/verifactu/core/ChainState;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/core/RegistroAltaDraft;
+	public static final fun registrationXml ()Ljava/lang/String;
+	public static final fun system ()Ldev/verifactu/core/SistemaInformatico;
+}
+

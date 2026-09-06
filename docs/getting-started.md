@@ -1,54 +1,48 @@
 # Getting Started
 
-VeriFactu KMP is currently a specification-first repository. No installable artifact exists yet.
+VeriFactu KMP has a local implementation and offline examples. No version is published to Maven Central yet.
 
-This page documents the intended first-user path for the initial implementation.
+## Build prerequisites
 
-## Intended Installation
+Use JDK 21 to build, Android SDK platform 36 with accepted SDK licenses, and an `ANDROID_HOME` environment variable or a gitignored `local.properties` containing `sdk.dir=/your/android/sdk`. JVM artifacts target Java 11. Apple compilation/tests additionally require macOS, Xcode, and an installed arm64 iOS simulator runtime.
 
-The planned release target is Maven Central.
-
-Expected module split:
-
-```kotlin
-implementation("io.github.zorka42:verifactu-core:<version>")
-implementation("io.github.zorka42:verifactu-xml:<version>")
-implementation("io.github.zorka42:verifactu-qr:<version>")
-implementation("io.github.zorka42:verifactu-aeat:<version>")
+```bash
+./gradlew jvmTest testDebugUnitTest
+./gradlew :samples:offline:runKotlinSample :samples:offline:runJavaSample
 ```
 
-## Intended Minimal Flow
+The first dependency resolution may need network access to Gradle/plugin/dependency repositories. Once cached, add `--offline`. Tests and examples never need live AEAT access or personal certificates.
 
-1. Build or map invoice data into the library's typed fiscal input model.
-2. Load the caller-owned previous chain state.
-3. Create a registration or cancellation record.
-4. Validate the record locally.
-5. Serialize XML or build a submission request.
-6. Generate the QR payload for invoice rendering.
-7. Persist the returned next chain state in the host application.
-8. Submit records to AEAT if the host application uses VERI*FACTU remittance through this library.
+## Create the first record
 
-Target API shape:
+Read the complete, compiled [Kotlin example](../samples/offline/src/commonMain/kotlin/dev/verifactu/sample/OfflineExampleResult.kt) or [Java example](../samples/offline/src/jvmMain/java/dev/verifactu/sample/JavaExample.java).
 
-```kotlin
-val record = Verifactu.createRegistration(
-    invoice = invoice,
-    chain = previousChain,
-    system = systemInfo,
-    generatedAt = timestamp,
-)
+1. Parse identifiers, dates, amounts, and the caller-supplied generation timestamp using each type's `parse` method. Handle `ValueResult.Valid` and `ValueResult.Invalid` at the application boundary.
+2. Construct `RegistroAltaDraft`, including the tax breakdown and the host SIF's `SistemaInformatico` metadata. Select the correct invoice category and supply complete business input.
+3. Supply `ChainState.FirstRecord` only for an empty chain, otherwise the persisted `ChainState.PreviousRecord`.
+4. Call `FiscalRecordFactory.createRegistration`. `RecordCreationResult.Invalid` contains structural validation issues. `Created` contains the record and next chain head.
+5. Serialize with `RegistroXmlSerializer.serialize` and build the QR URL with `QrPayloadBuilder.build`.
+6. Atomically persist the original record and next head in your application before arranging delivery. Factory-created records snapshot the tax breakdown.
 
-val report = Verifactu.validate(record)
-report.requireValid()
+For the composed path used by the examples, call `FiscalSubmissionPreparation.prepareRegistration(draft, qrEnvironment)` to prepare the record, next head, record XML, QR, batch XML and SOAP together. Preparation performs no delivery or persistence.
 
-val xml = VerifactuXml.serialize(record)
-val qrPayload = VerifactuQr.payload(invoice)
-val nextChain = record.chainState
+The factory runs local validation before hashing. It does not establish full fiscal validity or remote acceptance. Current parsing/validation gaps are listed in [implementation status](implementation-status.md).
+
+## Cancellation and delivery
+
+The Kotlin example passes the persisted registration head into `RegistroAnulacionDraft`, then calls `createCancellation`. Both record kinds share the chronological chain. Cancellation neither deletes the registration nor rewinds the head.
+
+`FiscalSubmissionPreparation.prepareCancellation(draft, header)` produces a cancellation and request artifacts; `SubmissionBatchBuilder.build(header, records)` validates multi-record batches. Use the resulting `soapEnvelope` for an explicit transport call. Examples inject `FakeAeatTransport`, then parse and correlate responses before inspecting acceptance states. Live transport remains separately unverified.
+
+## Java and local artifacts
+
+`parse`, record factory, XML, QR, and response parser entry points have JVM static methods. Sealed results are ordinary Java interfaces/nested classes with getters; Kotlin default arguments do not automatically become Java overloads. The Java example passes constructor arguments explicitly and uses standard Java 11 syntax.
+
+To test actual artifact consumption instead of project dependencies:
+
+```bash
+./gradlew publishJvmPreview
+./gradlew -p samples/maven-consumer run
 ```
 
-## Current Limitations
-
-- No Kotlin modules exist yet.
-- No Maven artifact exists yet.
-- No live AEAT client exists yet.
-- API examples are product targets until implementation starts.
+See [publishing](publishing.md) for the Maven dependency snippet and artifact limitations.

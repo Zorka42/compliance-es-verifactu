@@ -1,4 +1,15 @@
-artifact	version_or_retrieval	sha256	official_source	used_by
-SuministroInformacion.xsd	tikeV1.0 retrieved 2026-08-16	34ef72b3f5ba2c6c5cd2d9a7c3b5b7b226b59d754e569c5c74a04d1c27762989	https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroInformacion.xsd	Conditional registration fields and XML order
-errores.properties	catalogue 1.2.2 retrieved 2026-09-06	06519ceb23422bd6b0ad3bfb659e3007615050da4920781d12cff536481d5902	https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/errores.properties	Typed AEAT incidence classification
-Validaciones_Errores_Veri-Factu.pdf	1.2.2 dated 2026-04-08	unpublished by AEAT	https://www.agenciatributaria.es/static_files/AEAT_Desarrolladores/EEDD/IVA/VERI-FACTU/Validaciones_Errores_Veri-Factu.pdf	Conditional validation rules and subsanation semantics
+file	sha256	retrieved	source_url
+BOE-A-2023-24840-consolidado.pdf	34418589f3c5684cbb5aa55cf208d08de96e81bb216623c14db51f3da5b9731f	2026-09-06	https://www.boe.es/buscar/pdf/2023/BOE-A-2023-24840-consolidado.pdf
+BOE-A-2024-22138-consolidado.pdf	a0090109d56c29c1f1d9be42df5fecc5d7b2384605dd2b2af549236ff5bcc5de	2026-09-06	https://www.boe.es/buscar/pdf/2024/BOE-A-2024-22138-consolidado.pdf
+ConsultaLR.xsd	bf2cdb8fc4b95b291757a72b76d8fffca06a6d30d9329122ca2fd6b2d5f8f1b1	2026-09-06	https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/ConsultaLR.xsd
+EjemplosDeclaracionResponsable-V0.5.1.pdf	0b9c3625d5c4b91cb72ef2aa7675aeffe554f3b6c1dda35869a9f0629dfb9954	2026-09-06	https://sede.agenciatributaria.gob.es/static_files/Sede/Tema/IVA/Verifactu/EjemplosDeclaracionResponsable(V0.5.1).pdf
+RespuestaConsultaLR.xsd	de35063acb8d9ba0d6ae51acc6b595de9c2b12333250e95e13108ef5f2670d45	2026-09-06	https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/RespuestaConsultaLR.xsd
+RespuestaSuministro.xsd	82acf80f785643caac13087aae66808ed721a13f08ca5218cf8ae81b695549ef	2026-09-06	https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/RespuestaSuministro.xsd
+SistemaFacturacion.wsdl	05919120708ff7650612fa6683c9336eaf919335d9a4db10e86759190af48602	2026-09-06	https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SistemaFacturacion.wsdl
+SuministroInformacion.xsd	ee4c1655175644de44c4c25055ffeb8e5f4bb4bc3834ce8254d4222ef18c8aa1	2026-09-06	https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroInformacion.xsd
+SuministroLR.xsd	cbdac8d427cc5ab5d77ca48974cab0f35d6bb819c4c66db361681e3710aeba36	2026-09-06	https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SuministroLR.xsd
+Validaciones_Errores_Veri-Factu.pdf	426eb926fc098a36a163f66ca5f40d9e0847ca23300bbe5008979832d3513440	2026-09-06	https://www.agenciatributaria.es/static_files/AEAT_Desarrolladores/EEDD/IVA/VERI-FACTU/Validaciones_Errores_Veri-Factu.pdf
+Veri-Factu_Descripcion_SWeb.pdf	b3570f6a308ce98a5f52001a0dc427310ad6cf7bccd60a9ee98720a59e553c02	2026-09-06	https://sede.agenciatributaria.gob.es/static_files/AEAT_Desarrolladores/EEDD/IVA/VERI-FACTU/Veri-Factu_Descripcion_SWeb.pdf
+declaracion-responsable-faq.html	0df5a6f2e7cef0dbdc1bc561c7fe5ebdcb7fcaa42aefe445f48079327755b53a	2026-09-06	https://sede.agenciatributaria.gob.es/Sede/iva/sistemas-informaticos-facturacion-verifactu/preguntas-frecuentes/certificacion-sistemas-informaticos-declaracion-responsable.html
+errores.properties	06519ceb23422bd6b0ad3bfb659e3007615050da4920781d12cff536481d5902	2026-09-06	https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/errores.properties
+xmldsig-core-schema.xsd	d102ad3df7664c307e0c2c776ba4a90513b1969974d8a940bae1a77f9f21e15d	2026-08-16	https://www.w3.org/TR/xmldsig-core/xmldsig-core-schema.xsd

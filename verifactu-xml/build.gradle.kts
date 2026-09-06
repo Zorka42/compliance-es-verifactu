@@ -5,7 +5,9 @@ plugins {
 
 kotlin {
     explicitApi()
-    androidTarget()
+    androidTarget {
+        publishLibraryVariants("release")
+    }
     jvm()
     iosX64()
     iosArm64()
@@ -18,6 +20,9 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
+        }
+        jvmTest {
+            resources.srcDir(rootProject.file("schemas-aeat"))
         }
     }
 }

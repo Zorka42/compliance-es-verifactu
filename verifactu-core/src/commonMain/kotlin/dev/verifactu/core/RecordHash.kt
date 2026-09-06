@@ -1,5 +1,7 @@
 package dev.verifactu.core
 
+import kotlin.jvm.JvmStatic
+
 /**
  * AEAT canonical hash input for a `RegistroAlta` record.
  *
@@ -56,6 +58,7 @@ public data class CancellationHashInput(
 /** SHA-256 utility with a KMP-safe, deterministic implementation. */
 public object RecordHashCalculator {
     /** Calculates the uppercase hexadecimal SHA-256 hash of [value]'s UTF-8 bytes. */
+    @JvmStatic
     public fun sha256(value: String): String = Sha256.digest(value.encodeToByteArray()).toHex()
 }
 

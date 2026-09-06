@@ -1,38 +1,31 @@
 # Integration Flow
 
-This document describes how a host application should integrate VeriFactu KMP once implementation exists.
+The [shared executable example](../samples/offline/src/commonMain/kotlin/dev/verifactu/sample/OfflineExampleResult.kt) demonstrates the current local pipeline. It composes the pure preparation facade with explicit, application-owned attempt handling.
 
-## Registration Flow
+## Registration
 
-1. The host application decides that an invoice is legally issued.
-2. The host application loads the current chain head for the relevant SIF/taxpayer chain.
-3. The host application calls the library to create `RegistroAlta`.
-4. The library calculates the hash and returns an immutable fiscal record.
-5. The host application validates the record.
-6. The host application persists its invoice data, fiscal record, and next chain state according to its own durability requirements.
-7. The host application renders the invoice and QR payload.
-8. The host application queues or submits the fiscal record according to its VERI*FACTU operating model.
+1. The host finalizes invoice business input and acquires its per-chain lock.
+2. It reads the current chain head and supplies an explicit generation timestamp and SIF metadata.
+3. `FiscalSubmissionPreparation.prepareRegistration` returns typed structural issues or the record/hash, next head and XML/QR/SOAP artifacts.
+4. The host atomically persists the invoice, original fiscal record, exact prepared request and next head under its durability policy.
+5. The host renders the invoice and separately queues delivery. It releases its concurrency guard only after committing the new head.
 
-## Cancellation Flow
+The sample uses an in-memory value to illustrate persistence ownership. A real integration needs durable storage and recovery. The library neither writes data nor starts a worker.
 
-1. The host application decides that an invoice must be cancelled according to business/legal rules.
-2. The host application loads the current chain head.
-3. The host application calls the library to create `RegistroAnulacion`.
-4. The cancellation record is chained like any other fiscal record.
-5. The host application persists and submits the cancellation record.
+## Cancellation
 
-## Submission Flow
+Pass the invoice reference to `RegistroAnulacionDraft` with the current chain head, then call `createCancellation`. Persist that new cancellation and its returned head. Keep the original registration. A cancellation can follow unrelated later records in the chain; its predecessor is the current head, not necessarily the record being cancelled.
 
-1. The host application selects AEAT test or production environment.
-2. The host application provides immutable records and credential access.
-3. The library builds and sends the SOAP request.
-4. The library parses global and per-record AEAT responses.
-5. The host application stores submission results and acts on flow-control, incidence, retry, or correction requirements.
+## Offline submission example
 
-## Failure Flow
+The sample passes prepared SOAP to `FakeAeatTransport`, parses its schema-checked synthetic response and correlates every returned invoice/operation before inspecting acceptance. The attempt interpreter distinguishes local preflight failure, ambiguous delivery, HTTP failures, SOAP faults, malformed/mismatched responses and unknown states. It preserves flow control without sleeping.
 
-Network failures are not equivalent to AEAT rejections.
+The Java sample demonstrates the same production creation/XML/QR APIs with static calls and explicit getters. The independent Java consumer verifies local published JARs and their transitive dependencies.
 
-If delivery is unknown, the host application should retry the same immutable fiscal records until a response is obtained, following AEAT guidance and flow-control rules.
+## Production submission remains pending
 
-The library must never create a new fiscal record merely because a transport response was lost.
+The validated builder, preparation facade, typed delivery states and response correlation are implemented. Production integration still requires complete conditional fiscal models, source-backed incidence/correction policies, host persistence/recovery, real transport verification and release hardening.
+
+`NOT_SENT` only represents known local failures; timeouts and send I/O failures remain `UNKNOWN`. A duplicate is not unconditional acceptance. Preserve the original record and response under an explicit diagnostics policy; do not generate a new record or roll back the chain on delivery failure. The sample tests manually reuse exactly the same prepared request. See [error handling](error-handling.md) and the [remaining plan](release-plan.md).
+
+No storage, queue, certificate vault or automatic retry scheduler belongs inside the library.

@@ -4,6 +4,8 @@
 
 v1 targets VERI*FACTU mode only.
 
+This page distinguishes the product target from the current pre-release implementation. See [implementation status](implementation-status.md) for gaps and [the local sample](../samples/offline/README.md) for executable behavior.
+
 The library should support:
 
 - registration records;
@@ -44,7 +46,7 @@ Implementation requirements include:
 
 XML generation must be deterministic and compatible with the pinned AEAT schemas for the release.
 
-JVM schema validation is expected to be part of CI once code exists. Cross-target tests should still verify deterministic serialization behavior where platform XML tooling differs.
+Shared record golden tests and JVM record/batch/response XSD checks use archived public contracts. `SubmissionBatchBuilder` validates currently modeled records and builds SOAP 1.1 document/literal requests. Runtime response parsing enforces XML well-formedness and namespace identity while preserving unknown protocol values; it does not claim full XSD or business-rule validation.
 
 ## QR
 
@@ -56,4 +58,4 @@ Invoice layout and QR rendering belong to the host application unless an optiona
 
 AEAT may return a wait value for subsequent submissions.
 
-The library should expose this value, but the host application owns scheduling and queueing.
+The parser exposes `AeatFlowControl.Known` or `Unknown`, preserving unrecognized text, alongside the `retryAfterSeconds` convenience getter. The host application owns scheduling and queueing; the library never sleeps or retries automatically.

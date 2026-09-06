@@ -4,7 +4,10 @@ package dev.verifactu.aeat
 public data class AeatTransportRequest(
     public val endpoint: AeatSubmissionEndpoint,
     public val xmlPayload: String,
-)
+) {
+    /** Omits the destination and raw XML, which can contain private data. */
+    override fun toString(): String = "AeatTransportRequest(endpoint=redacted, xmlPayload=redacted)"
+}
 
 /** Platform-provided executor for an AEAT transport request. */
 public interface AeatTransportAdapter {

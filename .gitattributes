@@ -1,3 +1,8 @@
 gradlew.bat text eol=crlf
 *.api -whitespace
 verifactu-xml/src/jvmTest/resources/aeat-xsd/*.xsd binary
+# Preserve original public contract bytes; source digests are checked by tests.
+schemas-aeat/*.xsd -text -whitespace
+schemas-aeat/*.wsdl -text -whitespace
+schemas-aeat/*.properties -text -whitespace
+schemas-aeat/*.html -text -whitespace

@@ -1,5 +1,7 @@
 package dev.verifactu.aeat
 
+import kotlin.jvm.JvmStatic
+
 /** The AEAT environment selected by the integrating application. */
 public enum class AeatEnvironment {
     /** The AEAT external testing environment. */
@@ -68,6 +70,7 @@ public object AeatEndpointConfiguration {
         "https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SistemaFacturacion.wsdl"
 
     /** Resolves the AEAT-published default endpoint for an environment and certificate route. */
+    @JvmStatic
     public fun defaultSubmissionEndpoint(
         environment: AeatEnvironment,
         certificateAccess: AeatCertificateAccess = AeatCertificateAccess.STANDARD,
@@ -86,6 +89,7 @@ public object AeatEndpointConfiguration {
      *
      * Normal consumers should use [defaultSubmissionEndpoint].
      */
+    @JvmStatic
     public fun submissionEndpointWithAdvancedOverride(
         environment: AeatEnvironment,
         certificateAccess: AeatCertificateAccess = AeatCertificateAccess.STANDARD,
