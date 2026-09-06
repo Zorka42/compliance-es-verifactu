@@ -8,12 +8,15 @@ Run from the repository root:
 
 Both commands use synthetic fiscal data, a fixed timestamp, `example.invalid` endpoint metadata, and `FakeAeatTransport`. They never access the network, read certificates, or sleep. Gradle may resolve build dependencies unless run with `--offline` and a populated cache.
 
-- [Kotlin shared flow](src/commonMain/kotlin/dev/verifactu/sample/OfflineExampleResult.kt): typed input, registration, hash, XML, QR, application-owned chain head, cancellation, batch documents, fake responses, wait value.
-- [Java flow](src/jvmMain/java/dev/verifactu/sample/JavaExample.java): explicit Java 11 construction and result handling through static entry points.
+- [Kotlin shared flow](src/commonMain/kotlin/dev/verifactu/sample/OfflineExampleResult.kt): `FiscalSubmissionPreparation`, registration, hash, XML, QR, application-owned chain head, cancellation, prepared SOAP requests, correlated fake responses, and flow control.
+- [Java flow](src/jvmMain/java/dev/verifactu/sample/JavaExample.java): explicit Java 11 construction, preparation, and response correlation through static entry points. Its synthetic response identifies `JAVA-001`, matching the submitted invoice.
 - [Shared smoke test](src/commonTest/kotlin/dev/verifactu/sample/OfflineExampleTest.kt): public module integration on JVM and supported Apple test targets.
+- [Attempt outcome tests](src/commonTest/kotlin/dev/verifactu/sample/OfflineAttemptOutcomeTest.kt): accepted records, warnings, rejection, duplicates, SOAP faults, malformed XML, mismatched identities/operations, unknown states, flow control, and transport failures.
 
-This code is a sample application, not the future production workflow facade. The batch document is sent to a fake and is not wrapped in SOAP. The minimal response parser cannot reconcile production batches yet. Fixture response contents are synthetic and are not remote validation evidence.
+The sample prepares a SOAP 1.1 envelope through the library facade and passes that exact string to an explicit fake. Both consumers require matched invoice identities and operations before inspecting acceptance. A duplicate, warning, rejection, or unknown state does not enter the sample's ordinary accepted branch. Synthetic responses provide local integration evidence; they do not establish remote AEAT acceptance.
 
-The sample prints only synthetic hashes/statuses/counts. Raw record XML and QR data remain in the returned example artifacts for tests. A real host must own durable storage, per-chain concurrency, queues, complete fiscal validation, credentials, and delivery recovery.
+`interpretExampleAttempt` is a pure, application-owned example. It distinguishes not-sent and unknown-delivery failures, HTTP responses it cannot use, SOAP faults, malformed responses, correlation failures, and known or unknown fiscal states. Parsed flow control remains inspectable. Interpreting a result performs no retry or chain-state mutation. A test explicitly repeats the same saved SOAP bytes after a synthetic timeout and verifies that the record hash and timestamp stay unchanged; a real host must first decide how to reconcile unknown delivery.
+
+The sample prints only synthetic hashes/statuses/counts. Raw record XML and QR data remain in the returned example artifacts for tests. The local `persistedHead` value marks where a real host would atomically persist a record and its chain head before delivery. No durable store is implemented or tested here. A real host owns durable storage, per-chain concurrency, queues, credentials, and delivery recovery, and must address the library's documented validation gaps before production use.
 
 To compile the same Java source against actual local published artifacts, see [the separate consumer build](../maven-consumer/build.gradle.kts) and [publication instructions](../../docs/publishing.md).

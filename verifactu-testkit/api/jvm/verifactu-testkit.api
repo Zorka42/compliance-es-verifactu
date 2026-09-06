@@ -1,6 +1,9 @@
 public final class dev/verifactu/testkit/AeatResponseFixtures {
 	public static final field INSTANCE Ldev/verifactu/testkit/AeatResponseFixtures;
 	public static final fun response (Ldev/verifactu/testkit/AeatResponseScenario;)Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;
+	public static final fun response (Ldev/verifactu/testkit/AeatResponseScenario;Ldev/verifactu/core/InvoiceIdentifier;)Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;
+	public static final fun response (Ldev/verifactu/testkit/AeatResponseScenario;Ldev/verifactu/core/InvoiceIdentifier;Ldev/verifactu/aeat/AeatOperationType;)Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;
+	public static synthetic fun response$default (Ldev/verifactu/testkit/AeatResponseScenario;Ldev/verifactu/core/InvoiceIdentifier;Ldev/verifactu/aeat/AeatOperationType;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;
 	public static final fun soapFault ()Ldev/verifactu/aeat/AeatTransportResult$XmlResponse;
 }
 

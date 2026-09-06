@@ -2,22 +2,33 @@ package dev.verifactu.sample
 
 import dev.verifactu.aeat.AeatAdvancedEndpointConfiguration
 import dev.verifactu.aeat.AeatCertificateAccess
+import dev.verifactu.aeat.AeatDuplicateStatus
 import dev.verifactu.aeat.AeatEndpointConfiguration
 import dev.verifactu.aeat.AeatEnvironment
+import dev.verifactu.aeat.AeatOperationType
+import dev.verifactu.aeat.AeatRecordStatus
+import dev.verifactu.aeat.AeatResponseCorrelation
+import dev.verifactu.aeat.AeatResponseCorrelationResult
+import dev.verifactu.aeat.AeatResponseLine
 import dev.verifactu.aeat.AeatResponseParseResult
 import dev.verifactu.aeat.AeatResponseParser
+import dev.verifactu.aeat.AeatSubmissionEndpoint
 import dev.verifactu.aeat.AeatSubmissionResponse
+import dev.verifactu.aeat.AeatSubmissionStatus
 import dev.verifactu.aeat.AeatTransportRequest
 import dev.verifactu.aeat.AeatTransportResult
+import dev.verifactu.aeat.CancellationPreparationResult
+import dev.verifactu.aeat.FiscalSubmissionPreparation
+import dev.verifactu.aeat.RegistrationPreparationResult
+import dev.verifactu.aeat.SoapFault
+import dev.verifactu.aeat.SoapFaultParseResult
 import dev.verifactu.core.ChainState
 import dev.verifactu.core.FiscalAmount
-import dev.verifactu.core.FiscalRecordFactory
 import dev.verifactu.core.InvoiceIdentifier
 import dev.verifactu.core.InvoiceIssueDate
 import dev.verifactu.core.InvoiceNumber
 import dev.verifactu.core.InvoiceType
 import dev.verifactu.core.Qualification
-import dev.verifactu.core.RecordCreationResult
 import dev.verifactu.core.RecordGenerationTimestamp
 import dev.verifactu.core.RecordVersion
 import dev.verifactu.core.RegistroAlta
@@ -32,18 +43,13 @@ import dev.verifactu.core.TaxOperation
 import dev.verifactu.core.TaxType
 import dev.verifactu.core.ValueResult
 import dev.verifactu.qr.QrEnvironment
-import dev.verifactu.qr.QrPayloadBuilder
-import dev.verifactu.qr.QrPayloadInput
-import dev.verifactu.qr.QrPayloadResult
 import dev.verifactu.testkit.AeatResponseFixtures
 import dev.verifactu.testkit.AeatResponseScenario
 import dev.verifactu.testkit.FakeAeatTransport
-import dev.verifactu.xml.RegistroXmlSerializer
-import dev.verifactu.xml.SubmissionBatchXmlSerializer
 import dev.verifactu.xml.SubmissionHeader
 import dev.verifactu.xml.SubmissionRecord
 
-/** Application-owned artifacts demonstrated by the sample, not a production library facade. */
+/** Application-owned artifacts composed through the production preparation API and a fake transport. */
 internal data class OfflineExampleResult(
     val registration: RegistroAlta,
     val cancellation: RegistroAnulacion,
@@ -58,69 +64,158 @@ internal data class OfflineExampleResult(
 /** Runs shared production APIs with synthetic inputs and a transport that cannot perform I/O. */
 internal fun runOfflineExample(): OfflineExampleResult {
     val draft = exampleRegistrationDraft()
-    val registration = created(FiscalRecordFactory.createRegistration(draft))
-    val registrationXml = RegistroXmlSerializer.serialize(registration.record)
-    val qr =
-        when (val result = QrPayloadBuilder.build(QrPayloadInput(draft.invoice, draft.totalAmount, QrEnvironment.TEST))) {
-            is QrPayloadResult.Created -> result.payload
-            is QrPayloadResult.Invalid -> error("Sample QR input is invalid.")
+    val registration =
+        when (val result = FiscalSubmissionPreparation.prepareRegistration(draft, QrEnvironment.TEST)) {
+            is RegistrationPreparationResult.Prepared -> result
+            is RegistrationPreparationResult.Invalid -> error("Synthetic registration failed preparation.")
         }
 
     // A real application atomically persists the record and this head under its per-chain lock.
     val persistedHead = registration.nextChainState
     val cancellation =
-        created(
-            FiscalRecordFactory.createCancellation(
-                RegistroAnulacionDraft(
-                    draft.invoice,
-                    persistedHead,
-                    draft.system,
-                    value(RecordGenerationTimestamp.parse("2024-01-01T12:01:00+01:00")),
-                ),
-            ),
-        )
-    val cancellationXml = RegistroXmlSerializer.serialize(cancellation.record)
+        when (
+            val result =
+                FiscalSubmissionPreparation.prepareCancellation(
+                    RegistroAnulacionDraft(
+                        draft.invoice,
+                        persistedHead,
+                        draft.system,
+                        value(RecordGenerationTimestamp.parse("2024-01-01T12:01:00+01:00")),
+                    ),
+                    SubmissionHeader(draft.issuerName, draft.invoice.issuer),
+                )
+        ) {
+            is CancellationPreparationResult.Prepared -> result
+            is CancellationPreparationResult.Invalid -> error("Synthetic cancellation failed preparation.")
+        }
     val transport =
         FakeAeatTransport(
             listOf(
-                AeatResponseFixtures.response(AeatResponseScenario.ACCEPTED),
-                AeatResponseFixtures.response(AeatResponseScenario.FLOW_CONTROL),
+                AeatResponseFixtures.response(AeatResponseScenario.ACCEPTED, draft.invoice, AeatOperationType.REGISTRATION),
+                AeatResponseFixtures.response(AeatResponseScenario.FLOW_CONTROL, draft.invoice, AeatOperationType.CANCELLATION),
             ),
         )
-    val endpoint =
-        AeatEndpointConfiguration.submissionEndpointWithAdvancedOverride(
-            AeatEnvironment.TEST,
-            AeatCertificateAccess.STANDARD,
-            AeatAdvancedEndpointConfiguration("https://example.invalid/verifactu"),
+    val requests =
+        listOf(
+            SubmissionRecord.Registration(registration.record) to registration.soapEnvelope,
+            SubmissionRecord.Cancellation(cancellation.record) to cancellation.soapEnvelope,
         )
-    val records = listOf(SubmissionRecord.Registration(registration.record), SubmissionRecord.Cancellation(cancellation.record))
     val responses =
-        records.map { record ->
-            val batchXml = SubmissionBatchXmlSerializer.serialize(SubmissionHeader(draft.issuerName, draft.invoice.issuer), listOf(record))
-            // This is batch XML sent to a fake, not a wire-ready SOAP integration example.
-            when (val result = transport.execute(AeatTransportRequest(endpoint, batchXml))) {
-                is AeatTransportResult.XmlResponse ->
-                    when (val parsed = AeatResponseParser.parseSubmission(result.xml)) {
-                        is AeatResponseParseResult.Parsed -> parsed.response
-                        is AeatResponseParseResult.InvalidXml -> error("Synthetic response could not be parsed.")
-                    }
-                else -> error("Unexpected synthetic transport outcome.")
+        requests.map { (record, savedPayload) ->
+            val result = transport.execute(AeatTransportRequest(offlineEndpoint(), savedPayload))
+            when (val outcome = interpretExampleAttempt(listOf(record), result)) {
+                is ExampleAttemptOutcome.KnownResponse -> {
+                    check(outcome.isAccepted) { "The synthetic scenario expected matched acceptance." }
+                    outcome.response
+                }
+                else -> error("Unexpected synthetic attempt outcome.")
             }
         }
     return OfflineExampleResult(
         registration.record,
         cancellation.record,
-        registrationXml,
-        cancellationXml,
-        qr.url,
+        registration.recordXml,
+        cancellation.recordXml,
+        registration.qr.url,
         cancellation.nextChainState,
         responses,
         transport.requests,
     )
 }
 
+/** Host-owned interpretation of one attempt, independent of persistence and retry scheduling. */
+internal sealed interface ExampleAttemptOutcome {
+    data class NotSent(
+        val transport: AeatTransportResult,
+    ) : ExampleAttemptOutcome
+
+    data class UnknownDelivery(
+        val transport: AeatTransportResult,
+    ) : ExampleAttemptOutcome
+
+    data class UnexpectedHttpResponse(
+        val statusCode: Int,
+    ) : ExampleAttemptOutcome
+
+    data class SoapFailure(
+        val fault: SoapFault,
+    ) : ExampleAttemptOutcome
+
+    data object MalformedResponse : ExampleAttemptOutcome
+
+    data class ResponseMismatch(
+        val response: AeatSubmissionResponse,
+        val correlation: AeatResponseCorrelationResult.Mismatch,
+    ) : ExampleAttemptOutcome
+
+    data class UnknownResponseState(
+        val response: AeatSubmissionResponse,
+    ) : ExampleAttemptOutcome
+
+    data class KnownResponse(
+        val response: AeatSubmissionResponse,
+        val matchedLines: List<AeatResponseLine>,
+    ) : ExampleAttemptOutcome {
+        val isAccepted: Boolean
+            get() =
+                response.status == AeatSubmissionStatus.ACCEPTED &&
+                    matchedLines.isNotEmpty() &&
+                    matchedLines.all { it.status == AeatRecordStatus.ACCEPTED && it.declaredStatus == AeatRecordStatus.ACCEPTED }
+    }
+}
+
+/** Pure application policy example: no result causes an automatic resend or a chain-state change. */
+internal fun interpretExampleAttempt(
+    submitted: List<SubmissionRecord>,
+    transportResult: AeatTransportResult,
+): ExampleAttemptOutcome =
+    when (transportResult) {
+        is AeatTransportResult.InvalidEndpoint, is AeatTransportResult.NotSent -> ExampleAttemptOutcome.NotSent(transportResult)
+        is AeatTransportResult.Timeout, is AeatTransportResult.NetworkFailure -> ExampleAttemptOutcome.UnknownDelivery(transportResult)
+        is AeatTransportResult.NonXmlResponse -> ExampleAttemptOutcome.UnexpectedHttpResponse(transportResult.statusCode)
+        is AeatTransportResult.XmlResponse -> interpretExampleXml(submitted, transportResult)
+    }
+
+private fun interpretExampleXml(
+    submitted: List<SubmissionRecord>,
+    transportResult: AeatTransportResult.XmlResponse,
+): ExampleAttemptOutcome {
+    val response =
+        when (val parsed = AeatResponseParser.parseSubmission(transportResult.xml)) {
+            is AeatResponseParseResult.Parsed -> parsed.response
+            is AeatResponseParseResult.InvalidXml ->
+                return when (val fault = AeatResponseParser.parseSoapFault(transportResult.xml)) {
+                    is SoapFaultParseResult.Parsed -> ExampleAttemptOutcome.SoapFailure(fault.fault)
+                    is SoapFaultParseResult.InvalidXml -> ExampleAttemptOutcome.MalformedResponse
+                }
+        }
+    if (transportResult.statusCode !in 200..299) return ExampleAttemptOutcome.UnexpectedHttpResponse(transportResult.statusCode)
+    val correlation = AeatResponseCorrelation.correlate(submitted, response)
+    if (correlation is AeatResponseCorrelationResult.Mismatch) return ExampleAttemptOutcome.ResponseMismatch(response, correlation)
+    val matched = (correlation as AeatResponseCorrelationResult.Matched).lines
+    val unknownState =
+        response.status == AeatSubmissionStatus.UNKNOWN_STATE ||
+            matched.any {
+                it.status == AeatRecordStatus.UNKNOWN_STATE ||
+                    it.declaredStatus == AeatRecordStatus.UNKNOWN_STATE ||
+                    it.duplicate?.status == AeatDuplicateStatus.UNKNOWN_STATE
+            }
+    return if (unknownState) {
+        ExampleAttemptOutcome.UnknownResponseState(response)
+    } else {
+        ExampleAttemptOutcome.KnownResponse(response, matched)
+    }
+}
+
+internal fun offlineEndpoint(): AeatSubmissionEndpoint =
+    AeatEndpointConfiguration.submissionEndpointWithAdvancedOverride(
+        AeatEnvironment.TEST,
+        AeatCertificateAccess.STANDARD,
+        AeatAdvancedEndpointConfiguration("https://example.invalid/verifactu"),
+    )
+
 /** Models a finalized synthetic simplified invoice; business finalization belongs to the host. */
-private fun exampleRegistrationDraft(): RegistroAltaDraft {
+internal fun exampleRegistrationDraft(): RegistroAltaDraft {
     val issuer = value(TaxIdentifier.parse("89890001K"))
     return RegistroAltaDraft(
         version = RecordVersion.V1_0,
@@ -153,10 +248,4 @@ private fun <T> value(result: ValueResult<T>): T =
     when (result) {
         is ValueResult.Valid -> result.value
         is ValueResult.Invalid -> error("Invalid synthetic input: ${result.error.code}")
-    }
-
-private fun <T> created(result: RecordCreationResult<T>): RecordCreationResult.Created<T> =
-    when (result) {
-        is RecordCreationResult.Created -> result
-        is RecordCreationResult.Invalid -> error("Synthetic input failed local record validation.")
     }

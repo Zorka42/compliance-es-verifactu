@@ -4,19 +4,26 @@ import dev.verifactu.aeat.AeatAdvancedEndpointConfiguration;
 import dev.verifactu.aeat.AeatCertificateAccess;
 import dev.verifactu.aeat.AeatEndpointConfiguration;
 import dev.verifactu.aeat.AeatEnvironment;
+import dev.verifactu.aeat.AeatOperationType;
+import dev.verifactu.aeat.AeatRecordStatus;
+import dev.verifactu.aeat.AeatResponseCorrelation;
+import dev.verifactu.aeat.AeatResponseCorrelationResult;
+import dev.verifactu.aeat.AeatResponseLine;
 import dev.verifactu.aeat.AeatResponseParseResult;
 import dev.verifactu.aeat.AeatResponseParser;
+import dev.verifactu.aeat.AeatSubmissionResponse;
+import dev.verifactu.aeat.AeatSubmissionStatus;
 import dev.verifactu.aeat.AeatTransportRequest;
 import dev.verifactu.aeat.AeatTransportResult;
+import dev.verifactu.aeat.FiscalSubmissionPreparation;
+import dev.verifactu.aeat.RegistrationPreparationResult;
 import dev.verifactu.core.ChainState;
 import dev.verifactu.core.FiscalAmount;
-import dev.verifactu.core.FiscalRecordFactory;
 import dev.verifactu.core.InvoiceIdentifier;
 import dev.verifactu.core.InvoiceIssueDate;
 import dev.verifactu.core.InvoiceNumber;
 import dev.verifactu.core.InvoiceType;
 import dev.verifactu.core.Qualification;
-import dev.verifactu.core.RecordCreationResult;
 import dev.verifactu.core.RecordGenerationTimestamp;
 import dev.verifactu.core.RecordVersion;
 import dev.verifactu.core.RegistroAlta;
@@ -29,15 +36,9 @@ import dev.verifactu.core.TaxOperation;
 import dev.verifactu.core.TaxType;
 import dev.verifactu.core.ValueResult;
 import dev.verifactu.qr.QrEnvironment;
-import dev.verifactu.qr.QrPayloadBuilder;
-import dev.verifactu.qr.QrPayloadInput;
-import dev.verifactu.qr.QrPayloadResult;
 import dev.verifactu.testkit.AeatResponseFixtures;
 import dev.verifactu.testkit.AeatResponseScenario;
 import dev.verifactu.testkit.FakeAeatTransport;
-import dev.verifactu.xml.RegistroXmlSerializer;
-import dev.verifactu.xml.SubmissionBatchXmlSerializer;
-import dev.verifactu.xml.SubmissionHeader;
 import dev.verifactu.xml.SubmissionRecord;
 import java.util.List;
 
@@ -61,32 +62,65 @@ public final class JavaExample {
             new SistemaInformatico("Example producer", issuer, "Java sample", "VF", "0.1", "sample-1", true, false, false),
             value(RecordGenerationTimestamp.parse("2024-01-01T12:00:00+01:00"))
         );
-        RecordCreationResult<RegistroAlta> result = FiscalRecordFactory.createRegistration(draft);
-        if (!(result instanceof RecordCreationResult.Created)) {
+        RegistrationPreparationResult result = FiscalSubmissionPreparation.prepareRegistration(draft, QrEnvironment.TEST);
+        if (!(result instanceof RegistrationPreparationResult.Prepared)) {
             throw new IllegalStateException("Synthetic Java draft failed local validation");
         }
-        RecordCreationResult.Created<RegistroAlta> created = (RecordCreationResult.Created<RegistroAlta>) result;
+        RegistrationPreparationResult.Prepared created = (RegistrationPreparationResult.Prepared) result;
         RegistroAlta record = created.getRecord();
-        String recordXml = RegistroXmlSerializer.serialize(record);
-        QrPayloadResult qr = QrPayloadBuilder.build(new QrPayloadInput(invoice, draft.getTotalAmount(), QrEnvironment.TEST));
-        if (!(qr instanceof QrPayloadResult.Created) || !recordXml.contains(record.getHash())) {
+        List<TaxBreakdownDetail> preparedDetails = record.getDraft().getTaxBreakdown().getDetails();
+        try {
+            preparedDetails.clear();
+            throw new IllegalStateException("Prepared fiscal record allowed Java list mutation");
+        } catch (UnsupportedOperationException expected) {
+            // Java collection mutators must not change a prepared fiscal record.
+        }
+        try {
+            preparedDetails.set(0, detail);
+            throw new IllegalStateException("Prepared fiscal record allowed Java list replacement");
+        } catch (UnsupportedOperationException expected) {
+            // Even replacement with an equal value must be unavailable.
+        }
+        if (!preparedDetails.equals(List.of(detail))) {
+            throw new IllegalStateException("Prepared tax breakdown changed after Java mutation attempts");
+        }
+        if (!created.getRecordXml().contains(record.getHash()) || !created.getQr().getUrl().contains("numserie=JAVA-001")) {
             throw new IllegalStateException("Synthetic artifacts were not produced");
         }
-        String batchXml = SubmissionBatchXmlSerializer.serialize(
-            new SubmissionHeader(draft.getIssuerName(), issuer), List.of(new SubmissionRecord.Registration(record))
-        );
-        FakeAeatTransport transport = new FakeAeatTransport(List.of(AeatResponseFixtures.response(AeatResponseScenario.ACCEPTED)));
+        List<SubmissionRecord> submitted = List.of(new SubmissionRecord.Registration(record));
+        // A real host persists this exact payload, the record, and the next head before delivery.
+        String savedPayload = created.getSoapEnvelope();
+        FakeAeatTransport transport = new FakeAeatTransport(List.of(
+            AeatResponseFixtures.response(AeatResponseScenario.ACCEPTED, invoice, AeatOperationType.REGISTRATION)
+        ));
         AeatTransportResult delivered = transport.execute(new AeatTransportRequest(
             AeatEndpointConfiguration.submissionEndpointWithAdvancedOverride(
                 AeatEnvironment.TEST, AeatCertificateAccess.STANDARD,
                 new AeatAdvancedEndpointConfiguration("https://example.invalid/verifactu")
-            ), batchXml
+            ), savedPayload
         ));
-        AeatResponseParseResult parsed = AeatResponseParser.parseSubmission(((AeatTransportResult.XmlResponse) delivered).getXml());
+        if (!(delivered instanceof AeatTransportResult.XmlResponse)) {
+            throw new IllegalStateException("Synthetic transport did not return XML; no acceptance established");
+        }
+        AeatTransportResult.XmlResponse xmlResponse = (AeatTransportResult.XmlResponse) delivered;
+        if (xmlResponse.getStatusCode() < 200 || xmlResponse.getStatusCode() >= 300) {
+            throw new IllegalStateException("Synthetic HTTP response did not establish acceptance");
+        }
+        AeatResponseParseResult parsed = AeatResponseParser.parseSubmission(xmlResponse.getXml());
         if (!(parsed instanceof AeatResponseParseResult.Parsed)) {
             throw new IllegalStateException("Synthetic response could not be parsed");
         }
-        System.out.println("Java registration: " + ((AeatResponseParseResult.Parsed) parsed).getResponse().getStatus());
+        AeatSubmissionResponse response = ((AeatResponseParseResult.Parsed) parsed).getResponse();
+        AeatResponseCorrelationResult correlation = AeatResponseCorrelation.correlate(submitted, response);
+        if (!(correlation instanceof AeatResponseCorrelationResult.Matched) || response.getStatus() != AeatSubmissionStatus.ACCEPTED) {
+            throw new IllegalStateException("Response identity, operation, or aggregate state did not establish acceptance");
+        }
+        List<AeatResponseLine> lines = ((AeatResponseCorrelationResult.Matched) correlation).getLines();
+        if (lines.size() != 1 || lines.get(0).getStatus() != AeatRecordStatus.ACCEPTED
+                || lines.get(0).getDeclaredStatus() != AeatRecordStatus.ACCEPTED) {
+            throw new IllegalStateException("Synthetic response record was not accepted without errors");
+        }
+        System.out.println("Java registration: " + lines.get(0).getStatus());
         System.out.println("Next synthetic chain hash: " + created.getNextChainState().getHash());
         System.out.println("Captured fake requests: " + transport.getRequests().size() + "; network calls: 0");
     }

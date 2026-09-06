@@ -26,6 +26,7 @@ kotlin {
         }
         jvmTest {
             resources.srcDir(rootProject.file("verifactu-xml/src/jvmTest/resources"))
+            resources.srcDir(rootProject.file("schemas-aeat"))
         }
     }
 }
