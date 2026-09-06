@@ -1,18 +1,22 @@
 # VeriFactu KMP
 
-Apache-2.0 Kotlin Multiplatform library for building VERI*FACTU fiscal-record, XML, QR, and AEAT submission functionality into invoicing software.
+[![CI](https://github.com/Zorka42/compliance-es-verifactu/actions/workflows/ci.yml/badge.svg)](https://github.com/Zorka42/compliance-es-verifactu/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/Zorka42/compliance-es-verifactu/graph/badge.svg)](https://codecov.io/gh/Zorka42/compliance-es-verifactu)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+
+Apache-2.0 Kotlin Multiplatform building blocks for VERI*FACTU fiscal records, hashes, XML, QR payloads, and optional AEAT integration, usable from Kotlin and Java.
 
 ## Status
 
-Draft/pre-implementation. The repository currently defines the product and open-source documentation structure before the Kotlin modules are created.
+**Pre-release implementation; not ready for production fiscal compliance.** Five modules are implemented and a runnable offline consumer exercises record creation, chaining, XML, QR, fake submission, and response parsing. No Maven Central version has been released.
 
-Do not use this repository for production VERI*FACTU compliance yet.
+Local validation and response parsing remain incomplete. The validated batch builder, complete submission outcomes, retry/correction semantics, production workflow facade, and release signing are still pending. See [implementation status](docs/implementation-status.md).
 
 ## Installation
 
-No Maven Central artifact has been released.
+The publication group is `io.github.zorka42`; source packages remain `dev.verifactu`.
 
-Planned coordinates:
+After the first release, Kotlin Multiplatform consumers will use the root module coordinates below. `<version>` is a placeholder, not an available release:
 
 ```kotlin
 implementation("io.github.zorka42:verifactu-core:<version>")
@@ -21,65 +25,39 @@ implementation("io.github.zorka42:verifactu-qr:<version>")
 implementation("io.github.zorka42:verifactu-aeat:<version>")
 ```
 
-## Quick Start
+Java/Maven consumers use the `-jvm` artifacts and Java 11 or newer. Local unsigned JVM publications can already be built and consumed from `build/maven-repository`; see [publishing](docs/publishing.md) and the [independent Java consumer](samples/maven-consumer/build.gradle.kts).
 
-The target integration flow is:
+## Quick start
 
-```kotlin
-val record = Verifactu.createRegistration(
-    invoice = invoice,
-    chain = previousChain,
-    system = systemInfo,
-    generatedAt = timestamp,
-)
+With JDK 21 and Android SDK 36 configured, run from the checkout:
 
-Verifactu.validate(record).requireValid()
-
-val xml = VerifactuXml.serialize(record)
-val qrPayload = VerifactuQr.payload(invoice)
-val nextChain = record.chainState
+```bash
+./gradlew :samples:offline:runKotlinSample
+./gradlew :samples:offline:runJavaSample
 ```
 
-This API is a product target, not a released implementation.
+Both examples use synthetic inputs and a fake transport. They require no certificates and make no network submissions. Add `--offline` when build dependencies are already cached.
 
-## Main Capabilities
+The [shared Kotlin example](samples/offline/src/commonMain/kotlin/dev/verifactu/sample/OfflineExampleResult.kt) constructs typed inputs and demonstrates registration followed by cancellation. The [Java example](samples/offline/src/jvmMain/java/dev/verifactu/sample/JavaExample.java) uses static factory/parser methods and typed result getters. Both compile and run in CI; they are the canonical quickstart sources.
 
-- VERI*FACTU `RegistroAlta` and `RegistroAnulacion` modeling.
-- Caller-owned fiscal-record chain state.
-- SHA-256 hash input construction and hashing.
-- Deterministic local validation.
-- Deterministic AEAT XML serialization and response parsing.
-- AEAT QR payload generation.
-- Optional AEAT SOAP submission client.
-- Typed flow-control, retry, incidence, and response semantics.
-- KMP support target: `commonMain`, `jvmMain`, `androidMain`, `iosMain`, and `macosMain`.
+## Modules
 
-## What This Library Does Not Do
+| Module | Provides |
+| --- | --- |
+| `verifactu-core` | Fiscal values, structural validation, alta/anulación records, SHA-256, caller-owned chain state; no I/O |
+| `verifactu-xml` | Deterministic record and batch XML; pinned record XSD tests on JVM |
+| `verifactu-qr` | Test/production QR URL payloads as data; no image rendering |
+| `verifactu-aeat` | Endpoint metadata, minimal response/fault extraction, JVM transport, injected Android/Apple boundaries |
+| `verifactu-testkit` | Synthetic fixtures and scripted fake transport for downstream tests |
 
-VeriFactu KMP is not a complete Sistema Informatico de Facturacion.
+JVM, Android local unit tests, iOS arm64 simulator, and macOS arm64 have CI test coverage. iOS device code is compiled; on-device execution is not verified. Intel Apple targets remain configured but are not advertised as supported. See the [platform matrix](docs/platform-support.md).
 
-It does not provide a database, invoice storage, durable queue, background worker, certificate store, user interface, invoice PDF renderer, accounting system, hosted API, or legal/tax advice.
+## Host application boundary
 
-## Documentation
+The library does not provide a database, invoice store, durable queue, scheduler, certificate vault, UI, invoice PDF renderer, accounting system, hosted API, or legal/tax advice. The host owns invoice finalization, durable records, concurrency, credentials, and operating the complete SIF.
 
-- [Product requirements](PRODUCT_SPEC.md)
-- [Open-source repository requirements](OPEN_SOURCE_REQUIREMENTS.md)
-- [Developer documentation index](docs/README.md)
-- [Getting started](docs/getting-started.md)
-- [Core concepts](docs/core-concepts.md)
-- [Integration flow](docs/integration-flow.md)
-- [Protocol behavior](docs/protocol-behavior.md)
-- [Error handling](docs/error-handling.md)
-- [Integration responsibilities](docs/integration-responsibilities.md)
-- [Compliance sources](docs/compliance/sources.md)
-- [Compliance traceability](docs/compliance/README.md)
+## Documentation and contributing
 
-## Contributing
+Start with [getting started](docs/getting-started.md), [integration flow](docs/integration-flow.md), and [error handling](docs/error-handling.md). The [documentation index](docs/README.md) links to platform guidance, testkit, compliance sources, and publication instructions.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-Compliance-sensitive changes must cite the relevant official BOE or AEAT source.
-
-## License
-
-Apache-2.0. See [LICENSE](LICENSE).
+Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md). Compliance changes require official BOE/AEAT sources. Licensed under [Apache-2.0](LICENSE); see [acknowledgements](ACKNOWLEDGEMENTS.md).

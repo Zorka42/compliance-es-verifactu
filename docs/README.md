@@ -12,6 +12,14 @@ The README stays short. Product scope, integration details, and compliance expla
 - [Protocol behavior](protocol-behavior.md)
 - [Error handling](error-handling.md)
 - [Integration responsibilities](integration-responsibilities.md)
+- [Testkit and synthetic fixtures](testkit.md)
+- [Offline Kotlin and Java examples](../samples/offline/README.md)
+- [Platform support matrix](platform-support.md)
+- [Apple transport integration](apple-aeat-transport.md)
+- [Android transport integration](android-aeat-transport.md)
+- [JVM transport integration](jvm-mtls-testing.md)
+- [Local Maven publishing](publishing.md)
+- [Implementation status and local backlog report](implementation-status.md)
 - [Compliance sources](compliance/sources.md)
 - [Compliance traceability](compliance/README.md)
 
@@ -23,3 +31,7 @@ The README stays short. Product scope, integration details, and compliance expla
 - Keep examples aligned with the public API once implementation exists.
 - Do not present planned APIs as released APIs.
 - Update documentation when public behavior, compliance baseline, or integration responsibility changes.
+## Architecture
+
+- [Module architecture](architecture.md)
+- [Chain-state persistence and concurrency contract](chain-state-contract.md)

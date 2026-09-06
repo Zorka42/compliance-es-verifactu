@@ -2,7 +2,7 @@
 
 Thanks for considering a contribution to VeriFactu KMP.
 
-The project is currently in specification and repository-structure setup. Code contribution instructions will become more concrete once the Gradle KMP project exists.
+The Gradle Kotlin Multiplatform workspace is available. This project is still pre-release and must not be used for production fiscal compliance.
 
 ## Language
 
@@ -19,26 +19,31 @@ Official Spanish VERI*FACTU terms may remain where they map directly to AEAT pro
 
 ## Local Development
 
-Until the Gradle project is created, documentation changes can be reviewed with:
+Use JDK 21, Android SDK platform 36, and the checked-in Gradle Wrapper. Point `ANDROID_HOME` or the gitignored `local.properties` `sdk.dir` to the SDK. Apple checks need macOS, Xcode, and an installed iOS arm64 simulator runtime. JVM publications target Java 11.
 
-```bash
-git diff --check
-```
-
-Once the Gradle project exists, contributors should be able to run:
+Run the standard local gate before opening a pull request:
 
 ```bash
 ./gradlew check
 ```
 
-Expected future checks:
+For a focused JVM/Android iteration, run `./gradlew jvmTest testDebugUnitTest ktlintCheck detekt apiCheck`. On a Mac, run `./gradlew compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test` for the advertised Apple targets. Configured Intel Apple targets are experimental and may require additional SDK/runtime support for the aggregate `check` task.
 
-- Kotlin compilation for supported KMP targets;
-- formatting/linting;
-- static analysis;
-- tests;
-- coverage;
-- Dokka documentation build.
+Use `./gradlew dokkaHtml` to generate API documentation. Dokka is configured in offline mode. Add `--offline` to Gradle commands when dependencies are cached; normal tests and examples never require AEAT or real certificates.
+
+Run `./gradlew :samples:offline:runKotlinSample :samples:offline:runJavaSample` for the canonical compiled examples. Local artifact verification uses `./gradlew publishJvmPreview` followed by `./gradlew -p samples/maven-consumer run`. See [publishing](docs/publishing.md).
+
+The CI workflow also runs:
+
+- `ktlintCheck` for Kotlin formatting;
+- `detekt` for static analysis without a baseline;
+- `apiCheck` for reviewed public JVM/Android API signatures;
+- `koverVerifyJvm` for the 90% line-coverage gate in `verifactu-core`;
+- `dokkaHtml` for generated API documentation.
+
+The remaining modules publish JVM Kover reports without pretending that target-specific coverage is equivalent to JVM coverage.
+
+For an intentional public API change, inspect the generated diff from `./gradlew apiDump`, commit the reviewed baselines, and rerun `apiCheck`. Do not refresh baselines merely to hide an accidental incompatible change. API stability before the first release is still under development.
 
 ## Compliance-Sensitive Changes
 
@@ -80,6 +85,8 @@ Pull requests should:
 - avoid committing secrets, certificates, private keys, or production credentials.
 
 ## Release Changes
+
+No external release workflow is enabled yet. Publishing credentials and signing are separate from local development. Official releases must be built by CI from reviewed tags after the platform checks and compliance baseline are verified.
 
 Release-related changes must preserve:
 

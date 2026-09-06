@@ -370,6 +370,17 @@ Check:
 - `docs/compliance/README.md` - traceability rules and initial matrix.
 - `docs/error-handling.md` - validation, submission outcome, unknown delivery, and diagnostics expectations.
 
+## Project Task Tracking
+
+The authoritative implementation backlog for this repository is the Notion data source **Zorka Accounting - Tasks**:
+
+- Database: https://app.notion.com/p/3bd4f302230980d3bb72ffbd0068aa8b
+- Data source: `collection://3bd4f302-2309-8053-8a55-000b43accb58`
+- Project property: `Verifactu`
+- Milestones: `VF0 Foundation`, `VF1 Domain Core`, `VF2 XML QR and Protocol Artifacts`, `VF3 AEAT Submission Runtime`, `VF4 End-to-End Integration`, `VF5 OSS Release Hardening`
+
+Update a task to `To verify` only after its acceptance criteria are implemented and its relevant non-mocked checks pass. Do not mark a task `Done` without external verification.
+
 ---
 
 ## Dependencies and Tooling

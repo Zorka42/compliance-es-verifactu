@@ -16,6 +16,7 @@ The host application must own:
 - retry scheduling;
 - user warnings while records remain pending;
 - certificate and private-key storage;
+- providing opaque certificate handles to platform transport adapters; VeriFactu KMP neither reads certificate bytes nor owns key-store paths or passwords;
 - final invoice rendering;
 - QR placement;
 - operational security;
@@ -24,7 +25,7 @@ The host application must own:
 
 ## Library Responsibilities
 
-The library should provide:
+The current library provides building blocks for:
 
 - typed fiscal models;
 - deterministic fiscal-record creation;
@@ -36,6 +37,8 @@ The library should provide:
 - AEAT request/response modeling;
 - transport adapters where supported;
 - test utilities for downstream integrations.
+
+Production workflow orchestration, complete fiscal validation, response reconciliation, and source-backed retry/correction semantics are still pending. See [implementation status](implementation-status.md) before selecting an integration scope.
 
 ## Concurrency Contract
 
