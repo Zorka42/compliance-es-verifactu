@@ -36,7 +36,7 @@ jobs:
           ./gradlew --no-daemon -p samples/maven-consumer run
       - name: Upload JVM coverage
         if: ${{ env.CODECOV_TOKEN != '' }}
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           files: verifactu-core/build/reports/kover/reportJvm.xml,verifactu-xml/build/reports/kover/reportJvm.xml,verifactu-qr/build/reports/kover/reportJvm.xml,verifactu-aeat/build/reports/kover/reportJvm.xml
           fail_ci_if_error: true
