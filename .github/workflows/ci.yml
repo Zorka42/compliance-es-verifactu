@@ -23,8 +23,15 @@ jobs:
         run: ./gradlew check compileKotlinMetadata jvmTest testDebugUnitTest apiCheck dokkaHtml koverXmlReportJvm koverVerifyJvm
       - name: Build local JVM publications
         run: ./gradlew publishJvmPreview
-      - name: Verify an independent Java consumer against published artifacts
-        run: ./gradlew -p samples/maven-consumer run
+      - name: Select Java 11 for the independent consumer
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+      - name: Verify published artifacts on a Java 11 runtime
+        run: |
+          java -version
+          ./gradlew --no-daemon -p samples/maven-consumer run
       - name: Upload JVM coverage
         uses: codecov/codecov-action@v5
         with:

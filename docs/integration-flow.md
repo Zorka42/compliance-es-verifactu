@@ -1,13 +1,13 @@
 # Integration Flow
 
-The [shared executable example](../samples/offline/src/commonMain/kotlin/dev/verifactu/sample/OfflineExampleResult.kt) demonstrates the current local pipeline. It is sample application code, not the pending production workflow facade.
+The [shared executable example](../samples/offline/src/commonMain/kotlin/dev/verifactu/sample/OfflineExampleResult.kt) demonstrates the current local pipeline. It composes the pure preparation facade with explicit, application-owned attempt handling.
 
 ## Registration
 
 1. The host finalizes invoice business input and acquires its per-chain lock.
 2. It reads the current chain head and supplies an explicit generation timestamp and SIF metadata.
-3. `FiscalRecordFactory.createRegistration` returns either typed structural issues or a record/hash and next head.
-4. The host creates the XML and QR artifacts, then atomically persists the invoice, original fiscal record, and next head under its durability policy.
+3. `FiscalSubmissionPreparation.prepareRegistration` returns typed structural issues or the record/hash, next head and XML/QR/SOAP artifacts.
+4. The host atomically persists the invoice, original fiscal record, exact prepared request and next head under its durability policy.
 5. The host renders the invoice and separately queues delivery. It releases its concurrency guard only after committing the new head.
 
 The sample uses an in-memory value to illustrate persistence ownership. A real integration needs durable storage and recovery. The library neither writes data nor starts a worker.
@@ -18,14 +18,14 @@ Pass the invoice reference to `RegistroAnulacionDraft` with the current chain he
 
 ## Offline submission example
 
-The sample serializes one record per batch, passes the batch document to `FakeAeatTransport`, and uses `AeatResponseParser.parseSubmission` on its synthetic XML response. It retains the response wait value for the host to inspect and never sleeps.
+The sample passes prepared SOAP to `FakeAeatTransport`, parses its schema-checked synthetic response and correlates every returned invoice/operation before inspecting acceptance. The attempt interpreter distinguishes local preflight failure, ambiguous delivery, HTTP failures, SOAP faults, malformed/mismatched responses and unknown states. It preserves flow control without sleeping.
 
 The Java sample demonstrates the same production creation/XML/QR APIs with static calls and explicit getters. The independent Java consumer verifies local published JARs and their transitive dependencies.
 
 ## Production submission remains pending
 
-The low-level batch serializer is not the validated submission builder. A production integration still needs taxpayer/count validation with typed failures, SOAP request construction, complete response correlation, delivery-state distinctions, flow-control semantics, and source-backed retry/correction handling.
+The validated builder, preparation facade, typed delivery states and response correlation are implemented. Production integration still requires complete conditional fiscal models, source-backed incidence/correction policies, host persistence/recovery, real transport verification and release hardening.
 
-Transport errors and timeout results currently cannot prove whether delivery occurred. A duplicate response is not unconditional acceptance. Preserve the original record and raw response under an explicit diagnostics policy; do not automatically generate a new record or roll back the chain on delivery failure. See [error handling](error-handling.md).
+`NOT_SENT` only represents known local failures; timeouts and send I/O failures remain `UNKNOWN`. A duplicate is not unconditional acceptance. Preserve the original record and response under an explicit diagnostics policy; do not generate a new record or roll back the chain on delivery failure. The sample tests manually reuse exactly the same prepared request. See [error handling](error-handling.md) and the [remaining plan](release-plan.md).
 
-The next workflow/orchestration APIs must preserve an explicit boundary between creating/persisting artifacts and sending them. No storage, queue, certificate vault, or automatic retry scheduler belongs inside the library.
+No storage, queue, certificate vault or automatic retry scheduler belongs inside the library.

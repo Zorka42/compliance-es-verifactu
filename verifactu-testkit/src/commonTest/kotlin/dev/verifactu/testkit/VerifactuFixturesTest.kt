@@ -53,8 +53,28 @@ class VerifactuFixturesTest {
             val response = AeatResponseFixtures.response(scenario)
             val parsed = assertIs<AeatResponseParseResult.Parsed>(AeatResponseParser.parseSubmission(response.xml)).response
             assertEquals(expected[index], parsed.lines.single().status)
+            assertEquals(
+                "SAMPLE-001",
+                parsed.lines
+                    .single()
+                    .invoice
+                    ?.number,
+            )
+            assertEquals(
+                dev.verifactu.aeat.AeatOperationType.REGISTRATION,
+                parsed.lines
+                    .single()
+                    .operation
+                    ?.type,
+            )
             assertEquals(if (scenario == AeatResponseScenario.FLOW_CONTROL) 60 else 0, parsed.retryAfterSeconds)
             if (scenario == AeatResponseScenario.DUPLICATE) assertEquals("TEST-REQUEST", parsed.lines.single().duplicateRequestId)
+            if (scenario == AeatResponseScenario.REJECTED || scenario == AeatResponseScenario.DUPLICATE) {
+                assertEquals(null, parsed.csv)
+            }
+            if (scenario == AeatResponseScenario.ACCEPTED_WITH_ERRORS) {
+                assertEquals(dev.verifactu.aeat.AeatSubmissionStatus.PARTIALLY_ACCEPTED, parsed.status)
+            }
         }
         assertIs<SoapFaultParseResult.Parsed>(AeatResponseParser.parseSoapFault(AeatResponseFixtures.soapFault().xml))
     }

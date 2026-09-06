@@ -1,0 +1,11 @@
+# Archived Public Contracts
+
+This directory preserves public BOE, AEAT and W3C inputs used by implementation, validation and tests. [manifest.tsv](manifest.tsv) records source URLs, retrieval dates and SHA-256 hashes. Original AEAT downloads are byte-for-byte copies; original notices and examples remain in their files. Their publication here does not imply AEAT endorsement or certification. Project-authored Kotlin/XML fixtures remain in module test sources and are explicitly synthetic.
+
+The 2026-09-06 snapshot includes submission/query XSDs, the WSDL, the machine-readable error catalogue, service specification v1.0.3, validation specification v1.2.2, declaration examples v0.5.1, consolidated BOE texts and the declaration FAQ. The XML Signature schema was carried forward from the 2026-08-16 test baseline. The older `verifactu-xml/src/jvmTest/resources/aeat-xsd/SuministroInformacion.xsd` is a documented derivative that changes only the XML Signature import to a local filename; its digest is not the original AEAT download's digest.
+
+JVM batch/response tests and the offline query tool preload schema documents by namespace and disable external DTD/schema access. Namespace URLs and WSDL addresses are identifiers and archived data, never requests made by these tests. The query tool packages only the XSDs needed at runtime. Original PDFs, WSDL and error text stay available as source evidence and are not interpreted as executable configuration.
+
+`InvoiceQueryTest.everyArchivedContractMatchesItsRecordedDigest` verifies every manifest entry from repository resources during `:tools:query:jvmTest` (also part of `check`). The submission testkit validates its scenarios against the archived response XSD. The query fixtures cover issued/received records, sparse cancellation and continuation pages. Unknown response state/error values remain inspectable; archiving a catalogue does not mean every listed business rule has been implemented.
+
+When updating a contract, keep its original bytes, update the manifest deliberately, review the semantic diff, update [traceability](../docs/compliance/README.md), and add or revise deterministic tests. Do not download sources during ordinary builds, validation or tests. Before release, review the mutable upstream versions explicitly.

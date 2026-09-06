@@ -2,7 +2,9 @@ package dev.verifactu.core
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 class FiscalRecordFactoryTest {
     @Test
@@ -124,6 +126,121 @@ class FiscalRecordFactoryTest {
                 .single()
                 .code,
         )
+    }
+
+    @Test
+    fun snapshotsTheTaxBreakdownBeforeReturningACreatedRecord() {
+        val draft = registrationDraft()
+        val details = draft.taxBreakdown.details.toMutableList()
+        val created =
+            assertIs<RecordCreationResult.Created<RegistroAlta>>(
+                FiscalRecordFactory.createRegistration(draft.copy(taxBreakdown = TaxBreakdown(details))),
+            )
+
+        details.clear()
+
+        assertEquals(draft.taxBreakdown.details, created.record.draft.taxBreakdown.details)
+        assertTrue(RegistroAltaValidator.validate(created.record.draft).isValid)
+    }
+
+    @Test
+    fun rejectsMutationThroughTheCreatedRecordList() {
+        val draft = registrationDraft()
+        val original = List(2) { draft.taxBreakdown.details.single() }
+        val record =
+            assertIs<RecordCreationResult.Created<RegistroAlta>>(
+                FiscalRecordFactory.createRegistration(draft.copy(taxBreakdown = TaxBreakdown(original))),
+            ).record
+        val details = record.draft.taxBreakdown.details
+
+        val clearFailure = assertFails { (details as MutableList<TaxBreakdownDetail>).clear() }
+        val setFailure = assertFails { (details as MutableList<TaxBreakdownDetail>)[0] = original[0].copy(taxRate = "99") }
+
+        assertTrue(clearFailure is ClassCastException || clearFailure is UnsupportedOperationException)
+        assertTrue(setFailure is ClassCastException || setFailure is UnsupportedOperationException)
+        assertEquals(original, details)
+    }
+
+    @Test
+    fun validatesTheLengthOfTheUntrimmedTextThatWillBeSerialized() {
+        val draft = registrationDraft()
+        val invalid =
+            assertIs<RecordCreationResult.Invalid>(
+                FiscalRecordFactory.createRegistration(
+                    draft.copy(
+                        issuerName = " ${"A".repeat(120)} ",
+                        operationDescription = " ${"A".repeat(500)} ",
+                        system = draft.system.copy(systemIdentifier = " VF "),
+                    ),
+                ),
+            )
+
+        assertEquals(
+            listOf("system.systemIdentifier", "issuerName", "operationDescription"),
+            invalid.report.issues.map { it.fieldPath },
+        )
+        assertTrue(invalid.report.issues.all { it.code == "VF-RECORD-001" })
+    }
+
+    @Test
+    fun acceptsSchemaLengthBoundariesForSupplementaryUnicodeCharacters() {
+        val draft = registrationDraft()
+        assertIs<RecordCreationResult.Created<RegistroAlta>>(
+            FiscalRecordFactory.createRegistration(
+                draft.copy(issuerName = "\uD83D\uDE00".repeat(120)),
+            ),
+        )
+    }
+
+    @Test
+    fun rejectsNonXmlCharactersInRecordAndSystemTextWithFieldPaths() {
+        val draft = registrationDraft()
+        val invalid =
+            assertIs<RecordCreationResult.Invalid>(
+                FiscalRecordFactory.createRegistration(
+                    draft.copy(
+                        issuerName = "Issuer\u0000",
+                        operationDescription = "Operation\uD800",
+                        system = draft.system.copy(producerName = "Producer\uDC00", version = "1\uFFFF"),
+                    ),
+                ),
+            )
+
+        assertEquals(
+            listOf("system.producerName", "system.version", "issuerName", "operationDescription"),
+            invalid.report.issues.map { it.fieldPath },
+        )
+        assertTrue(invalid.report.issues.all { it.code == "VF-RECORD-006" && it.source?.document == "W3C XML 1.0" })
+    }
+
+    @Test
+    fun checksRegimeCodesAgainstThePinnedSchemaEnumeration() {
+        val draft = registrationDraft()
+        val detail = draft.taxBreakdown.details.single()
+        listOf("00", "12", "13", "16", "22", "99", "1", "01 ").forEach { regime ->
+            val invalid =
+                assertIs<RecordCreationResult.Invalid>(
+                    FiscalRecordFactory.createRegistration(
+                        draft.copy(taxBreakdown = TaxBreakdown(listOf(detail.copy(regimeCode = regime)))),
+                    ),
+                    regime,
+                )
+            assertEquals(
+                "VF-RECORD-003",
+                invalid.report.issues
+                    .single()
+                    .code,
+            )
+        }
+        listOf("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "17", "18", "19", "20", "21")
+            .forEach { regime ->
+                assertIs<RecordCreationResult.Created<RegistroAlta>>(
+                    FiscalRecordFactory.createRegistration(
+                        draft.copy(taxBreakdown = TaxBreakdown(listOf(detail.copy(regimeCode = regime)))),
+                    ),
+                    regime,
+                )
+            }
     }
 
     private fun registrationDraft(chainState: ChainState = ChainState.FirstRecord): RegistroAltaDraft =

@@ -72,3 +72,13 @@ Each release should record exact versions for:
 ## Non-Normative Sources
 
 Third-party libraries, vendor documents, blog posts, and examples may be useful for engineering comparisons, but they must not define compliance behavior.
+
+## Archived Snapshot, 2026-09-06
+
+The original batch/common/submission-response/query schemas, WSDL, `errores.properties`, service specification v1.0.3 (2025-07-28), and validation specification v1.2.2 (2026-04-08) are now checked in under [`schemas-aeat`](../../schemas-aeat/README.md). The archive also includes the BOE/declaration sources used by the unsigned component guidance. [`manifest.tsv`](../../schemas-aeat/manifest.tsv) is the authoritative inventory of original bytes, source URL, retrieval date and SHA-256 for this snapshot; tests verify its entries without downloading them.
+
+The original common schema digest is `ee4c1655175644de44c4c25055ffeb8e5f4bb4bc3834ce8254d4222ef18c8aa1`. The older `34ef72b3f5ba2c6c5cd2d9a7c3b5b7b226b59d754e569c5c74a04d1c27762989` identifies the existing adapted test copy: only the XML Signature import location was replaced with a local filename. These are different provenance records, not a fiscal schema change.
+
+The review also uses [XML 1.0 Fifth Edition §2.2/2.11](https://www.w3.org/TR/REC-xml/) and [XML Schema Part 2 (2004), §3.2.7 and §4.3](https://www.w3.org/TR/2004/REC-xmlschema-2-20041028/) for character, timestamp, whitespace and length semantics. The runtime String parser's UTF-8 and resource limits are library engineering boundaries.
+
+This snapshot does not certify that every archived rule is implemented or that every release prerequisite has been revalidated. Public static sources were accessed; operational AEAT services and personal certificates were not.

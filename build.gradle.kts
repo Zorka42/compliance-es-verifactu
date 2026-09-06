@@ -34,7 +34,7 @@ tasks.register("publishJvmPreview") {
 }
 
 subprojects {
-    if (name == "samples") return@subprojects
+    if (name == "samples" || name == "tools") return@subprojects
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     apply(plugin = "io.gitlab.arturbosch.detekt")
     apply(plugin = "org.jetbrains.dokka")
@@ -109,6 +109,7 @@ subprojects {
             "src/commonMain/kotlin",
             "src/commonTest/kotlin",
             "src/jvmMain/kotlin",
+            "src/jvmAndAndroidMain/kotlin",
             "src/jvmTest/kotlin",
             "src/androidMain/kotlin",
             "src/androidUnitTest/kotlin",

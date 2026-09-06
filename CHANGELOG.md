@@ -12,7 +12,10 @@ This project follows Semantic Versioning.
 - Contribution, acknowledgement, changelog, and security documents.
 - Five Gradle Kotlin Multiplatform modules with explicit APIs, lint/static-analysis gates, API baselines, coverage, and Dokka.
 - Structural fiscal value/record validation, registration/cancellation hashing and chain-state outputs, deterministic XML and QR payloads.
-- Minimal AEAT response/fault extraction, endpoint metadata, JVM transport, and Android adapter boundary.
+- Namespace-aware AEAT response/fault parsing, preserved identities/operations/duplicates/unknown states, typed flow control and pure response correlation.
+- Validated batch/SOAP preparation and a pure record/XML/QR preparation facade.
+- Local issued/received invoice query CLI, archived public contracts with digest checks, and unsigned component declaration guidance.
+- Endpoint metadata, JVM transport and Android adapter boundary.
 - Apple adapter injection boundary with shared iOS/macOS tests; no built-in credential access.
 - Synthetic KMP testkit with record/XML/QR fixtures, response scenarios, and scripted transport.
 - Executable Kotlin registration/cancellation flow and Java consumer, plus a separate build consuming local published JVM artifacts.
@@ -26,12 +29,14 @@ This project follows Semantic Versioning.
 
 ### Fixed
 
-- Response extraction now uses a common-compatible multiline regex instead of a platform-specific option that broke KMP metadata compilation.
+- Replaced regex response extraction with bounded platform XML readers; reject unsafe XML and preserve every identifiable response line.
+- Validate timestamp calendar/offsets, exact Unicode field lengths, XML characters and schema regime codes; snapshot factory inputs and preserve CR in XML.
+- Redact diagnostic summaries, classify not-sent versus unknown delivery, and gate sample acceptance on matching response identities/operations.
 - Dokka tasks are marked incompatible with Gradle configuration cache so their documentation/publication builds can complete.
 - JVM schema tests preload vendored schemas and disable external resolution, removing an implicit W3C DTD dependency without changing the pinned schema files.
 
 ### Notes
 
 - No Maven Central release exists. Local previews are unsigned and not production-ready.
-- Full batch validation, SOAP orchestration, delivery uncertainty, duplicate reconciliation, incident/correction semantics, and signed release automation remain pending.
+- Conditional fiscal fields, incidence/correction policy, real AEAT/mTLS verification, app-specific integration and signed release automation remain pending.
 - The repository is not production-ready for VERI*FACTU compliance.
