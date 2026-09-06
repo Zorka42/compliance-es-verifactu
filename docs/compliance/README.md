@@ -60,3 +60,24 @@ The Apple adapter boundary, synthetic testkit, Java entry points, offline consum
 No AEAT endpoint, website, or certificate was used for this work. The listed remote source versions were not refreshed. The response/batch schemas, WSDL, and error catalogue still need to be vendored and reviewed before new submission/correction semantics or an external release. See [implementation status](../implementation-status.md).
 
 JVM schema tests now preload both vendored schemas and disable external DTD/schema access, avoiding the W3C DTD reference in the XML Signature schema. The vendored bytes and existing digest are unchanged. `FixtureSchemaTest` also validates the new synthetic registration and cancellation XML locally; this is structural schema evidence only.
+
+## Review, Query and Preparation Work, 2026-09-06
+
+The following additions use the original public contract snapshot in [`schemas-aeat`](../../schemas-aeat/README.md), with exact source URLs and SHA-256 in its manifest. Static documentation downloads did not involve authenticated portals, SOAP calls or personal certificates.
+
+| Requirement / engineering invariant | Source and exact section/type | Implementation | Evidence |
+| --- | --- | --- | --- |
+| Batch order, 1–1000 records and header | `SuministroLR.xsd/RegFactuSistemaFacturacion`; `SuministroInformacion.xsd/CabeceraType` | `SubmissionBatchBuilder` | Common boundary/mismatch/hash tests; `AeatSchemaValidationTest` batch XSD and SOAP Body checks |
+| SOAP 1.1 document/literal | `SistemaFacturacion.wsdl`, `soap:binding`, operation/body definitions | Batch builder and query tool | Parsed SOAP Body matches the archived operation XSD |
+| Timestamp and exact Unicode/XML text | Common XSD `FechaHoraHusoGenRegistro`, `TextMax*Type`, `TextoIDFacturaType`; W3C XML Schema 1.0 Part 2 §3.2.7.1/3.2.7.3 and §4.3.1/4.3.3; XML 1.0 Fifth Edition §2.2 | `FiscalValues`, record validators | Calendar/offset, surrogate, Unicode-length and record schema tests; documented JAXP length-facet limitation |
+| Preserve CR through XML parsing | XML 1.0 Fifth Edition §2.11 | Record/batch escaping (`&#13;`) | XML → DOM → hash-input regression |
+| Regime enum membership | Common XSD `IdOperacionesTrascendenciaTributariaType` | Tax-breakdown validation | Allowed and disallowed regime fixtures |
+| Response identity, operation, current/duplicate states | `RespuestaSuministro.xsd/RespuestaExpedidaType`; common XSD `OperacionType`, `RegistroDuplicadoType`, `EstadoRegistroSFType` | `AeatResponseParser`, `AeatResponseCorrelation` | Shared parser/correlation fixtures on supported targets; schema-checked testkit responses |
+| Partial acceptance and no new receipt for rejected submissions | Service specification v1.0.3 §3, pp.10–11; response XSD `RespuestaBaseType` | Synthetic fixtures and sample interpretation | Warning-only aggregate and rejected/duplicate CSV assertions |
+| Wait representation | Common XSD `Tipo6Type`; response XSD `TiempoEsperaEnvio` | `AeatFlowControl.Known/Unknown` | Zero, bounded numeric, missing, invalid and future wait tests; no scheduling inference |
+| Query role, period, paging, stored states | `ConsultaLR.xsd`, `RespuestaConsultaLR.xsd`; service specification v1.0.3 §6.4/11 | `tools:query` | Issued/received XSD requests, saved response fixtures, continuation and inconsistent/unsafe XML checks |
+| Query authorization boundaries | Archived `errores.properties` codes 4132, 4140, 4112, 1261, 1272 | [Access guidance](query-access.md) | Document/source review only; no authentication claim |
+| Component declaration responsibilities | RD 1007/2023 art.13; Orden HAC/1177/2024 art.15.1–4; declaration FAQ/example v0.5.1 | [Guide](declaration-guide.md), [unsigned worksheet](declaration-template.md) | Unsigned documentation only; producer review remains required |
+| Factory output snapshots, supplied-hash checks, delivery uncertainty and redaction | Library engineering invariants, not extra XSD or legal obligations | Record factory, batch/facade, transport results and diagnostics | Mutation/Java getter tests, deterministic replay, typed preflight/failure and redaction tests |
+
+The runtime parser deliberately preserves unknown protocol values rather than claiming full schema validation. Response matching does not imply acceptance. The error catalogue is archived as evidence; a complete incidence/subsanación mapping is still open. Core conditional fiscal fields and live interoperability remain unfinished; see [release plan](../release-plan.md).

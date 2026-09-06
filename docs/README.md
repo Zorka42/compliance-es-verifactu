@@ -20,6 +20,11 @@ The README stays short. Product scope, integration details, and compliance expla
 - [JVM transport integration](jvm-mtls-testing.md)
 - [Local Maven publishing](publishing.md)
 - [Implementation status and local backlog report](implementation-status.md)
+- [Offline issued/received invoice query tool](../tools/query/README.md)
+- [Query scope, access and testing plan](compliance/query-access.md)
+- [Archived public contracts](../schemas-aeat/README.md)
+- [Component declaration guidance](compliance/declaration-guide.md)
+- [Unsigned declaration worksheet](compliance/declaration-template.md)
 - [Compliance sources](compliance/sources.md)
 - [Compliance traceability](compliance/README.md)
 
