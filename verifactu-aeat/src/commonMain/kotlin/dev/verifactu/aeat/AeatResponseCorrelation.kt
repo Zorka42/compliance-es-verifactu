@@ -14,6 +14,7 @@ public enum class AeatCorrelationIssueCode {
     MISSING_RESPONSE_IDENTITY,
     UNSUPPORTED_OPERATION,
     UNSUPPORTED_OPERATION_FLAGS,
+    OPERATION_FLAGS_MISMATCH,
 }
 
 /** Stable issue code and zero-based positions without embedding fiscal identifiers or remote text. */
@@ -50,8 +51,8 @@ public sealed interface AeatResponseCorrelationResult {
  *
  * This does not infer acceptance, interpret error codes, validate record hashes, or decide retries.
  * Repeated invoice-plus-operation keys are ambiguous. An alta and anulacion for the same invoice
- * are distinct. The current submitted record models do not represent affirmative correction flags,
- * so responses with those flags or unknown flag text cannot be matched to these models.
+ * are distinct. Registration correction flags must match the submitted conditional data;
+ * unknown flag text and cancellation flags not represented by the submitted model cannot match.
  */
 public object AeatResponseCorrelation {
     /** Matches the complete response while retaining every original response state. */
@@ -60,7 +61,8 @@ public object AeatResponseCorrelation {
         submitted: List<SubmissionRecord>,
         response: AeatSubmissionResponse,
     ): AeatResponseCorrelationResult {
-        val expected = submitted.toList().map { it.correlationKey() }
+        val records = submitted.toList()
+        val expected = records.map { it.correlationKey() }
         val lines = response.lines.toList()
         val issues = mutableListOf<AeatCorrelationIssue>()
         if (expected.isEmpty()) issues.add(AeatCorrelationIssue(AeatCorrelationIssueCode.EMPTY_SUBMISSION))
@@ -87,6 +89,19 @@ public object AeatResponseCorrelation {
         }
         if (issues.isNotEmpty()) return AeatResponseCorrelationResult.Mismatch(issues.toList())
         val indices = actual.withIndex().associate { it.value to it.index }
+        expected.forEachIndexed { submittedIndex, key ->
+            val responseIndex = indices.getValue(key)
+            if (records[submittedIndex].operationFlags() != lines[responseIndex].operation?.operationFlags()) {
+                issues.add(
+                    AeatCorrelationIssue(
+                        AeatCorrelationIssueCode.OPERATION_FLAGS_MISMATCH,
+                        submittedIndex = submittedIndex,
+                        responseIndex = responseIndex,
+                    ),
+                )
+            }
+        }
+        if (issues.isNotEmpty()) return AeatResponseCorrelationResult.Mismatch(issues.toList())
         return AeatResponseCorrelationResult.Matched(expected.map { lines[indices.getValue(it)] })
     }
 }
@@ -106,7 +121,10 @@ private fun responseKey(
         issues.add(AeatCorrelationIssue(AeatCorrelationIssueCode.UNSUPPORTED_OPERATION, responseIndex = index))
         return null
     }
-    if (listOf(operation.subsanacion, operation.rechazoPrevio, operation.sinRegistroPrevio).any { it != null && it != "N" }) {
+    if (operation.subsanacion !in listOf(null, "N", "S") ||
+        operation.rechazoPrevio !in listOf(null, "N", "S", "X") ||
+        operation.sinRegistroPrevio !in listOf(null, "N", "S")
+    ) {
         issues.add(AeatCorrelationIssue(AeatCorrelationIssueCode.UNSUPPORTED_OPERATION_FLAGS, responseIndex = index))
     }
     return CorrelationKey(invoice, operation.type)
@@ -120,6 +138,22 @@ private fun SubmissionRecord.correlationKey(): CorrelationKey =
 
 private fun InvoiceIdentifier.responseReference(): AeatInvoiceReference = AeatInvoiceReference(issuer.value, number.value, issueDate.value)
 
+private fun SubmissionRecord.operationFlags(): OperationFlags =
+    when (this) {
+        is SubmissionRecord.Registration ->
+            OperationFlags(
+                value.draft.conditionalData.subsanation
+                    ?.xmlValue ?: "N",
+                value.draft.conditionalData.previousRejection
+                    ?.xmlValue ?: "N",
+                "N",
+            )
+        is SubmissionRecord.Cancellation -> OperationFlags("N", "N", "N")
+    }
+
+private fun AeatResponseOperation.operationFlags(): OperationFlags =
+    OperationFlags(subsanacion ?: "N", rechazoPrevio ?: "N", sinRegistroPrevio ?: "N")
+
 private fun AeatOperationType.protocolValue(): String? =
     when (this) {
         AeatOperationType.REGISTRATION -> "Alta"
@@ -130,4 +164,10 @@ private fun AeatOperationType.protocolValue(): String? =
 private data class CorrelationKey(
     val invoice: AeatInvoiceReference,
     val operation: AeatOperationType,
+)
+
+private data class OperationFlags(
+    val subsanation: String,
+    val previousRejection: String,
+    val withoutPreviousRecord: String,
 )

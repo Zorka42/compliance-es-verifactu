@@ -18,6 +18,7 @@ import dev.verifactu.xml.SubmissionBatchBuildResult
 import dev.verifactu.xml.SubmissionBatchBuilder
 import dev.verifactu.xml.SubmissionHeader
 import dev.verifactu.xml.SubmissionRecord
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 /** Local outcome of preparing a registration record and its associated artifacts. */
@@ -27,16 +28,20 @@ public sealed interface RegistrationPreparationResult {
      * The XML strings and QR contain fiscal data; diagnostics redact this result.
      * Preparation alone does not persist a record or establish delivery to AEAT.
      */
-    public data class Prepared(
-        public val record: RegistroAlta,
-        public val nextChainState: ChainState.PreviousRecord,
-        public val recordXml: String,
-        public val qr: QrPayload,
-        public val batchXml: String,
-        public val soapEnvelope: String,
-    ) : RegistrationPreparationResult {
-        override fun toString(): String = "RegistrationPreparationResult.Prepared(<redacted>)"
-    }
+    public data class Prepared
+        @JvmOverloads
+        constructor(
+            public val record: RegistroAlta,
+            public val nextChainState: ChainState.PreviousRecord,
+            public val recordXml: String,
+            public val qr: QrPayload,
+            public val batchXml: String,
+            public val soapEnvelope: String,
+            /** Local record-validation evidence, with paths relative to the supplied draft. */
+            public val report: ValidationReport = ValidationReport(emptyList()),
+        ) : RegistrationPreparationResult {
+            override fun toString(): String = "RegistrationPreparationResult.Prepared(<redacted>)"
+        }
 
     /** Structured issues returned by record, QR, or batch validation. */
     public data class Invalid(
@@ -50,15 +55,19 @@ public sealed interface CancellationPreparationResult {
      * A cancellation record snapshot, its caller-owned next chain state, and exact XML artifacts.
      * Cancellation does not remove the original invoice. Diagnostics redact this result.
      */
-    public data class Prepared(
-        public val record: RegistroAnulacion,
-        public val nextChainState: ChainState.PreviousRecord,
-        public val recordXml: String,
-        public val batchXml: String,
-        public val soapEnvelope: String,
-    ) : CancellationPreparationResult {
-        override fun toString(): String = "CancellationPreparationResult.Prepared(<redacted>)"
-    }
+    public data class Prepared
+        @JvmOverloads
+        constructor(
+            public val record: RegistroAnulacion,
+            public val nextChainState: ChainState.PreviousRecord,
+            public val recordXml: String,
+            public val batchXml: String,
+            public val soapEnvelope: String,
+            /** Local record-validation evidence, with paths relative to the supplied draft. */
+            public val report: ValidationReport = ValidationReport(emptyList()),
+        ) : CancellationPreparationResult {
+            override fun toString(): String = "CancellationPreparationResult.Prepared(<redacted>)"
+        }
 
     /** Structured issues returned by record or batch validation. */
     public data class Invalid(
@@ -112,6 +121,7 @@ public object FiscalSubmissionPreparation {
             qr,
             batch.xml,
             batch.soapEnvelope,
+            created.report,
         )
     }
 
@@ -137,6 +147,7 @@ public object FiscalSubmissionPreparation {
             RegistroXmlSerializer.serialize(created.record),
             batch.xml,
             batch.soapEnvelope,
+            created.report,
         )
     }
 

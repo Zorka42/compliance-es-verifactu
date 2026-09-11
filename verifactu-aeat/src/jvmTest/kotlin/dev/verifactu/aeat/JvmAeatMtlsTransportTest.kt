@@ -12,7 +12,10 @@ import java.nio.file.Path
 import java.security.KeyStore
 import java.security.SecureRandom
 import java.time.Duration
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicReference
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
@@ -21,19 +24,20 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class JvmAeatMtlsTransportTest {
     @Test
     fun sendsToALocalMtlsServerWithDisposableClientIdentityAndSoapContentType() =
         withLoopbackMtlsServer { server ->
             val payload = "<soap:Envelope>local-only</soap:Envelope>"
-            var receivedPayload: String? = null
-            var receivedContentType: String? = null
-            var peerPrincipal: String? = null
+            val receivedPayload = AtomicReference<String>()
+            val receivedContentType = AtomicReference<String>()
+            val peerPrincipal = AtomicReference<String>()
             server.handler = { exchange ->
-                receivedPayload = exchange.requestBody.use { it.readBytes().toString(StandardCharsets.UTF_8) }
-                receivedContentType = exchange.requestHeaders.getFirst("Content-Type")
-                peerPrincipal = exchange.sslSession.peerPrincipal.name
+                receivedPayload.set(exchange.requestBody.use { it.readBytes().toString(StandardCharsets.UTF_8) })
+                receivedContentType.set(exchange.requestHeaders.getFirst("Content-Type"))
+                peerPrincipal.set(exchange.sslSession.peerPrincipal.name)
                 exchange.respond("text/xml; charset=UTF-8", "<Respuesta/>")
             }
             server.start()
@@ -44,28 +48,40 @@ class JvmAeatMtlsTransportTest {
             assertEquals(200, response.statusCode)
             assertEquals("<Respuesta/>", response.xml)
             assertEquals(AeatDeliveryState.RESPONSE_RECEIVED, result.deliveryState)
-            assertEquals(payload, receivedPayload)
-            assertEquals("text/xml; charset=UTF-8", receivedContentType)
-            assertEquals("CN=verifactu-loopback-client", assertNotNull(peerPrincipal))
+            assertEquals(payload, receivedPayload.get())
+            assertEquals("text/xml; charset=UTF-8", receivedContentType.get())
+            assertEquals("CN=verifactu-loopback-client", assertNotNull(peerPrincipal.get()))
         }
 
     @Test
     fun boundsALocalResponseWithoutTreatingItsReceiptAsFiscalAcceptance() =
         withLoopbackMtlsServer { server ->
+            val releaseBody = CountDownLatch(1)
             server.handler = { exchange ->
                 exchange.requestBody.close()
-                exchange.respond("text/xml", "x".repeat(33))
+                exchange.responseHeaders.set("Content-Type", "text/xml")
+                exchange.sendResponseHeaders(200, 1_000)
+                exchange.responseBody.write("x".repeat(33).toByteArray(StandardCharsets.UTF_8))
+                exchange.responseBody.flush()
+                try {
+                    releaseBody.await(10, TimeUnit.SECONDS)
+                } finally {
+                    exchange.close()
+                }
             }
             server.start()
+            try {
+                val result = server.transport(timeout = Duration.ofSeconds(2), maxResponseBytes = 32).submit(server.endpoint(), "<local/>")
 
-            val result = server.transport(timeout = Duration.ofSeconds(2), maxResponseBytes = 32).submit(server.endpoint(), "<local/>")
-
-            val tooLarge = assertIs<AeatTransportResult.ResponseTooLarge>(result)
-            assertEquals(200, tooLarge.statusCode)
-            assertEquals("text/xml", tooLarge.contentType)
-            assertEquals(32, tooLarge.maxBodyBytes)
-            assertEquals(AeatDeliveryState.RESPONSE_RECEIVED, tooLarge.deliveryState)
-            assertFalse(tooLarge.toString().contains("xxxxxxxx"))
+                val tooLarge = assertIs<AeatTransportResult.ResponseTooLarge>(result)
+                assertEquals(200, tooLarge.statusCode)
+                assertEquals("text/xml", tooLarge.contentType)
+                assertEquals(32, tooLarge.maxBodyBytes)
+                assertEquals(AeatDeliveryState.RESPONSE_RECEIVED, tooLarge.deliveryState)
+                assertFalse(tooLarge.toString().contains("xxxxxxxx"))
+            } finally {
+                releaseBody.countDown()
+            }
         }
 
     @Test
@@ -81,6 +97,36 @@ class JvmAeatMtlsTransportTest {
 
             assertIs<AeatTransportResult.Timeout>(result)
             assertEquals(AeatDeliveryState.UNKNOWN, result.deliveryState)
+        }
+
+    @Test
+    fun enforcesTheDeadlineAfterHeadersAndAPartialResponseBodyHaveArrived() =
+        withLoopbackMtlsServer { server ->
+            val bodyStarted = CountDownLatch(1)
+            val releaseBody = CountDownLatch(1)
+            server.handler = { exchange ->
+                exchange.requestBody.use { it.readBytes() }
+                exchange.responseHeaders.set("Content-Type", "text/xml; charset=UTF-8")
+                exchange.sendResponseHeaders(200, 64)
+                exchange.responseBody.write('<'.code)
+                exchange.responseBody.flush()
+                bodyStarted.countDown()
+                try {
+                    releaseBody.await(10, TimeUnit.SECONDS)
+                } finally {
+                    exchange.close()
+                }
+            }
+            server.start()
+            try {
+                val result = server.transport(timeout = Duration.ofSeconds(2)).submit(server.endpoint(), "<local/>")
+
+                assertTrue(bodyStarted.await(1, TimeUnit.SECONDS), "The timeout must occur after response body delivery started.")
+                assertIs<AeatTransportResult.Timeout>(result)
+                assertEquals(AeatDeliveryState.UNKNOWN, result.deliveryState)
+            } finally {
+                releaseBody.countDown()
+            }
         }
 
     @Test

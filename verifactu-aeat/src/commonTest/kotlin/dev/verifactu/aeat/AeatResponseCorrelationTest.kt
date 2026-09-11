@@ -11,11 +11,14 @@ import dev.verifactu.core.Qualification
 import dev.verifactu.core.RecordCreationResult
 import dev.verifactu.core.RecordGenerationTimestamp
 import dev.verifactu.core.RecordVersion
+import dev.verifactu.core.RegistrationConditionalData
+import dev.verifactu.core.RegistrationPreviousRejection
 import dev.verifactu.core.RegistroAlta
 import dev.verifactu.core.RegistroAltaDraft
 import dev.verifactu.core.RegistroAnulacion
 import dev.verifactu.core.RegistroAnulacionDraft
 import dev.verifactu.core.SistemaInformatico
+import dev.verifactu.core.Subsanation
 import dev.verifactu.core.TaxBreakdown
 import dev.verifactu.core.TaxBreakdownDetail
 import dev.verifactu.core.TaxIdentifier
@@ -122,7 +125,7 @@ class AeatResponseCorrelationTest {
     }
 
     @Test
-    fun rejectsAffirmativeAndUnknownFlagsThatSubmittedModelsCannotRepresent() {
+    fun rejectsMismatchedAndUnknownFlagsWithoutInferringAcceptance() {
         val record = registration("S-1")
         val original = line("S-1")
         val operation = original.operation!!
@@ -131,16 +134,20 @@ class AeatResponseCorrelationTest {
                 operation.copy(subsanacion = "S"),
                 operation.copy(rechazoPrevio = "S"),
                 operation.copy(sinRegistroPrevio = "S"),
-                operation.copy(subsanacion = "Future"),
             )
         unsupported.forEach {
             assertTrue(
                 mismatch(listOf(record), listOf(original.copy(operation = it))).issues.any { issue ->
                     issue.code ==
-                        AeatCorrelationIssueCode.UNSUPPORTED_OPERATION_FLAGS
+                        AeatCorrelationIssueCode.OPERATION_FLAGS_MISMATCH
                 },
             )
         }
+        assertTrue(
+            mismatch(listOf(record), listOf(original.copy(operation = operation.copy(subsanacion = "Future")))).issues.any {
+                it.code == AeatCorrelationIssueCode.UNSUPPORTED_OPERATION_FLAGS
+            },
+        )
         assertIs<AeatResponseCorrelationResult.Matched>(
             AeatResponseCorrelation.correlate(
                 listOf(record),
@@ -154,6 +161,23 @@ class AeatResponseCorrelationTest {
                 it.code == AeatCorrelationIssueCode.UNSUPPORTED_OPERATION
             },
         )
+    }
+
+    @Test
+    fun matchesSubmittedSubsanationAndPriorRejectionFlagsAndRejectsMissingOrContradictoryEchoes() {
+        listOf(null, RegistrationPreviousRejection.YES, RegistrationPreviousRejection.NOT_PRESENT_AT_AEAT).forEach { previous ->
+            val conditional = RegistrationConditionalData(subsanation = Subsanation.YES, previousRejection = previous)
+            val record = registration("S-1", conditional)
+            val correct =
+                line("S-1").copy(
+                    operation = AeatResponseOperation(AeatOperationType.REGISTRATION, "Alta", "S", previous?.xmlValue),
+                )
+            assertIs<AeatResponseCorrelationResult.Matched>(AeatResponseCorrelation.correlate(listOf(record), response(listOf(correct))))
+            val mismatch = mismatch(listOf(record), listOf(line("S-1")))
+            assertEquals(AeatCorrelationIssueCode.OPERATION_FLAGS_MISMATCH, mismatch.issues.single().code)
+            assertEquals(0, mismatch.issues.single().submittedIndex)
+            assertEquals(0, mismatch.issues.single().responseIndex)
+        }
     }
 
     @Test
@@ -196,7 +220,10 @@ class AeatResponseCorrelationTest {
             rawStatus = "Correcto",
         )
 
-    private fun registration(number: String): SubmissionRecord.Registration {
+    private fun registration(
+        number: String,
+        conditionalData: RegistrationConditionalData = RegistrationConditionalData(),
+    ): SubmissionRecord.Registration {
         val invoice = invoice(number)
         val draft =
             RegistroAltaDraft(
@@ -222,6 +249,7 @@ class AeatResponseCorrelationTest {
                 ChainState.FirstRecord,
                 system(invoice.issuer),
                 value(RecordGenerationTimestamp.parse("2024-01-01T12:00:00+01:00")),
+                conditionalData,
             )
         return SubmissionRecord.Registration(
             assertIs<RecordCreationResult.Created<RegistroAlta>>(FiscalRecordFactory.createRegistration(draft)).record,
