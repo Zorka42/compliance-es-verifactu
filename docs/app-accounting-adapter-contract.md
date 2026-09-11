@@ -22,9 +22,17 @@ The sample maps an application-owned `AppAccountingFinalizedRegistration` to `Re
 
 Successful preparation retains its `report`, including local warnings, and the sample persists it as `validationReport`. The host must inspect warnings and unresolved context before choosing delivery. A prepared record is not a promise that every AEAT rule was checked or that the response will be accepted.
 
-## Remaining application data gaps
+## Real application implementation
 
-The app-accounting checkout at commit `1d54f4f` was inspected locally on 2026-09-11. Its `SalesInvoice` has a final invoice number, seller/customer snapshots, decimal monetary totals and tax lines. `InvoiceIssueWorkflow.issueDraft` allocates the number and sets `Issued`/`PendingSubmission` inside a `RecordTransaction`. Neither file wires a fiscal chain or saved SOAP attempt into that transaction. The sample here verifies the boundary contract; it does not claim that the application's real database already implements it.
+ZA-116 now implements this boundary in app-accounting commit `9ac803e57311e40d1c556c4b69c5458684910a67`. `SqlDelightVerifactuInvoiceIssue` calls the real invoice workflow inside the shared SQLite transaction. An opt-in local source profile provides vendor adapters while the library is unpublished; the ordinary app build remains independent of that artifact. The database stores the immutable fiscal event, head, exact SOAP bytes, warning report and durable attempts, with unique event/invoice constraints and head comparison.
+
+The app supplies fiscal tax/gross totals and signed withholding explicitly because its normal payable totals may already subtract withholding. The adapter verifies the host accounting identities instead of inferring tax treatment from line labels. Ten real SQLite tests cover rollback, reopening, migration, stale candidates, duplicate events, warnings, withholding and explicit saved-byte replay. The [candidate evidence](release-candidates/0.1.0-rc.1.md) records the full checks.
+
+The existing desktop issue action still needs complete fiscal configuration, integration with its annual numbering flow and activation of this entry point. Persisted HTTP/XML responses remain uncorrelated evidence; acceptance/reconciliation policy is a separate follow-up. No UI or certificate behavior is enabled by this backend alone.
+
+## Original baseline and remaining application data gaps
+
+The pre-integration app-accounting checkout at commit `1d54f4f` was inspected locally on 2026-09-11. Its `SalesInvoice` has a final invoice number, seller/customer snapshots, decimal monetary totals and tax lines. `InvoiceIssueWorkflow.issueDraft` allocated the number and set `Issued`/`PendingSubmission` inside a `RecordTransaction`, without fiscal persistence. ZA-116 adds the implementation above; the library sample remains a separate boundary-contract example.
 
 An integrating product must explicitly supply and validate:
 

@@ -21,6 +21,15 @@ Add `--offline` when dependencies are cached. The first command creates the five
 
 For a full set of local platform publications on a configured Mac, use `publishAllPublicationsToLocalPreviewRepository`. That also requires the configured native/Android toolchains; a JVM preview alone does not verify every platform artifact.
 
+To rehearse a candidate version locally without a tag, credentials, signing or upload:
+
+```bash
+./gradlew --offline -PreleaseVersion=0.1.0-rc.1 publishAllPublicationsToLocalPreviewRepository
+./gradlew --offline -p samples/maven-consumer -PverifactuVersion=0.1.0-rc.1 run
+```
+
+The version override only labels local artifacts. Record the exact source commit and checks alongside the candidate evidence before considering an external release. A local candidate does not reserve that version in Central or establish publication readiness.
+
 Java consumers can use this dependency after installing a matching local preview repository, or replace the version after a real release:
 
 ```xml

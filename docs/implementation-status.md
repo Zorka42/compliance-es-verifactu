@@ -2,7 +2,17 @@
 
 Local assessment updated 2026-09-11; earlier implementation batches are recorded below. **External acceptance and release remain open.** The authoritative backlog remains [Zorka Accounting – Tasks](https://app.notion.com/p/3bd4f302230980d3bb72ffbd0068aa8b), project `Verifactu`.
 
-## Five-Task Acceptance Review — 2026-09-11
+## Offline validation and candidate preparation — 2026-09-11
+
+ZA-113 adds exact charged-tax/sign/tolerance checks, the F2 limit and warning-only total consistency. ZA-114 introduces explicit AEAT receipt-date context through factory, batch and facade APIs while retaining unknown history/census boundaries. ZA-115 adds source-backed fiscal identifier validation without narrowing the low-level XML value parsers. The known zero-rate surcharge discrepancy, entity/K/L/M checksum gap and special VAT-country mapping assumptions remain visible in reports and documentation.
+
+The real app-accounting integration is developed separately under ZA-116, using its SQLite transaction and an explicitly enabled local VeriFactu source profile. It does not activate the existing desktop issue action without fiscal configuration. ZA-117 prepares a local candidate and independent Java consumption; it does not publish to Central. Current evidence and remaining work are in [the release plan](release-plan.md).
+
+All fifteen previously archived public contracts were [refreshed without byte changes](compliance/source-refresh-2026-09-11.md). Additional BOE identifier sources and an explicitly marked Interior checksum fact snapshot are preserved with digests.
+
+The [0.1.0-rc.1 local candidate evidence](release-candidates/0.1.0-rc.1.md) records exact implementation commits, 662 library test executions, coverage, all-platform local artifacts, independent Java consumption and real application SQLite checks. It also records the remaining activation and external-release gates.
+
+## Previous five-task acceptance review — 2026-09-11
 
 The worktree was advanced from `8339528` to the existing `main` commit `51e2321` before reviewing ZA-106–110. Existing `To verify` labels were checked against code and acceptance criteria; they did not establish correctness. Review found invalid conditional XML ordering, mutable conditional lists, a UTF-16 length regression, incorrect correction-response matching, context-free error classification and a response-body timeout gap.
 
@@ -85,7 +95,7 @@ Dokka 2.0 V1 tasks remain incompatible with configuration cache. Their successfu
 
 ## Remaining Plan
 
-See [the complete release and testing plan](release-plan.md) for the ordered work, required credentials and evidence at each stage. The remaining offline priorities are exact arithmetic checks, source-backed identifier semantics, explicit context for externally dependent rules, and the real app's durable integration. Existing constructors are intentionally low-level; local validation is not a complete AEAT or legal compliance decision.
+See [the complete release and testing plan](release-plan.md) for the ordered work, required credentials and evidence at each stage. The next offline priorities are application fiscal configuration/activation, durable receipt correlation, remaining source ambiguities, and broader parser/API regression coverage. Existing constructors are intentionally low-level; local validation is not a complete AEAT or legal compliance decision.
 
 Loopback transport checks use fresh disposable test identities. Real AEAT test calls, actual issued/received history and personal certificates require the separate operational discussion requested by the owner. The query utility prepares requests and inspects saved responses locally; it has not retrieved this taxpayer's invoices.
 

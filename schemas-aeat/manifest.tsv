@@ -1,4 +1,7 @@
 file	sha256	retrieved	source_url
+BOE-A-2007-15984-consolidado.pdf	e9746915ecfa5ef7ad4b800a047daf33c7d7aabc9fc381c32c8db919ea6996b3	2026-09-11	https://www.boe.es/buscar/pdf/2007/BOE-A-2007-15984-consolidado.pdf
+BOE-A-2008-3580-consolidado.pdf	bc127e6e40da40d64d617b526f9e13400162498e5a8ce24ff5698bfaf4b14493	2026-09-11	https://www.boe.es/buscar/pdf/2008/BOE-A-2008-3580-consolidado.pdf
+interior-nif-nie-checksum.json	b8a6216df42858d104386acc493ffa3789f8c71df09084248f130c1b56de14f4	2026-09-11	https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/dni/calculo-del-digito-de-control-del-nif-nie/
 BOE-A-2023-24840-consolidado.pdf	34418589f3c5684cbb5aa55cf208d08de96e81bb216623c14db51f3da5b9731f	2026-09-06	https://www.boe.es/buscar/pdf/2023/BOE-A-2023-24840-consolidado.pdf
 BOE-A-2024-22138-consolidado.pdf	a0090109d56c29c1f1d9be42df5fecc5d7b2384605dd2b2af549236ff5bcc5de	2026-09-06	https://www.boe.es/buscar/pdf/2024/BOE-A-2024-22138-consolidado.pdf
 ConsultaLR.xsd	bf2cdb8fc4b95b291757a72b76d8fffca06a6d30d9329122ca2fd6b2d5f8f1b1	2026-09-06	https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/ConsultaLR.xsd

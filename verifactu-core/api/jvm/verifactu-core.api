@@ -95,6 +95,13 @@ public final class dev/verifactu/core/FiscalAmount$Companion {
 	public final fun parse (Ljava/lang/String;)Ldev/verifactu/core/ValueResult;
 }
 
+public final class dev/verifactu/core/FiscalIdentifierValidator {
+	public static final field INSTANCE Ldev/verifactu/core/FiscalIdentifierValidator;
+	public static final fun validateInvoiceNumber (Ldev/verifactu/core/InvoiceNumber;)Ldev/verifactu/core/ValidationReport;
+	public static final fun validatePartyIdentifier (Ldev/verifactu/core/FiscalPartyIdentifier;Ldev/verifactu/core/InvoiceIssueDate;)Ldev/verifactu/core/ValidationReport;
+	public static final fun validateTaxIdentifier (Ldev/verifactu/core/TaxIdentifier;)Ldev/verifactu/core/ValidationReport;
+}
+
 public final class dev/verifactu/core/FiscalParty {
 	public fun <init> (Ljava/lang/String;Ldev/verifactu/core/FiscalPartyIdentifier;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -141,6 +148,8 @@ public final class dev/verifactu/core/FiscalRecordFactory {
 	public static final field INSTANCE Ldev/verifactu/core/FiscalRecordFactory;
 	public static final fun createCancellation (Ldev/verifactu/core/RegistroAnulacionDraft;)Ldev/verifactu/core/RecordCreationResult;
 	public static final fun createRegistration (Ldev/verifactu/core/RegistroAltaDraft;)Ldev/verifactu/core/RecordCreationResult;
+	public static final fun createRegistration (Ldev/verifactu/core/RegistroAltaDraft;Ldev/verifactu/core/ValidationContext;)Ldev/verifactu/core/RecordCreationResult;
+	public static synthetic fun createRegistration$default (Ldev/verifactu/core/RegistroAltaDraft;Ldev/verifactu/core/ValidationContext;ILjava/lang/Object;)Ldev/verifactu/core/RecordCreationResult;
 }
 
 public final class dev/verifactu/core/InvoiceGeneratedBy : java/lang/Enum {
@@ -480,6 +489,7 @@ public final class dev/verifactu/core/RegistroAltaDraft {
 public final class dev/verifactu/core/RegistroAltaValidator : dev/verifactu/core/Validator {
 	public static final field INSTANCE Ldev/verifactu/core/RegistroAltaValidator;
 	public fun validate (Ldev/verifactu/core/RegistroAltaDraft;)Ldev/verifactu/core/ValidationReport;
+	public static final fun validate (Ldev/verifactu/core/RegistroAltaDraft;Ldev/verifactu/core/ValidationContext;)Ldev/verifactu/core/ValidationReport;
 	public synthetic fun validate (Ljava/lang/Object;)Ldev/verifactu/core/ValidationReport;
 }
 
@@ -652,6 +662,19 @@ public final class dev/verifactu/core/TaxType : java/lang/Enum {
 	public final fun getXmlValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/core/TaxType;
 	public static fun values ()[Ldev/verifactu/core/TaxType;
+}
+
+public final class dev/verifactu/core/ValidationContext {
+	public fun <init> ()V
+	public fun <init> (Ldev/verifactu/core/InvoiceIssueDate;)V
+	public synthetic fun <init> (Ldev/verifactu/core/InvoiceIssueDate;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ldev/verifactu/core/InvoiceIssueDate;
+	public final fun copy (Ldev/verifactu/core/InvoiceIssueDate;)Ldev/verifactu/core/ValidationContext;
+	public static synthetic fun copy$default (Ldev/verifactu/core/ValidationContext;Ldev/verifactu/core/InvoiceIssueDate;ILjava/lang/Object;)Ldev/verifactu/core/ValidationContext;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAeatReceiptDate ()Ldev/verifactu/core/InvoiceIssueDate;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class dev/verifactu/core/ValidationIssue {

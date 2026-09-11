@@ -253,7 +253,19 @@ class AeatSchemaValidationTest {
                 system = SistemaInformatico("Producer", taxId, "VeriFactu", "VF", "1.0", "install-1", true, false, false),
                 generatedAt = (RecordGenerationTimestamp.parse(timestamp) as ValueResult.Valid).value,
             )
-        return assertIs<RecordCreationResult.Created<RegistroAlta>>(FiscalRecordFactory.createRegistration(draft)).record
+        // Raw XML/hash fixtures intentionally include schema-compatible identifiers outside the service profile.
+        val hashInput =
+            RegistrationHashInput(
+                draft.invoice.issuer.value,
+                draft.invoice.number.value,
+                draft.invoice.issueDate.value,
+                draft.invoiceType.name,
+                draft.totalTax.value,
+                draft.totalAmount.value,
+                null,
+                draft.generatedAt.value,
+            )
+        return RegistroAlta(draft, RecordHashCalculator.sha256(hashInput.canonicalString()))
     }
 
     private fun schema(includeBatch: Boolean = false): javax.xml.validation.Schema {

@@ -19,6 +19,7 @@ import dev.verifactu.aeat.FiscalSubmissionPreparation;
 import dev.verifactu.aeat.RegistrationPreparationResult;
 import dev.verifactu.core.ChainState;
 import dev.verifactu.core.FiscalAmount;
+import dev.verifactu.core.FiscalIdentifierValidator;
 import dev.verifactu.core.FiscalParty;
 import dev.verifactu.core.FiscalPartyIdentifier;
 import dev.verifactu.core.InvoiceIdentifier;
@@ -38,6 +39,7 @@ import dev.verifactu.core.TaxIdentifier;
 import dev.verifactu.core.TaxOperation;
 import dev.verifactu.core.TaxType;
 import dev.verifactu.core.ValueResult;
+import dev.verifactu.core.ValidationContext;
 import dev.verifactu.qr.QrEnvironment;
 import dev.verifactu.testkit.AeatResponseFixtures;
 import dev.verifactu.testkit.AeatResponseScenario;
@@ -60,7 +62,7 @@ public final class JavaExample {
             TaxType.IVA, "01", "21", null, value(FiscalAmount.parse("21.00")), null, null
         );
         FiscalParty recipient = new FiscalParty(
-            "Synthetic Java recipient", new FiscalPartyIdentifier.SpanishNif(value(TaxIdentifier.parse("89890002Q")))
+            "Synthetic Java recipient", new FiscalPartyIdentifier.SpanishNif(value(TaxIdentifier.parse("89890002E")))
         );
         List<FiscalParty> recipients = new ArrayList<>(List.of(recipient));
         RegistroAltaDraft draft = new RegistroAltaDraft(
@@ -74,6 +76,14 @@ public final class JavaExample {
             )
         );
         RegistrationPreparationResult result = FiscalSubmissionPreparation.prepareRegistration(draft, QrEnvironment.TEST);
+        RegistrationPreparationResult withContext = FiscalSubmissionPreparation.prepareRegistration(
+            draft, QrEnvironment.TEST, new ValidationContext(value(InvoiceIssueDate.parse("01-01-2027")))
+        );
+        if (!(withContext instanceof RegistrationPreparationResult.Prepared)
+                || !FiscalIdentifierValidator.validateTaxIdentifier(issuer).isValid()
+                || new ValidationContext().getAeatReceiptDate() != null) {
+            throw new IllegalStateException("Java identifier or explicit-context entry points failed");
+        }
         if (!(result instanceof RegistrationPreparationResult.Prepared)) {
             throw new IllegalStateException("Synthetic Java draft failed local validation");
         }

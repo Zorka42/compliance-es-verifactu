@@ -2,7 +2,17 @@
 
 Assessment: 2026-09-11. This is a pre-release open-source Kotlin/Java library, not a complete SIF or an externally verified compliance claim. The authoritative backlog is [Zorka Accounting – Tasks](https://app.notion.com/p/3bd4f302230980d3bb72ffbd0068aa8b), project `Verifactu`. Current local evidence is recorded in [implementation status](implementation-status.md).
 
-## Finish Offline First
+## Implemented foundations and next work
+
+ZA-113–115 now implement the decimal checks, fiscal identifier formats and explicit receipt-date context described below. ZA-116 adds real SQLite persistence in an optional local app integration profile. ZA-117 rehearses local candidate publication and Java consumption. These changes require external verification before `Done`; none establishes AEAT acceptance or a Central release.
+
+The next offline tasks are:
+
+1. [Connect fiscal configuration to the real app issue action](https://app.notion.com/3d84f302230981f58c3dd5413adb6f58): supply complete fiscal inputs and connect the transactional entry point to the existing desktop flow.
+2. [Correlate durable receipts and expose reconciliation state](https://app.notion.com/3d84f302230981b89fa6fa234ca2eac2): interpret saved responses against saved identity/operation evidence, with restart tests.
+3. [Resolve remaining public-source gaps](https://app.notion.com/3d84f302230981109fadf80c8a0a74b6): zero-rate surcharge, special VAT-country pairs and unsupported checksum algorithms.
+4. [Expand the parser and API regression corpus](https://app.notion.com/3d84f3022309812c95dacc865eb5ba17): malformed inputs, resource limits, unknown protocol additions and Java/native compatibility evidence.
+5. Complete the release-owner inputs and agree on the separately authorized AEAT test stage described below. The offline issued/received query tool is ready for saved fixtures, but has not read this taxpayer's records.
 
 | Work | Outcome needed | Verification |
 | --- | --- | --- |
@@ -17,11 +27,11 @@ Assessment: 2026-09-11. This is a pre-release open-source Kotlin/Java library, n
 
 The executable preparation checklist is [release-readiness-checklist.md](release-readiness-checklist.md). It distinguishes completed offline evidence from the secrets, producer decision, source refresh, and first external release that must remain manually controlled.
 
-The five-task implementation adds conditional F1/F3/R1–R5 data, catalogue semantics, Unicode provider checks, loopback mTLS and a compile-tested application adapter contract. Public unchecked record constructors remain low-level APIs. Creating an object or passing local validation is not proof of complete fiscal compliance; arithmetic, identifier and context-dependent gaps above remain explicit.
+The library now combines conditional F1/F3/R1–R5 data, exact arithmetic, fiscal identifier validation, explicit receipt-date context, catalogue semantics, Unicode provider checks and loopback mTLS. Public unchecked record constructors remain low-level APIs. Passing local validation is not proof of complete fiscal compliance: source ambiguities, census/history evidence, application activation and service interoperability remain explicit.
 
 Core validation uses XML Schema character counts. JVM XSD and query tests probe the selected provider with a synthetic supplementary-character boundary and compare it to the archived AEAT schema. Providers counting UTF-16 units may conservatively reject valid supplementary text near a length boundary. No global JVM switch or truncation hides that difference. Android host and Apple common tests verify deterministic character semantics; these are not device XSD-provider or live AEAT validation claims. Check the intended runtime and, later, AEAT before release.
 
-In particular, supplementary invoice-number fixtures exercise the structural XSD/parser contract. The archived validation PDF v1.2.2 section 3.1.3.1 defines a narrower service character profile for `NumSerieFactura` (error 1130: printable ASCII except character codes 34, 39, 60, 61 and 62). Enforcing that business profile belongs to ZA-115; the current structural parser does not prove service acceptance. ZA-114 also records the unresolved zero-VAT/surcharge wording difference between PDF section 3.1.3.15.3 and `errores.properties` code 1170.
+Supplementary invoice-number fixtures exercise the low-level XSD/parser contract. Factory validation now enforces the narrower service profile in validation PDF v1.2.2 §3.1.3.1 (error 1130: printable ASCII except character codes 34, 39, 60, 61 and 62). The unchecked serializer still preserves structural XML text. The unresolved zero-VAT/surcharge difference between PDF §3.1.3.15.3 and `errores.properties` 1170 remains an explicit warning; receipt-date context cannot resolve that operation-date rule.
 
 ## Where Certificates or AEAT Are Needed
 

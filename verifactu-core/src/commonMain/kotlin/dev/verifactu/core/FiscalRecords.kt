@@ -197,7 +197,11 @@ public sealed interface RecordCreationResult<out T> {
 public object FiscalRecordFactory {
     /** Validates and creates a registration record. */
     @JvmStatic
-    public fun createRegistration(draft: RegistroAltaDraft): RecordCreationResult<RegistroAlta> {
+    @JvmOverloads
+    public fun createRegistration(
+        draft: RegistroAltaDraft,
+        context: ValidationContext = ValidationContext(),
+    ): RecordCreationResult<RegistroAlta> {
         val conditional = draft.conditionalData
         val snapshot =
             draft.copy(
@@ -212,7 +216,7 @@ public object FiscalRecordFactory {
                             },
                     ),
             )
-        val validated = RegistroAltaValidator.validate(snapshot)
+        val validated = RegistroAltaValidator.validate(snapshot, context)
         val report = validated.copy(issues = RecordListSnapshot(validated.issues))
         if (!report.isValid) return RecordCreationResult.Invalid(report)
         val hash =
@@ -266,12 +270,23 @@ private class RecordListSnapshot<T>(
 
 /** Local structural validation for `RegistroAlta` drafts. */
 public object RegistroAltaValidator : Validator<RegistroAltaDraft> {
-    override fun validate(value: RegistroAltaDraft): ValidationReport =
-        ValidationReport(
-            systemIssues(value.system) + requiredTextIssue("issuerName", value.issuerName, 120) +
-                requiredTextIssue("operationDescription", value.operationDescription, 500) +
-                taxBreakdownIssues(value) + registrationConditionalIssues(value) +
-                chainIssues(value.chainState),
+    override fun validate(value: RegistroAltaDraft): ValidationReport = validate(value, ValidationContext())
+
+    /** Validates with explicit caller-supplied external facts, without reading a clock or contacting AEAT. */
+    @JvmStatic
+    public fun validate(
+        value: RegistroAltaDraft,
+        context: ValidationContext,
+    ): ValidationReport =
+        applyValidationContext(
+            value,
+            ValidationReport(
+                systemIssues(value.system) + requiredTextIssue("issuerName", value.issuerName, 120) +
+                    requiredTextIssue("operationDescription", value.operationDescription, 500) +
+                    taxBreakdownIssues(value) + registrationConditionalIssues(value) + fiscalArithmeticIssues(value) +
+                    chainIssues(value.chainState) + registrationIdentifierIssues(value),
+            ),
+            context,
         )
 }
 
@@ -279,7 +294,7 @@ public object RegistroAltaValidator : Validator<RegistroAltaDraft> {
 public object RegistroAnulacionValidator : Validator<RegistroAnulacionDraft> {
     override fun validate(value: RegistroAnulacionDraft): ValidationReport =
         ValidationReport(
-            systemIssues(value.system) + chainIssues(value.chainState),
+            systemIssues(value.system) + chainIssues(value.chainState) + cancellationIdentifierIssues(value),
         )
 }
 

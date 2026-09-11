@@ -4,6 +4,8 @@ Use this checklist for one immutable release candidate. It is evidence for the l
 
 ## Offline Preparation
 
+The latest completed local rehearsal is [0.1.0-rc.1](release-candidates/0.1.0-rc.1.md), with artifact digests, target tests, Java consumption and real SQLite integration evidence. It is unsigned and has not been uploaded or tagged.
+
 - [x] Apache-2.0 license, acknowledgements, contributing, changelog, security guidance, and release governance are present.
 - [x] `main` requires Linux/JVM/Android, Apple, CodeQL, and static-analysis checks through a pull request; force-push and deletion are disabled.
 - [x] The KMP/API/coverage/sample gate and all-platform local Maven publication pass without AEAT access.

@@ -1,0 +1,20 @@
+{
+  "document": "Ministerio del Interior: Cálculo del Dígito de Control del NIF-NIE",
+  "source_url": "https://www.interior.gob.es/opencms/es/servicios-al-ciudadano/tramites-y-gestiones/dni/calculo-del-digito-de-control-del-nif-nie/",
+  "retrieved": "2026-09-11",
+  "snapshot_kind": "Extracted factual contract, not original HTML bytes",
+  "retrieval_note": "The public page was read through the web reader. Direct HTML retrieval returned HTTP 403. Only the complete checksum facts used by implementation and tests are transcribed here; page navigation is omitted.",
+  "nif_algorithm": {
+    "scope": "Spanish resident adults identified by DNI",
+    "operation": "Divide the numeric component by 23; use the remainder as the zero-based index in the letters table.",
+    "divisor": 23,
+    "letters_by_remainder": "TRWAGMYFPDXBNJZSQVHLCKE",
+    "published_example": { "number": "12345678", "remainder": 14, "letter": "Z", "identifier": "12345678Z" }
+  },
+  "nie_algorithm": {
+    "format": "Prefix X, Y or Z, followed by seven digits and the control letter",
+    "numeric_prefix": { "X": "0", "Y": "1", "Z": "2" },
+    "operation": "Replace the prefix with its numeric value, then apply the same remainder-23 algorithm."
+  },
+  "not_established_by_this_source": ["Entity NIF checksum", "K/L/M checksum", "AEAT or VIES census registration"]
+}

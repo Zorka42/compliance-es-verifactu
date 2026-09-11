@@ -6,6 +6,9 @@ This project follows Semantic Versioning.
 
 ### Added
 
+- Exact fiscal arithmetic checks for charged tax, simplified-invoice limits and total-consistency warnings, with archived-source boundary fixtures.
+- Explicit receipt-date context shared by record validation, creation and batch/submission preparation; existing Java overloads remain available.
+
 - Product requirements document for an Apache-2.0 VERI*FACTU Kotlin Multiplatform library.
 - Open-source repository requirements.
 - Initial developer documentation structure under `docs/`.

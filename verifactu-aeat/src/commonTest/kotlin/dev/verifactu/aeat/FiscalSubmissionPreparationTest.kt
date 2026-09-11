@@ -17,6 +17,8 @@ import dev.verifactu.core.TaxBreakdownDetail
 import dev.verifactu.core.TaxIdentifier
 import dev.verifactu.core.TaxOperation
 import dev.verifactu.core.TaxType
+import dev.verifactu.core.ValidationContext
+import dev.verifactu.core.ValidationSeverity
 import dev.verifactu.core.ValueResult
 import dev.verifactu.qr.QrEnvironment
 import dev.verifactu.xml.SubmissionBatchBuildResult
@@ -30,6 +32,61 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class FiscalSubmissionPreparationTest {
+    @Test
+    fun receiptDateContextSurvivesFactoryFacadeAndBatchRevalidation() {
+        val original = registrationDraft()
+        val draft =
+            original.copy(
+                taxBreakdown = TaxBreakdown(original.taxBreakdown.details.map { it.copy(tax = TaxType.IPSI, regimeCode = null) }),
+            )
+        val before = ValidationContext(assertIs<ValueResult.Valid<InvoiceIssueDate>>(InvoiceIssueDate.parse("31-12-2026")).value)
+        val after = ValidationContext(assertIs<ValueResult.Valid<InvoiceIssueDate>>(InvoiceIssueDate.parse("01-01-2027")).value)
+        val prepared =
+            assertIs<RegistrationPreparationResult.Prepared>(
+                FiscalSubmissionPreparation.prepareRegistration(draft, QrEnvironment.TEST, before),
+            )
+        assertEquals(
+            ValidationSeverity.WARNING,
+            prepared.report.issues
+                .single()
+                .severity,
+        )
+        val header = SubmissionHeader(draft.issuerName, draft.invoice.issuer)
+        val records = listOf(SubmissionRecord.Registration(prepared.record))
+        val earlyBatch = assertIs<SubmissionBatchBuildResult.Created>(FiscalSubmissionPreparation.prepareBatch(header, records, before))
+        assertEquals(
+            prepared.report.issues
+                .single()
+                .aeatCode,
+            earlyBatch.report.issues
+                .single()
+                .aeatCode,
+        )
+        assertEquals(
+            "records[0].draft.taxBreakdown.details[0].regimeCode",
+            earlyBatch.report.issues
+                .single()
+                .fieldPath,
+        )
+        val lateBatch = assertIs<SubmissionBatchBuildResult.Invalid>(FiscalSubmissionPreparation.prepareBatch(header, records, after))
+        assertEquals(
+            ValidationSeverity.ERROR,
+            lateBatch.report.issues
+                .single()
+                .severity,
+        )
+        val latePreparation =
+            assertIs<RegistrationPreparationResult.Invalid>(
+                FiscalSubmissionPreparation.prepareRegistration(draft, QrEnvironment.TEST, after),
+            )
+        assertEquals(
+            ValidationSeverity.ERROR,
+            latePreparation.report.issues
+                .single()
+                .severity,
+        )
+    }
+
     @Test
     fun preparesConsistentRegistrationHashXmlQrAndRequestArtifacts() {
         val prepared =
@@ -114,7 +171,7 @@ class FiscalSubmissionPreparationTest {
                 .fieldPath,
         )
 
-        val invalidQr =
+        val invalidInvoiceNumber =
             assertIs<RegistrationPreparationResult.Invalid>(
                 FiscalSubmissionPreparation.prepareRegistration(
                     draft.copy(invoice = draft.invoice.copy(number = value(InvoiceNumber.parse("SERIE-ñ")))),
@@ -122,14 +179,14 @@ class FiscalSubmissionPreparationTest {
                 ),
             )
         assertEquals(
-            "VF-QR-001",
-            invalidQr.report.issues
+            "1130",
+            invalidInvoiceNumber.report.issues
                 .single()
-                .code,
+                .aeatCode,
         )
         assertEquals(
             "invoice.number",
-            invalidQr.report.issues
+            invalidInvoiceNumber.report.issues
                 .single()
                 .fieldPath,
         )
