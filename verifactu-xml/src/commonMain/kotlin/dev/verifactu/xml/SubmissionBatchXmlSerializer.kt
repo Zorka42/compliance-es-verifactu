@@ -6,6 +6,7 @@ import dev.verifactu.core.RecordCreationResult
 import dev.verifactu.core.RegistroAlta
 import dev.verifactu.core.RegistroAnulacion
 import dev.verifactu.core.TaxIdentifier
+import dev.verifactu.core.ValidationContext
 import dev.verifactu.core.ValidationIssue
 import dev.verifactu.core.ValidationReport
 import dev.verifactu.core.ValidationSeverity
@@ -62,9 +63,11 @@ public sealed interface SubmissionBatchBuildResult {
 public object SubmissionBatchBuilder {
     /** Snapshots and validates [records], returning immutable validation evidence and prepared XML strings. */
     @JvmStatic
+    @JvmOverloads
     public fun build(
         header: SubmissionHeader,
         records: List<SubmissionRecord>,
+        context: ValidationContext = ValidationContext(),
     ): SubmissionBatchBuildResult {
         val input = records.toList()
         val issues = headerIssues(header).toMutableList()
@@ -74,7 +77,7 @@ public object SubmissionBatchBuilder {
         }
         val snapshots =
             input.mapIndexedNotNull { index, record ->
-                validateRecord(record, header.issuerTaxIdentifier, "records[$index]", issues)
+                validateRecord(record, header.issuerTaxIdentifier, "records[$index]", issues, context)
             }
         val report = ValidationReport(BatchIssueSnapshot(issues))
         if (!report.isValid) return SubmissionBatchBuildResult.Invalid(report)
@@ -133,13 +136,14 @@ private fun validateRecord(
     issuer: TaxIdentifier,
     path: String,
     issues: MutableList<ValidationIssue>,
+    context: ValidationContext,
 ): SubmissionRecord? =
     when (record) {
         is SubmissionRecord.Registration -> {
             if (record.value.draft.invoice.issuer != issuer) {
                 issues.add(batchIssue("VF-BATCH-003", "$path.draft.invoice.issuer", "The record issuer must match the batch header."))
             }
-            when (val result = FiscalRecordFactory.createRegistration(record.value.draft)) {
+            when (val result = FiscalRecordFactory.createRegistration(record.value.draft, context)) {
                 is RecordCreationResult.Invalid -> {
                     issues.addAll(result.report.issues.map { it.copy(fieldPath = "$path.draft.${it.fieldPath}") })
                     null

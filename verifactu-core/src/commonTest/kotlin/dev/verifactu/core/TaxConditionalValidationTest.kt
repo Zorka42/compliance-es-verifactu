@@ -68,6 +68,60 @@ class TaxConditionalValidationTest {
     }
 
     @Test
+    fun suppliedAeatReceiptDateDeterminesIpsiSeverityRegardlessOfGenerationTimestamp() {
+        val before = ValidationContext(date("31-12-2026"))
+        val after = ValidationContext(date("01-01-2027"))
+        listOf(null, "02").forEach { regime ->
+            listOf("2026-01-01T00:00:00+01:00", "2028-01-01T00:00:00+01:00").forEach { generated ->
+                val draft = draft(detail().copy(tax = TaxType.IPSI, regimeCode = regime)).copy(generatedAt = timestamp(generated))
+                val early = assertIs<RecordCreationResult.Created<RegistroAlta>>(FiscalRecordFactory.createRegistration(draft, before))
+                assertEquals(
+                    ValidationSeverity.WARNING,
+                    early.report.issues
+                        .single()
+                        .severity,
+                )
+                assertEquals(
+                    if (regime == null) "2009" else null,
+                    early.report.issues
+                        .single()
+                        .aeatCode,
+                )
+                val late = assertIs<RecordCreationResult.Invalid>(FiscalRecordFactory.createRegistration(draft, after))
+                assertEquals(
+                    ValidationSeverity.ERROR,
+                    late.report.issues
+                        .single()
+                        .severity,
+                )
+                assertEquals(
+                    if (regime == null) "1245" else "1246",
+                    late.report.issues
+                        .single()
+                        .aeatCode,
+                )
+                assertEquals(
+                    "taxBreakdown.details[0].regimeCode",
+                    late.report.issues
+                        .single()
+                        .fieldPath,
+                )
+                assertEquals(
+                    "1.2.2 (2026-04-08)",
+                    late.report.issues
+                        .single()
+                        .source
+                        ?.version,
+                )
+            }
+        }
+        val valid = draft(detail().copy(tax = TaxType.IPSI, regimeCode = "01"))
+        assertTrue(RegistroAltaValidator.validate(valid, after).issues.isEmpty())
+        val ordinary = draft(detail())
+        assertEquals(RegistroAltaValidator.validate(ordinary), RegistroAltaValidator.validate(ordinary, after))
+    }
+
+    @Test
     fun costBaseRequiresRegime06OrIpsiOrOtherTax() {
         listOf(null, TaxType.IVA, TaxType.IGIC).forEach { tax ->
             assertAeatIssue("1257", detail().copy(tax = tax, costBase = amount("80")), "costBase")
@@ -162,7 +216,7 @@ class TaxConditionalValidationTest {
     @Test
     fun ivaRatesUseExactDecimalsAndOperationDateIntervals() {
         listOf("0", "4", "10", "21", "021.00", "4.").forEach { rate ->
-            assertNoTaxIssues(detail().copy(taxRate = rate))
+            assertNoTaxIssues(detail().copy(taxRate = rate, chargedTax = amount(rate)))
         }
         listOf("1", "7", "7.51", "22", "999.99").forEach { rate ->
             assertAeatIssue("1124", detail().copy(taxRate = rate), "taxRate")
@@ -174,7 +228,9 @@ class TaxConditionalValidationTest {
                 Triple("7.50", "01-10-2024", "31-12-2024"),
             )
         windows.forEach { (rate, start, end) ->
-            listOf(start, end).forEach { date -> assertNoTaxIssues(draft(detail().copy(taxRate = rate)).withOperationDate(date)) }
+            listOf(start, end).forEach { date ->
+                assertNoTaxIssues(draft(detail().copy(taxRate = rate, chargedTax = amount(rate))).withOperationDate(date))
+            }
         }
         listOf(
             "5" to "30-06-2022",
@@ -187,12 +243,12 @@ class TaxConditionalValidationTest {
             val issues = RegistroAltaValidator.validate(draft(detail().copy(taxRate = rate)).withOperationDate(date)).issues
             assertTrue(issues.any { it.code == "VF-TAX-RATE-DATE" }, "$rate on $date")
         }
-        assertNoTaxIssues(detail().copy(tax = TaxType.IGIC, taxRate = "7"))
+        assertNoTaxIssues(detail().copy(tax = TaxType.IGIC, taxRate = "7", chargedTax = amount("7")))
     }
 
     @Test
     fun missingOperationDateFallsBackToIssueDateWithoutUsingGenerationTimestamp() {
-        val historic = draft(detail().copy(taxRate = "5")).copy(invoice = invoice("30-09-2024"))
+        val historic = draft(detail().copy(taxRate = "5", chargedTax = amount("5"))).copy(invoice = invoice("30-09-2024"))
         assertNoTaxIssues(historic)
         assertNoTaxIssues(historic.copy(generatedAt = timestamp("2030-01-01T00:00:00+01:00")))
         assertTrue(RegistroAltaValidator.validate(historic.withOperationDate("01-10-2024")).issues.any { it.code == "VF-TAX-RATE-DATE" })
@@ -229,7 +285,13 @@ class TaxConditionalValidationTest {
                 SurchargeCase("7.5", "1", "31-12-2024", "1169"),
             )
         cases.forEach { case ->
-            val original = detail().copy(taxRate = case.rate, equivalenceSurchargeRate = case.surcharge, equivalenceSurcharge = amount("0"))
+            val original =
+                detail().copy(
+                    taxRate = case.rate,
+                    chargedTax = amount(case.rate),
+                    equivalenceSurchargeRate = case.surcharge,
+                    equivalenceSurcharge = amount("0"),
+                )
             assertNoTaxIssues(draft(original).withOperationDate(case.date))
             val invalid = original.copy(equivalenceSurchargeRate = "0")
             assertTrue(
@@ -247,7 +309,13 @@ class TaxConditionalValidationTest {
 
     @Test
     fun zeroRateSurchargeDistinguishesTheDocumentedIntervalAndUnresolvedLaterRule() {
-        val zero = detail().copy(taxRate = "0", equivalenceSurchargeRate = "0", equivalenceSurcharge = amount("0"))
+        val zero =
+            detail().copy(
+                taxRate = "0",
+                chargedTax = amount("0"),
+                equivalenceSurchargeRate = "0",
+                equivalenceSurcharge = amount("0"),
+            )
         listOf("01-01-2023", "30-09-2024").forEach { date ->
             assertNoTaxIssues(draft(zero).withOperationDate(date))
             assertTrue(
@@ -261,7 +329,9 @@ class TaxConditionalValidationTest {
         listOf("0", "0.26").forEach { surcharge ->
             val report =
                 RegistroAltaValidator.validate(
-                    draft(zero.copy(equivalenceSurchargeRate = surcharge)).withOperationDate("01-10-2024"),
+                    draft(
+                        zero.copy(equivalenceSurchargeRate = surcharge),
+                    ).copy(totalTax = amount("0"), totalAmount = amount("100")).withOperationDate("01-10-2024"),
                 )
             val issue = report.issues.single()
             assertTrue(report.isValid)
@@ -321,7 +391,7 @@ class TaxConditionalValidationTest {
         assertNoTaxIssues(detail().copy(regimeCode = "11"))
         assertAeatIssue("1206", detail().copy(regimeCode = "11", taxRate = "10"), "taxRate")
         assertAeatIssue("1206", exempt(Exemption.E1).copy(regimeCode = "11"), "taxRate")
-        assertNoTaxIssues(detail().copy(tax = TaxType.IGIC, regimeCode = "11", taxRate = "7"))
+        assertNoTaxIssues(detail().copy(tax = TaxType.IGIC, regimeCode = "11", taxRate = "7", chargedTax = amount("7")))
     }
 
     @Test

@@ -38,6 +38,8 @@ public final class dev/verifactu/xml/SubmissionBatchBuildResult$Invalid : dev/ve
 public final class dev/verifactu/xml/SubmissionBatchBuilder {
 	public static final field INSTANCE Ldev/verifactu/xml/SubmissionBatchBuilder;
 	public static final fun build (Ldev/verifactu/xml/SubmissionHeader;Ljava/util/List;)Ldev/verifactu/xml/SubmissionBatchBuildResult;
+	public static final fun build (Ldev/verifactu/xml/SubmissionHeader;Ljava/util/List;Ldev/verifactu/core/ValidationContext;)Ldev/verifactu/xml/SubmissionBatchBuildResult;
+	public static synthetic fun build$default (Ldev/verifactu/xml/SubmissionHeader;Ljava/util/List;Ldev/verifactu/core/ValidationContext;ILjava/lang/Object;)Ldev/verifactu/xml/SubmissionBatchBuildResult;
 }
 
 public final class dev/verifactu/xml/SubmissionBatchXmlSerializer {

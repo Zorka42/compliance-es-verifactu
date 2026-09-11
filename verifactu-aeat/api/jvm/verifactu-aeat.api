@@ -629,8 +629,12 @@ public final class dev/verifactu/aeat/CancellationPreparationResult$Prepared : d
 public final class dev/verifactu/aeat/FiscalSubmissionPreparation {
 	public static final field INSTANCE Ldev/verifactu/aeat/FiscalSubmissionPreparation;
 	public static final fun prepareBatch (Ldev/verifactu/xml/SubmissionHeader;Ljava/util/List;)Ldev/verifactu/xml/SubmissionBatchBuildResult;
+	public static final fun prepareBatch (Ldev/verifactu/xml/SubmissionHeader;Ljava/util/List;Ldev/verifactu/core/ValidationContext;)Ldev/verifactu/xml/SubmissionBatchBuildResult;
+	public static synthetic fun prepareBatch$default (Ldev/verifactu/xml/SubmissionHeader;Ljava/util/List;Ldev/verifactu/core/ValidationContext;ILjava/lang/Object;)Ldev/verifactu/xml/SubmissionBatchBuildResult;
 	public static final fun prepareCancellation (Ldev/verifactu/core/RegistroAnulacionDraft;Ldev/verifactu/xml/SubmissionHeader;)Ldev/verifactu/aeat/CancellationPreparationResult;
 	public static final fun prepareRegistration (Ldev/verifactu/core/RegistroAltaDraft;Ldev/verifactu/qr/QrEnvironment;)Ldev/verifactu/aeat/RegistrationPreparationResult;
+	public static final fun prepareRegistration (Ldev/verifactu/core/RegistroAltaDraft;Ldev/verifactu/qr/QrEnvironment;Ldev/verifactu/core/ValidationContext;)Ldev/verifactu/aeat/RegistrationPreparationResult;
+	public static synthetic fun prepareRegistration$default (Ldev/verifactu/core/RegistroAltaDraft;Ldev/verifactu/qr/QrEnvironment;Ldev/verifactu/core/ValidationContext;ILjava/lang/Object;)Ldev/verifactu/aeat/RegistrationPreparationResult;
 }
 
 public final class dev/verifactu/aeat/JvmAeatMtlsCredential : dev/verifactu/aeat/AeatClientCredential {

@@ -7,6 +7,7 @@ import dev.verifactu.core.RegistroAlta
 import dev.verifactu.core.RegistroAltaDraft
 import dev.verifactu.core.RegistroAnulacion
 import dev.verifactu.core.RegistroAnulacionDraft
+import dev.verifactu.core.ValidationContext
 import dev.verifactu.core.ValidationReport
 import dev.verifactu.qr.QrEnvironment
 import dev.verifactu.qr.QrPayload
@@ -88,12 +89,14 @@ public sealed interface CancellationPreparationResult {
 public object FiscalSubmissionPreparation {
     /** Prepares a registration, deriving its batch header from the validated issuer data. */
     @JvmStatic
+    @JvmOverloads
     public fun prepareRegistration(
         draft: RegistroAltaDraft,
         qrEnvironment: QrEnvironment,
+        context: ValidationContext = ValidationContext(),
     ): RegistrationPreparationResult {
         val created =
-            when (val result = FiscalRecordFactory.createRegistration(draft)) {
+            when (val result = FiscalRecordFactory.createRegistration(draft, context)) {
                 is RecordCreationResult.Created -> result
                 is RecordCreationResult.Invalid -> return RegistrationPreparationResult.Invalid(result.report)
             }
@@ -109,6 +112,7 @@ public object FiscalSubmissionPreparation {
                     SubmissionBatchBuilder.build(
                         SubmissionHeader(snapshot.issuerName, snapshot.invoice.issuer),
                         listOf(SubmissionRecord.Registration(created.record)),
+                        context,
                     )
             ) {
                 is SubmissionBatchBuildResult.Created -> result
@@ -153,8 +157,10 @@ public object FiscalSubmissionPreparation {
 
     /** Prepares an ordered batch of existing records without advancing or regenerating a chain. */
     @JvmStatic
+    @JvmOverloads
     public fun prepareBatch(
         header: SubmissionHeader,
         records: List<SubmissionRecord>,
-    ): SubmissionBatchBuildResult = SubmissionBatchBuilder.build(header, records)
+        context: ValidationContext = ValidationContext(),
+    ): SubmissionBatchBuildResult = SubmissionBatchBuilder.build(header, records, context)
 }

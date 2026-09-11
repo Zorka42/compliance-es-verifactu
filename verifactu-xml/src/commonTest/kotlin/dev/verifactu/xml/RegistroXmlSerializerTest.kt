@@ -89,7 +89,6 @@ class RegistroXmlSerializerTest {
         val supplementary = "\uD83D\uDE00"
         val draft =
             original.copy(
-                invoice = original.invoice.copy(number = invoiceNumber(supplementary.repeat(60))),
                 issuerName = supplementary.repeat(120),
                 operationDescription = supplementary.repeat(500),
             )
@@ -101,9 +100,14 @@ class RegistroXmlSerializerTest {
                     listOf(SubmissionRecord.Registration(record)),
                 ),
             )
-        assertContains(created.xml, "<NumSerieFactura>${supplementary.repeat(60)}</NumSerieFactura>")
         assertContains(created.xml, "<NombreRazon>${supplementary.repeat(120)}</NombreRazon>")
         assertContains(created.xml, "<DescripcionOperacion>${supplementary.repeat(500)}</DescripcionOperacion>")
+        // The low-level XML contract is wider than the AEAT service's invoice-number character profile.
+        val structuralDraft = draft.copy(invoice = draft.invoice.copy(number = invoiceNumber(supplementary.repeat(60))))
+        val invalid = assertIs<RecordCreationResult.Invalid>(FiscalRecordFactory.createRegistration(structuralDraft))
+        assertTrue(invalid.report.issues.any { it.aeatCode == "1130" })
+        val structuralXml = RegistroXmlSerializer.serialize(RegistroAlta(structuralDraft, record.hash))
+        assertContains(structuralXml, "<NumSerieFactura>${supplementary.repeat(60)}</NumSerieFactura>")
     }
 
     @Test
@@ -157,12 +161,9 @@ class RegistroXmlSerializerTest {
     fun preservesCarriageReturnsAndEscapesSpecialCharactersInRecordText() {
         val original = createdRegistration()
         val invoice = original.draft.invoice.copy(number = invoiceNumber("INV\r\n\t<&>\"'1"))
-        val created =
-            assertIs<RecordCreationResult.Created<RegistroAlta>>(
-                FiscalRecordFactory.createRegistration(original.draft.copy(invoice = invoice, issuerName = "Issuer\rName")),
-            )
-
-        val xml = RegistroXmlSerializer.serialize(created.record)
+        // Exercise escaping through the unchecked serializer; these characters fail service validation.
+        val record = RegistroAlta(original.draft.copy(invoice = invoice, issuerName = "Issuer\rName"), original.hash)
+        val xml = RegistroXmlSerializer.serialize(record)
 
         assertContains(xml, "<NumSerieFactura>INV&#13;\n\t&lt;&amp;&gt;&quot;&apos;1</NumSerieFactura>")
         assertContains(xml, "<NombreRazonEmisor>Issuer&#13;Name</NombreRazonEmisor>")

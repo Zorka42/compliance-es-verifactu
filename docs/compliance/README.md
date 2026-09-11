@@ -40,6 +40,10 @@ last reviewed date
 
 ## Implementation Traceability Matrix
 
+The [fiscal identifier contract](identifier-validation.md) traces invoice-number characters, Spanish NIF formats, DNI/NIE check characters, VAT country formats and GB/XI dates to the archived official sources. `FiscalIdentifierValidator.kt`, `FiscalRecordIdentifierValidation.kt` and `FiscalIdentifierValidationTest.kt` retain the source-to-code-to-test relationship. Entity/K/L/M checksum warnings and inferred EL/GR–XI/GB country mappings remain explicit validation evidence.
+
+The exact decimal checks and their synthetic boundary fixtures are described in [fiscal arithmetic](fiscal-arithmetic.md). The implementation uses the archived validation catalogue 1.2.2 §§3.1.3.15.7–17 and error codes 1140/1142/1143/1144/1150/2005/2006. `FiscalArithmeticValidation.kt` and `FiscalArithmeticValidationTest.kt` retain the source-to-code-to-test relationship, including warning-only totals and the documented regime exceptions.
+
 | Requirement | Official source | Source section/version | Implementation | Tests | Status | Last reviewed date |
 | --- | --- | --- | --- | --- | --- | --- |
 | Registration and cancellation XML record structures | AEAT `SuministroInformacion.xsd` | tikeV1.0; `RegistroFacturacionAltaType`, `RegistroFacturacionAnulacionType` | `verifactu-core`; `verifactu-xml` | core and XML schema tests | Implemented | 2026-08-16 |
@@ -64,11 +68,11 @@ Future implementation pull requests must replace `TBD` cells with exact source v
 
 ### Tax validation limits
 
-The tax tables use the original public files archived in [`schemas-aeat`](../../schemas-aeat/README.md); its manifest records the download URLs and SHA-256 values. Local validation covers the listed rules and does not establish full AEAT acceptance. Required sign/amount arithmetic, invoice-total tolerances, census/VAT identification, invoice-number business restrictions and checks requiring AEAT's date remain separate work.
+The tax tables use the original public files archived in [`schemas-aeat`](../../schemas-aeat/README.md); its manifest records the download URLs and SHA-256 values. Local validation covers the listed rules and does not establish full AEAT acceptance. Exact sign/amount arithmetic and invoice-total tolerances are now implemented in [fiscal arithmetic](fiscal-arithmetic.md). Identifier business formats are checked separately from structural parsing. Census status, unsupported checksum algorithms and actual service acceptance remain outside local verification.
 
 The zero-rate IVA surcharge rule from 2024-10-01 needs source resolution before release: validation catalogue v1.2.2 §3.1.3.15.3 documents the earlier zero-surcharge interval (2023-01-01 through 2024-09-30), while archived `errores.properties` error 1170 specifies 0.26 thereafter (also compare 1165 and 1277). The library emits `VF-TAX-ZERO-RATE-UNRESOLVED` as its own warning for the later period, with no asserted AEAT error code or acceptance outcome. A warning-only report remains locally valid and must remain visible through record creation and submission preparation.
 
-Similarly, `VF-TAX-IPSI-TRANSITION` does not reproduce AEAT's date-dependent severity. The validator has no receipt-date context and does not substitute a caller's generation timestamp or read a clock. Integrators must resolve that context before treating the local report as sufficient for submission.
+`VF-TAX-IPSI-TRANSITION` retains an unknown-context warning when no receipt date is supplied. [Explicit validation context](validation-context.md) now resolves its date-dependent severity using a caller-supplied AEAT receipt date, preserving that input through factory, batch and facade validation. It never substitutes generation time or reads a clock. Other current-time, census and history checks remain explicitly unestablished.
 
 ## Offline integration work, 2026-09-06
 
@@ -98,4 +102,4 @@ The following additions use the original public contract snapshot in [`schemas-a
 | Factory output snapshots, supplied-hash checks, delivery uncertainty and redaction | Library engineering invariants, not extra XSD or legal obligations | Record factory, batch/facade, transport results and diagnostics | Mutation/Java getter tests, deterministic replay, typed preflight/failure and redaction tests |
 | Bounded JVM transport body and complete-response deadline | Library resource and timeout limits, not extra fiscal rules | `JvmAeatMtlsTransport` | Disposable loopback mTLS identity, size-cap, pre-header timeout and stalled partial-body timeout tests |
 
-The runtime parser deliberately preserves unknown protocol values rather than claiming full schema validation. Response matching does not imply acceptance. Published incidence groups are typed with explicit source metadata and location; the JVM contract test compares all 247 archived codes and verifies that unlisted codes remain unknown. Automatic correction decisions belong to the host. Conditional fields and the rules listed above are implemented; remaining arithmetic, identity, context and live interoperability work is tracked in the [release plan](../release-plan.md).
+The runtime parser deliberately preserves unknown protocol values rather than claiming full schema validation. Response matching does not imply acceptance. Published incidence groups are typed with explicit source metadata and location; the JVM contract test compares all 247 archived codes and verifies that unlisted codes remain unknown. Automatic correction decisions belong to the host. Remaining source gaps, application activation, receipt reconciliation and live interoperability work are tracked in the [release plan](../release-plan.md).
