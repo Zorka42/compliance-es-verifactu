@@ -2,6 +2,7 @@
 
 package dev.verifactu.core
 
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 /**
@@ -171,10 +172,14 @@ public data class RegistroAnulacion(
 /** Result of record generation, including the caller-owned next chain state. */
 public sealed interface RecordCreationResult<out T> {
     /** A valid immutable record and the state to persist atomically in the host application. */
-    public data class Created<T>(
-        public val record: T,
-        public val nextChainState: ChainState.PreviousRecord,
-    ) : RecordCreationResult<T>
+    public data class Created<T>
+        @JvmOverloads
+        constructor(
+            public val record: T,
+            public val nextChainState: ChainState.PreviousRecord,
+            /** Validation evidence, including warnings that did not prevent creation. */
+            public val report: ValidationReport = ValidationReport(emptyList()),
+        ) : RecordCreationResult<T>
 
     /** Deterministic local validation failures. */
     public data class Invalid(
@@ -187,14 +192,28 @@ public sealed interface RecordCreationResult<out T> {
  *
  * Validation is structural and incomplete; creation does not guarantee AEAT acceptance.
  * The host must serialize creation per chain and atomically persist each record with its next
- * chain head. Registration creation snapshots the supplied tax-breakdown list.
+ * chain head. Registration creation snapshots all supplied lists, including conditional data.
  */
 public object FiscalRecordFactory {
     /** Validates and creates a registration record. */
     @JvmStatic
     public fun createRegistration(draft: RegistroAltaDraft): RecordCreationResult<RegistroAlta> {
-        val snapshot = draft.copy(taxBreakdown = TaxBreakdown(TaxBreakdownSnapshot(draft.taxBreakdown.details)))
-        val report = RegistroAltaValidator.validate(snapshot)
+        val conditional = draft.conditionalData
+        val snapshot =
+            draft.copy(
+                taxBreakdown = TaxBreakdown(RecordListSnapshot(draft.taxBreakdown.details)),
+                conditionalData =
+                    conditional.copy(
+                        recipients = RecordListSnapshot(conditional.recipients),
+                        replacedInvoices = RecordListSnapshot(conditional.replacedInvoices),
+                        rectification =
+                            conditional.rectification?.let {
+                                it.copy(rectifiedInvoices = RecordListSnapshot(it.rectifiedInvoices))
+                            },
+                    ),
+            )
+        val validated = RegistroAltaValidator.validate(snapshot)
+        val report = validated.copy(issues = RecordListSnapshot(validated.issues))
         if (!report.isValid) return RecordCreationResult.Invalid(report)
         val hash =
             RecordHashCalculator.sha256(
@@ -210,13 +229,14 @@ public object FiscalRecordFactory {
                 ).canonicalString(),
             )
         val record = RegistroAlta(snapshot, hash)
-        return RecordCreationResult.Created(record, ChainState.PreviousRecord(snapshot.invoice, hash))
+        return RecordCreationResult.Created(record, ChainState.PreviousRecord(snapshot.invoice, hash), report)
     }
 
     /** Validates and creates a cancellation record. */
     @JvmStatic
     public fun createCancellation(draft: RegistroAnulacionDraft): RecordCreationResult<RegistroAnulacion> {
-        val report = RegistroAnulacionValidator.validate(draft)
+        val validated = RegistroAnulacionValidator.validate(draft)
+        val report = validated.copy(issues = RecordListSnapshot(validated.issues))
         if (!report.isValid) return RecordCreationResult.Invalid(report)
         val hash =
             RecordHashCalculator.sha256(
@@ -229,19 +249,19 @@ public object FiscalRecordFactory {
                 ).canonicalString(),
             )
         val record = RegistroAnulacion(draft, hash)
-        return RecordCreationResult.Created(record, ChainState.PreviousRecord(draft.cancelledInvoice, hash))
+        return RecordCreationResult.Created(record, ChainState.PreviousRecord(draft.cancelledInvoice, hash), report)
     }
 }
 
-private class TaxBreakdownSnapshot(
-    details: List<TaxBreakdownDetail>,
-) : AbstractList<TaxBreakdownDetail>() {
-    private val entries: List<TaxBreakdownDetail> = details.toList()
+private class RecordListSnapshot<T>(
+    values: List<T>,
+) : AbstractList<T>() {
+    private val entries: List<T> = values.toList()
 
     override val size: Int
         get() = entries.size
 
-    override fun get(index: Int): TaxBreakdownDetail = entries[index]
+    override fun get(index: Int): T = entries[index]
 }
 
 /** Local structural validation for `RegistroAlta` drafts. */
@@ -250,7 +270,7 @@ public object RegistroAltaValidator : Validator<RegistroAltaDraft> {
         ValidationReport(
             systemIssues(value.system) + requiredTextIssue("issuerName", value.issuerName, 120) +
                 requiredTextIssue("operationDescription", value.operationDescription, 500) +
-                taxBreakdownIssues(value.taxBreakdown, value.invoiceType) + registrationConditionalIssues(value) +
+                taxBreakdownIssues(value) + registrationConditionalIssues(value) +
                 chainIssues(value.chainState),
         )
 }
@@ -295,10 +315,8 @@ private fun chainIssues(chainState: ChainState): List<ValidationIssue> =
             }
     }
 
-private fun taxBreakdownIssues(
-    breakdown: TaxBreakdown,
-    invoiceType: InvoiceType,
-): List<ValidationIssue> {
+private fun taxBreakdownIssues(draft: RegistroAltaDraft): List<ValidationIssue> {
+    val breakdown = draft.taxBreakdown
     if (breakdown.details.size !in 1..12) {
         return listOf(
             ValidationIssue(
@@ -339,7 +357,8 @@ private fun taxBreakdownIssues(
                     source = XSD_SOURCE,
                 )
             },
-        ) + taxOperationIssues(index, detail, invoiceType)
+        ) + taxOperationIssues(index, detail, draft.invoiceType) +
+            taxConditionalIssues(detail, "taxBreakdown.details[$index]", draft)
     }
 }
 
@@ -350,7 +369,7 @@ private fun taxOperationIssues(
 ): List<ValidationIssue> {
     val path = "taxBreakdown.details[$index]"
     return when (val operation = detail.operation) {
-        is TaxOperation.Exempt -> noTaxFieldIssues(detail, path, "VF-RECORD-006", "1238", "An exempt operation")
+        is TaxOperation.Exempt -> noTaxFieldIssues(detail, path, "VF-TAX-1238", "1238", "An exempt operation")
         is TaxOperation.Qualified -> qualificationIssues(detail, operation.value, path, invoiceType)
     }
 }
@@ -366,20 +385,32 @@ private fun qualificationIssues(
         Qualification.SUBJECT_REVERSE_CHARGE -> reverseChargeIssues(detail, path, invoiceType)
         Qualification.NOT_SUBJECT,
         Qualification.NOT_SUBJECT_LOCATION_RULES,
-        -> noTaxFieldIssues(detail, path, "VF-RECORD-009", "1237", "A non-subject operation")
+        ->
+            if (detail.isIva()) {
+                noTaxFieldIssues(detail, path, "VF-RECORD-009", "1237", "A non-subject IVA operation")
+            } else {
+                emptyList()
+            }
     }
 
 private fun subjectNotExemptIssues(
     detail: TaxBreakdownDetail,
     path: String,
 ): List<ValidationIssue> =
-    if (detail.costBase == null && (detail.taxRate == null || detail.chargedTax == null)) {
+    if (detail.taxRate == null || detail.chargedTax == null) {
         listOf(
-            conditionalIssue(
+            ValidationIssue(
                 "VF-RECORD-007",
                 path,
-                "A subject non-exempt operation requires tax rate and charged tax when no cost base is supplied.",
-                "1208",
+                ValidationSeverity.ERROR,
+                "A subject non-exempt operation requires tax rate and charged tax, including when a cost base is supplied.",
+                aeatCode =
+                    when {
+                        detail.costBase == null -> "1208"
+                        detail.regimeCode == "06" -> "1209"
+                        else -> null
+                    },
+                source = taxSource("3.1.3.15.7"),
             ),
         )
     } else {
@@ -442,12 +473,437 @@ private fun TaxBreakdownDetail.isZeroTaxRateAndChargedTax(): Boolean =
 
 private fun String.isZeroDecimal(): Boolean = trimStart('+', '-').split('.').all { part -> part.all { it == '0' } }
 
+private fun TaxBreakdownDetail.isIva(): Boolean = tax == null || tax == TaxType.IVA
+
+private fun TaxBreakdownDetail.isIvaOrIgic(): Boolean = isIva() || tax == TaxType.IGIC
+
+private fun TaxBreakdownDetail.qualification(): Qualification? = (operation as? TaxOperation.Qualified)?.value
+
+private fun taxConditionalIssues(
+    detail: TaxBreakdownDetail,
+    path: String,
+    draft: RegistroAltaDraft,
+): List<ValidationIssue> =
+    taxRegimePresenceIssues(detail, path) + taxFieldCombinationIssues(detail, path) +
+        taxExemptionIssues(detail, path, draft) + ivaRateIssues(detail, path, draft) +
+        regimeOperationIssues(detail, path) + contextualRegimeIssues(detail, path, draft) +
+        taxOperationDateIssues(detail, path, draft)
+
+private fun taxRegimePresenceIssues(
+    detail: TaxBreakdownDetail,
+    path: String,
+): List<ValidationIssue> {
+    val regime = detail.regimeCode
+    val fieldPath = "$path.regimeCode"
+    return when {
+        detail.tax == TaxType.OTHER && regime != null ->
+            listOf(taxIssue("1260", fieldPath, "Other taxes cannot include a regime code.", "3.1.3.15.6"))
+        detail.tax == TaxType.IPSI && regime !in IPSI_REGIME_CODES ->
+            listOf(
+                ValidationIssue(
+                    "VF-TAX-IPSI-TRANSITION",
+                    fieldPath,
+                    ValidationSeverity.WARNING,
+                    "IPSI requires regime 01, 08, 11, 18, 19, or 20. The source specifies an AEAT warning through " +
+                        "2026-12-31 and rejection from 2027-01-01. AEAT receipt-date context is unavailable locally; " +
+                        "this warning does not establish acceptance.",
+                    source = taxSource("3.1.3.15.6; IPSI transition at 2027-01-01"),
+                ),
+            )
+        detail.isIvaOrIgic() && regime == null ->
+            listOf(taxIssue("1245", fieldPath, "IVA and IGIC require an explicit regime code.", "3.1.3.15.6"))
+        detail.isIva() && regime == "21" ->
+            listOf(
+                taxIssue(
+                    "1246",
+                    fieldPath,
+                    "Regime 21 is an IGIC extension and is not in IVA list L8A.",
+                    "3.1.3.15.6, 15.6.11; Order HAC/1177/2024 Annex 6 L8A/L8B",
+                ),
+            )
+        else -> emptyList()
+    }
+}
+
+private fun taxFieldCombinationIssues(
+    detail: TaxBreakdownDetail,
+    path: String,
+): List<ValidationIssue> =
+    buildList {
+        if (detail.costBase != null && detail.regimeCode != "06" && detail.tax !in setOf(TaxType.IPSI, TaxType.OTHER)) {
+            add(taxIssue("1257", "$path.costBase", "A cost base requires regime 06, IPSI, or other taxes.", "3.1.3.15.2"))
+        }
+        if (detail.qualification() != Qualification.SUBJECT_NOT_EXEMPT && detail.chargedTax?.value?.isZeroDecimal() == false) {
+            add(taxIssue("1207", "$path.chargedTax", "Only an S1 operation may have non-zero charged tax.", "3.1.3.15.7"))
+        }
+        val hasSurcharge = detail.equivalenceSurchargeRate != null || detail.equivalenceSurcharge != null
+        if (hasSurcharge && detail.qualification() != Qualification.SUBJECT_NOT_EXEMPT) {
+            add(taxIssue("1281", path, "Equivalence-surcharge fields are only permitted for S1 operations.", "errores.properties 1281"))
+        }
+        if ((detail.equivalenceSurchargeRate == null) != (detail.equivalenceSurcharge == null)) {
+            add(taxIssue("1284", path, "Equivalence-surcharge rate and amount must be supplied together.", "errores.properties 1284"))
+        }
+    }
+
+private fun taxExemptionIssues(
+    detail: TaxBreakdownDetail,
+    path: String,
+    draft: RegistroAltaDraft,
+): List<ValidationIssue> {
+    val exemption = (detail.operation as? TaxOperation.Exempt)?.value ?: return emptyList()
+    return buildList {
+        if (detail.isIva() && exemption in setOf(Exemption.E7, Exemption.E8)) {
+            add(
+                taxIssue(
+                    "1182",
+                    "$path.operation",
+                    "IVA exemptions must belong to L10 (E1 through E6).",
+                    "3.1.3.15.5; Order HAC/1177/2024 Annex 6 L10",
+                ),
+            )
+        }
+        if (detail.isIvaOrIgic() && detail.regimeCode == "01" && exemption in setOf(Exemption.E2, Exemption.E3)) {
+            add(taxIssue("1199", "$path.operation", "Regime 01 cannot use exemption E2 or E3 for IVA or IGIC.", "3.1.3.15.5"))
+        }
+        if (detail.isIva() &&
+            exemption == Exemption.E5 &&
+            draft.conditionalData.recipients.any { it.identifier is FiscalPartyIdentifier.SpanishNif }
+        ) {
+            add(
+                taxIssue(
+                    "1289",
+                    "conditionalData.recipients",
+                    "IVA exemption E5 requires recipients to use IDOtro identification.",
+                    "3.1.3.15.5.1",
+                ),
+            )
+        }
+    }
+}
+
+private fun ivaRateIssues(
+    detail: TaxBreakdownDetail,
+    path: String,
+    draft: RegistroAltaDraft,
+): List<ValidationIssue> {
+    if (!detail.isIva() || detail.qualification() != Qualification.SUBJECT_NOT_EXEMPT) return emptyList()
+    val rate = detail.taxRate?.rateHundredthsOrNull() ?: return emptyList()
+    val date = (draft.conditionalData.operationDate ?: draft.invoice.issueDate).orderedDate()
+    return ivaTaxRateIssues(rate, date, path) + ivaSurchargeRateIssues(detail, rate, date, path)
+}
+
+private fun ivaTaxRateIssues(
+    rate: Int,
+    date: Int,
+    path: String,
+): List<ValidationIssue> {
+    if (rate !in setOf(0, 200, 400, 500, 750, 1000, 2100)) {
+        return listOf(taxIssue("1124", "$path.taxRate", "The IVA S1 rate must be in the permitted list.", "3.1.3.15.1"))
+    }
+    val permitted =
+        when (rate) {
+            500 -> date in 20220701..20240930
+            200, 750 -> date in 20241001..20241231
+            else -> true
+        }
+    if (permitted) return emptyList()
+    return listOf(
+        ValidationIssue(
+            "VF-TAX-RATE-DATE",
+            "$path.taxRate",
+            ValidationSeverity.ERROR,
+            "The IVA S1 rate is outside its permitted operation-date (or issue-date) interval.",
+            aeatCode = if (rate == 500) "1194" else null,
+            source = taxSource("3.1.3.15.1; errores.properties 1194, 1235, 1236"),
+        ),
+    )
+}
+
+private fun ivaSurchargeRateIssues(
+    detail: TaxBreakdownDetail,
+    rate: Int,
+    date: Int,
+    path: String,
+): List<ValidationIssue> {
+    val surcharge = detail.equivalenceSurchargeRate?.rateHundredthsOrNull() ?: return emptyList()
+    if (surcharge !in setOf(0, 26, 50, 62, 100, 140, 175, 520)) {
+        return listOf(
+            taxIssue("1127", "$path.equivalenceSurchargeRate", "The IVA S1 surcharge rate must be in the permitted list.", "3.1.3.15.3"),
+        )
+    }
+    if (rate == 0) return zeroIvaSurchargeIssues(surcharge, date, path)
+    val expected = expectedSurchargeRates(rate, date) ?: return emptyList()
+    return if (surcharge in expected) {
+        emptyList()
+    } else {
+        listOf(
+            taxIssue(
+                surchargeMismatchCode(rate, date),
+                "$path.equivalenceSurchargeRate",
+                "The surcharge rate does not match the IVA rate and operation-date (or issue-date) interval.",
+                "3.1.3.15.3",
+            ),
+        )
+    }
+}
+
+private fun expectedSurchargeRates(
+    rate: Int,
+    date: Int,
+): Set<Int>? =
+    when (rate) {
+        2100 -> setOf(520, 175)
+        1000 -> setOf(140)
+        750 -> setOf(100)
+        500 -> if (date <= 20221231) setOf(50) else setOf(62)
+        400 -> setOf(50)
+        200 -> setOf(26)
+        else -> null
+    }
+
+private fun surchargeMismatchCode(
+    rate: Int,
+    date: Int,
+): String =
+    when (rate) {
+        2100 -> "1162"
+        1000 -> "1163"
+        750 -> "1169"
+        500 -> if (date <= 20221231) "1167" else "1168"
+        400 -> "1164"
+        200 -> "1166"
+        else -> "1127"
+    }
+
+private fun zeroIvaSurchargeIssues(
+    surcharge: Int,
+    date: Int,
+    path: String,
+): List<ValidationIssue> =
+    when {
+        date in 20230101..20240930 && surcharge != 0 ->
+            listOf(
+                taxIssue(
+                    "1165",
+                    "$path.equivalenceSurchargeRate",
+                    "Zero-rate IVA requires zero surcharge from 2023-01-01 through 2024-09-30.",
+                    "3.1.3.15.3",
+                ),
+            )
+        date >= 20241001 ->
+            listOf(
+                ValidationIssue(
+                    "VF-TAX-ZERO-RATE-UNRESOLVED",
+                    "$path.equivalenceSurchargeRate",
+                    ValidationSeverity.WARNING,
+                    "The zero-rate IVA surcharge rule from 2024-10-01 is unresolved locally: the validation PDF " +
+                        "documents the earlier zero-surcharge interval, while error 1170 specifies 0.26 thereafter. " +
+                        "This combination has not been verified for AEAT acceptance.",
+                    source = taxSource("3.1.3.15.3; errores.properties 1165, 1170, 1277"),
+                ),
+            )
+        else -> emptyList()
+    }
+
+private fun regimeOperationIssues(
+    detail: TaxBreakdownDetail,
+    path: String,
+): List<ValidationIssue> {
+    if (!detail.isIvaOrIgic()) return emptyList()
+    val qualification = detail.qualification()
+    val exemption = (detail.operation as? TaxOperation.Exempt)?.value
+    val code =
+        when (detail.regimeCode) {
+            "02", "03", "04" -> exemptRegimeIssueCode(detail)
+            "07" -> cashRegimeIssueCode(qualification, exemption)
+            "08" -> if (qualification != Qualification.NOT_SUBJECT_LOCATION_RULES) "1252" else null
+            "20" -> if (detail.tax == TaxType.IGIC && qualification != Qualification.NOT_SUBJECT_LOCATION_RULES) "1293" else null
+            else -> null
+        }
+    return code?.let {
+        listOf(
+            taxIssue(
+                it,
+                "$path.operation",
+                "The operation qualification or exemption is incompatible with this tax regime.",
+                "3.1.3.15.6.1–15.6.6, 15.6.10",
+            ),
+        )
+    } ?: emptyList()
+}
+
+private fun exemptRegimeIssueCode(detail: TaxBreakdownDetail): String? {
+    if (detail.operation is TaxOperation.Exempt) return null
+    return when (detail.regimeCode) {
+        "02" -> "1286"
+        "03" -> if (detail.qualification() != Qualification.SUBJECT_NOT_EXEMPT) "1200" else null
+        "04" -> if (detail.qualification() != Qualification.SUBJECT_REVERSE_CHARGE) "1201" else null
+        else -> null
+    }
+}
+
+private fun cashRegimeIssueCode(
+    qualification: Qualification?,
+    exemption: Exemption?,
+): String? =
+    if (qualification != null &&
+        qualification != Qualification.SUBJECT_NOT_EXEMPT ||
+        exemption in setOf(Exemption.E2, Exemption.E3, Exemption.E4, Exemption.E5)
+    ) {
+        "1203"
+    } else {
+        null
+    }
+
+private fun contextualRegimeIssues(
+    detail: TaxBreakdownDetail,
+    path: String,
+    draft: RegistroAltaDraft,
+): List<ValidationIssue> {
+    if (!detail.isIvaOrIgic()) return emptyList()
+    return when (detail.regimeCode) {
+        "06" -> groupRegimeIssues(detail, path, draft.invoiceType)
+        "10" -> collectionRegimeIssues(detail, path, draft)
+        "11" -> rentalRegimeIssues(detail, path)
+        "14" -> publicAuthorityRegimeIssues(draft)
+        else -> emptyList()
+    }
+}
+
+private fun groupRegimeIssues(
+    detail: TaxBreakdownDetail,
+    path: String,
+    invoiceType: InvoiceType,
+): List<ValidationIssue> =
+    if (detail.costBase == null || invoiceType in setOf(InvoiceType.F2, InvoiceType.F3, InvoiceType.R5)) {
+        listOf(taxIssue("1202", path, "Regime 06 requires a cost base and cannot use invoice type F2, F3, or R5.", "3.1.3.15.6.4"))
+    } else {
+        emptyList()
+    }
+
+private fun collectionRegimeIssues(
+    detail: TaxBreakdownDetail,
+    path: String,
+    draft: RegistroAltaDraft,
+): List<ValidationIssue> =
+    if (detail.qualification() != Qualification.NOT_SUBJECT ||
+        draft.invoiceType != InvoiceType.F1 ||
+        draft.conditionalData.recipients.any { it.identifier !is FiscalPartyIdentifier.SpanishNif }
+    ) {
+        listOf(taxIssue("1205", path, "Regime 10 requires N1, invoice type F1, and recipients identified by NIF.", "3.1.3.15.6.7"))
+    } else {
+        emptyList()
+    }
+
+private fun rentalRegimeIssues(
+    detail: TaxBreakdownDetail,
+    path: String,
+): List<ValidationIssue> =
+    if (detail.isIva() && detail.taxRate?.rateHundredthsOrNull() != 2100) {
+        listOf(taxIssue("1206", "$path.taxRate", "IVA regime 11 requires a 21 percent tax rate.", "3.1.3.15.6.8"))
+    } else {
+        emptyList()
+    }
+
+private fun publicAuthorityRegimeIssues(draft: RegistroAltaDraft): List<ValidationIssue> =
+    buildList {
+        val operationDate = draft.conditionalData.operationDate
+        if (operationDate == null || operationDate.orderedDate() <= draft.invoice.issueDate.orderedDate()) {
+            add(
+                taxIssue(
+                    "1147",
+                    "conditionalData.operationDate",
+                    "Regime 14 requires an operation date after the invoice issue date.",
+                    "3.1.3.15.6.9",
+                ),
+            )
+        }
+        if (draft.invoiceType !in setOf(InvoiceType.F1, InvoiceType.R1, InvoiceType.R2, InvoiceType.R3, InvoiceType.R4)) {
+            add(taxIssue("1148", "invoiceType", "Regime 14 requires invoice type F1 or R1 through R4.", "3.1.3.15.6.9"))
+        }
+        if (draft.conditionalData.recipients.any { !it.isPublicAuthorityNif() }) {
+            add(
+                taxIssue(
+                    "1149",
+                    "conditionalData.recipients",
+                    "Regime 14 requires recipient NIFs beginning with P, Q, S, or V; census identification remains an AEAT check.",
+                    "3.1.3.15.6.9",
+                ),
+            )
+        }
+    }
+
+private fun FiscalParty.isPublicAuthorityNif(): Boolean {
+    val nif = (identifier as? FiscalPartyIdentifier.SpanishNif)?.value ?: return false
+    return nif.value.first() in setOf('P', 'Q', 'S', 'V')
+}
+
+private fun taxOperationDateIssues(
+    detail: TaxBreakdownDetail,
+    path: String,
+    draft: RegistroAltaDraft,
+): List<ValidationIssue> {
+    val operationDate = draft.conditionalData.operationDate ?: return emptyList()
+    if (!detail.isIvaOrIgic() || operationDate.orderedDate() <= draft.invoice.issueDate.orderedDate()) return emptyList()
+    return if (detail.regimeCode !in setOf("14", "15")) {
+        listOf(
+            taxIssue(
+                "1146",
+                "$path.regimeCode",
+                "Each IVA or IGIC detail requires regime 14 or 15 when the operation date is after the invoice issue date.",
+                "3.1.3.1; errores.properties 1146",
+            ),
+        )
+    } else {
+        emptyList()
+    }
+}
+
+private fun String.rateHundredthsOrNull(): Int? {
+    if (!Regex("\\d{1,3}(?:\\.\\d{0,2})?").matches(this)) return null
+    return substringBefore('.').toInt() * 100 + substringAfter('.', "").padEnd(2, '0').toInt()
+}
+
+private fun InvoiceIssueDate.orderedDate(): Int =
+    value.substring(6, 10).toInt() * 10000 + value.substring(3, 5).toInt() * 100 + value.substring(0, 2).toInt()
+
+private fun taxIssue(
+    aeatCode: String,
+    fieldPath: String,
+    message: String,
+    section: String,
+): ValidationIssue = ValidationIssue("VF-TAX-$aeatCode", fieldPath, ValidationSeverity.ERROR, message, aeatCode, taxSource(section))
+
+private fun taxSource(section: String): ComplianceSourceReference =
+    ComplianceSourceReference("AEAT validation and error catalogue", section, "1.2.2 (2026-04-08); archived errores.properties")
+
+private val IPSI_REGIME_CODES: Set<String> = setOf("01", "08", "11", "18", "19", "20")
+
 private fun registrationConditionalIssues(draft: RegistroAltaDraft): List<ValidationIssue> {
     val data = draft.conditionalData
-    return optionalConditionalTextIssues(data) + rectificationIssues(draft.invoiceType, data) +
+    return optionalConditionalTextIssues(data) + conditionalListIssues(data) + rectificationIssues(draft.invoiceType, data) +
         priorRejectionIssues(data) + recipientIssues(draft.invoiceType, data) + issuerDelegateIssues(data, draft.invoice.issuer) +
         indicatorIssues(draft.invoiceType, data) + macroDataIssues(draft.totalAmount, data.macroData)
 }
+
+private fun conditionalListIssues(data: RegistrationConditionalData): List<ValidationIssue> =
+    listOf(
+        "conditionalData.recipients" to data.recipients.size,
+        "conditionalData.replacedInvoices" to data.replacedInvoices.size,
+        "conditionalData.rectification.rectifiedInvoices" to (data.rectification?.rectifiedInvoices?.size ?: 0),
+    ).mapNotNull { (path, size) ->
+        if (size > 1000) {
+            ValidationIssue(
+                "VF-RECORD-036",
+                path,
+                ValidationSeverity.ERROR,
+                "The AEAT schema permits at most 1000 entries in this group.",
+                source = ComplianceSourceReference("AEAT SuministroInformacion.xsd", "RegistroFacturacionAltaType", "tikeV1.0"),
+            )
+        } else {
+            null
+        }
+    }
 
 private fun optionalConditionalTextIssues(data: RegistrationConditionalData): List<ValidationIssue> {
     val issues = mutableListOf<ValidationIssue>()
@@ -731,6 +1187,7 @@ private fun fiscalPartyIssues(
     when (val identifier = party.identifier) {
         is FiscalPartyIdentifier.SpanishNif -> Unit
         is FiscalPartyIdentifier.Other -> {
+            issues += countryCodeIssues("$fieldPath.identifier.countryCode", identifier.countryCode)
             if (identifier.value.isBlank() || (identifier.value.xmlCharacterCountOrNull() ?: Int.MAX_VALUE) > 20) {
                 issues +=
                     conditionalIssue(
@@ -782,6 +1239,276 @@ private fun fiscalPartyIssues(
     }
     return issues
 }
+
+private fun countryCodeIssues(
+    fieldPath: String,
+    countryCode: String?,
+): List<ValidationIssue> =
+    if (countryCode != null && countryCode !in COUNTRY_CODES) {
+        listOf(
+            ValidationIssue(
+                "VF-RECORD-037",
+                fieldPath,
+                ValidationSeverity.ERROR,
+                "The country code must be one of the values in the AEAT schema.",
+                aeatCode = "1101",
+                source = ComplianceSourceReference("AEAT SuministroInformacion.xsd", "CountryType2", "tikeV1.0"),
+            ),
+        )
+    } else {
+        emptyList()
+    }
+
+// Exact tokens from archived SuministroInformacion.xsd, CountryType2.
+private val COUNTRY_CODES: Set<String> =
+    setOf(
+        "AF",
+        "AL",
+        "DE",
+        "AD",
+        "AO",
+        "AI",
+        "AQ",
+        "AG",
+        "SA",
+        "DZ",
+        "AR",
+        "AM",
+        "AW",
+        "AU",
+        "AT",
+        "AZ",
+        "BS",
+        "BH",
+        "BD",
+        "BB",
+        "BE",
+        "BZ",
+        "BJ",
+        "BM",
+        "BY",
+        "BO",
+        "BA",
+        "BW",
+        "BV",
+        "BR",
+        "BN",
+        "BG",
+        "BF",
+        "BI",
+        "BT",
+        "CV",
+        "KY",
+        "KH",
+        "CM",
+        "CA",
+        "CF",
+        "CC",
+        "CO",
+        "KM",
+        "CG",
+        "CD",
+        "CK",
+        "KP",
+        "KR",
+        "CI",
+        "CR",
+        "HR",
+        "CU",
+        "TD",
+        "CZ",
+        "CL",
+        "CN",
+        "CY",
+        "CW",
+        "DK",
+        "DM",
+        "DO",
+        "EC",
+        "EG",
+        "AE",
+        "ER",
+        "SK",
+        "SI",
+        "ES",
+        "US",
+        "EE",
+        "ET",
+        "FO",
+        "PH",
+        "FI",
+        "FJ",
+        "FR",
+        "GA",
+        "GM",
+        "GE",
+        "GS",
+        "GH",
+        "GI",
+        "GD",
+        "GR",
+        "GL",
+        "GU",
+        "GT",
+        "GG",
+        "GN",
+        "GQ",
+        "GW",
+        "GY",
+        "HT",
+        "HM",
+        "HN",
+        "HK",
+        "HU",
+        "IN",
+        "ID",
+        "IR",
+        "IQ",
+        "IE",
+        "IM",
+        "IS",
+        "IL",
+        "IT",
+        "JM",
+        "JP",
+        "JE",
+        "JO",
+        "KZ",
+        "KE",
+        "KG",
+        "KI",
+        "KW",
+        "LA",
+        "LS",
+        "LV",
+        "LB",
+        "LR",
+        "LY",
+        "LI",
+        "LT",
+        "LU",
+        "XG",
+        "MO",
+        "MK",
+        "MG",
+        "MY",
+        "MW",
+        "MV",
+        "ML",
+        "MT",
+        "FK",
+        "MP",
+        "MA",
+        "MH",
+        "MU",
+        "MR",
+        "YT",
+        "UM",
+        "MX",
+        "FM",
+        "MD",
+        "MC",
+        "MN",
+        "ME",
+        "MS",
+        "MZ",
+        "MM",
+        "NA",
+        "NR",
+        "CX",
+        "NP",
+        "NI",
+        "NE",
+        "NG",
+        "NU",
+        "NF",
+        "NO",
+        "NC",
+        "NZ",
+        "IO",
+        "OM",
+        "NL",
+        "BQ",
+        "PK",
+        "PW",
+        "PA",
+        "PG",
+        "PY",
+        "PE",
+        "PN",
+        "PF",
+        "PL",
+        "PT",
+        "PR",
+        "QA",
+        "GB",
+        "RW",
+        "RO",
+        "RU",
+        "RE",
+        "SB",
+        "SV",
+        "WS",
+        "AS",
+        "KN",
+        "SM",
+        "SX",
+        "PM",
+        "VC",
+        "SH",
+        "LC",
+        "ST",
+        "SN",
+        "RS",
+        "SC",
+        "SL",
+        "SG",
+        "SY",
+        "SO",
+        "LK",
+        "SZ",
+        "ZA",
+        "SD",
+        "SS",
+        "SE",
+        "CH",
+        "SR",
+        "TH",
+        "TW",
+        "TZ",
+        "TJ",
+        "PS",
+        "TF",
+        "TL",
+        "TG",
+        "TK",
+        "TO",
+        "TT",
+        "TN",
+        "TC",
+        "TM",
+        "TR",
+        "TV",
+        "UA",
+        "UG",
+        "UY",
+        "UZ",
+        "VU",
+        "VA",
+        "VE",
+        "VN",
+        "VG",
+        "VI",
+        "WF",
+        "YE",
+        "DJ",
+        "ZM",
+        "ZW",
+        "QU",
+        "XB",
+        "XU",
+        "XN",
+    )
 
 private fun InvoiceType.isRectifying(): Boolean =
     this in setOf(InvoiceType.R1, InvoiceType.R2, InvoiceType.R3, InvoiceType.R4, InvoiceType.R5)

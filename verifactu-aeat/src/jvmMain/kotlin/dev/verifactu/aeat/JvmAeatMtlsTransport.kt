@@ -4,7 +4,14 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.ByteBuffer
 import java.time.Duration
+import java.util.concurrent.CancellationException
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Flow
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import javax.net.ssl.SSLContext
 import kotlin.jvm.JvmOverloads
@@ -76,42 +83,55 @@ public class JvmAeatMtlsTransport
                 } catch (_: SecurityException) {
                     return AeatTransportResult.NotSent("Local security policy prevented request setup.")
                 }
-            return executePreparedTransport(prepared, maxResponseBytes)
+            return executePreparedTransport(prepared, maxResponseBytes, timeout)
         }
     }
 
 private fun executePreparedTransport(
     prepared: Pair<HttpClient, HttpRequest>,
     maxResponseBytes: Int,
-): AeatTransportResult =
-    try {
-        val response = prepared.first.send(prepared.second, HttpResponse.BodyHandlers.ofInputStream())
+    timeout: Duration,
+): AeatTransportResult {
+    val pending =
+        try {
+            prepared.first.sendAsync(prepared.second) { BoundedResponseSubscriber(maxResponseBytes) }
+        } catch (exception: IllegalArgumentException) {
+            return classifyJvmTransportFailure(exception)
+        } catch (exception: SecurityException) {
+            return classifyJvmTransportFailure(exception)
+        }
+    return try {
+        val response = pending.get(timeout.boundedNanoseconds(), TimeUnit.NANOSECONDS)
         val contentType = response.headers().firstValue("Content-Type").orElse(null)
-        response.body().use { body ->
-            when (val result = body.readUpTo(maxResponseBytes)) {
-                is BoundedResponseBody.Complete ->
-                    classifyJvmTransportResponse(
-                        statusCode = response.statusCode(),
-                        contentType = contentType,
-                        body = result.value,
-                    )
-                BoundedResponseBody.TooLarge ->
-                    AeatTransportResult.ResponseTooLarge(response.statusCode(), contentType, maxResponseBytes)
-            }
+        when (val result = response.body()) {
+            is BoundedResponseBody.Complete ->
+                classifyJvmTransportResponse(
+                    statusCode = response.statusCode(),
+                    contentType = contentType,
+                    body = result.value,
+                )
+            BoundedResponseBody.TooLarge ->
+                AeatTransportResult.ResponseTooLarge(response.statusCode(), contentType, maxResponseBytes)
         }
     } catch (exception: TimeoutException) {
-        classifyJvmTransportFailure(exception)
-    } catch (exception: java.net.http.HttpTimeoutException) {
+        pending.cancel(true)
         classifyJvmTransportFailure(exception)
     } catch (exception: InterruptedException) {
+        pending.cancel(true)
         Thread.currentThread().interrupt()
         classifyJvmTransportFailure(exception)
-    } catch (exception: java.io.IOException) {
+    } catch (exception: ExecutionException) {
+        classifyJvmTransportFailure(exception.cause as? Exception ?: exception)
+    } catch (exception: CancellationException) {
         classifyJvmTransportFailure(exception)
-    } catch (exception: IllegalArgumentException) {
-        classifyJvmTransportFailure(exception)
-    } catch (exception: SecurityException) {
-        classifyJvmTransportFailure(exception)
+    }
+}
+
+private fun Duration.boundedNanoseconds(): Long =
+    try {
+        toNanos()
+    } catch (_: ArithmeticException) {
+        Long.MAX_VALUE
     }
 
 private fun validatedJvmEndpoint(url: String): URI? {
@@ -158,14 +178,46 @@ private sealed interface BoundedResponseBody {
     public data object TooLarge : BoundedResponseBody
 }
 
-private fun java.io.InputStream.readUpTo(maxBytes: Int): BoundedResponseBody {
-    val output = java.io.ByteArrayOutputStream(minOf(maxBytes, RESPONSE_BUFFER_BYTES))
-    val buffer = ByteArray(RESPONSE_BUFFER_BYTES)
-    while (true) {
-        val read = read(buffer)
-        if (read == -1) return BoundedResponseBody.Complete(output.toString(Charsets.UTF_8.name()))
-        if (output.size() > maxBytes - read) return BoundedResponseBody.TooLarge
-        output.write(buffer, 0, read)
+private class BoundedResponseSubscriber(
+    private val maxBytes: Int,
+) : HttpResponse.BodySubscriber<BoundedResponseBody> {
+    private val output = java.io.ByteArrayOutputStream(minOf(maxBytes, RESPONSE_BUFFER_BYTES))
+    private val completion = CompletableFuture<BoundedResponseBody>()
+    private var subscription: Flow.Subscription? = null
+
+    override fun getBody(): CompletionStage<BoundedResponseBody> = completion
+
+    override fun onSubscribe(subscription: Flow.Subscription) {
+        if (this.subscription != null) {
+            subscription.cancel()
+        } else {
+            this.subscription = subscription
+            subscription.request(1)
+        }
+    }
+
+    override fun onNext(item: List<ByteBuffer>) {
+        if (completion.isDone) return
+        for (buffer in item) {
+            val count = buffer.remaining()
+            if (output.size() > maxBytes - count) {
+                completion.complete(BoundedResponseBody.TooLarge)
+                subscription?.cancel()
+                return
+            }
+            val bytes = ByteArray(count)
+            buffer.get(bytes)
+            output.write(bytes)
+        }
+        subscription?.request(1)
+    }
+
+    override fun onError(throwable: Throwable) {
+        completion.completeExceptionally(throwable)
+    }
+
+    override fun onComplete() {
+        completion.complete(BoundedResponseBody.Complete(output.toString(Charsets.UTF_8.name())))
     }
 }
 

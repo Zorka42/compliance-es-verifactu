@@ -20,7 +20,7 @@ Read the complete, compiled [Kotlin example](../samples/offline/src/commonMain/k
 1. Parse identifiers, dates, amounts, and the caller-supplied generation timestamp using each type's `parse` method. Handle `ValueResult.Valid` and `ValueResult.Invalid` at the application boundary.
 2. Construct `RegistroAltaDraft`, including the tax breakdown and the host SIF's `SistemaInformatico` metadata. Select the correct invoice category and supply complete business input.
 3. Supply `ChainState.FirstRecord` only for an empty chain, otherwise the persisted `ChainState.PreviousRecord`.
-4. Call `FiscalRecordFactory.createRegistration`. `RecordCreationResult.Invalid` contains structural validation issues. `Created` contains the record and next chain head.
+4. Call `FiscalRecordFactory.createRegistration`. `RecordCreationResult.Invalid` contains validation issues. `Created` contains the record, next chain head and `report`. Inspect that report even on success: warnings can require source review or external context before delivery. The preparation facade and batch builder also retain successful validation reports.
 5. Serialize with `RegistroXmlSerializer.serialize` and build the QR URL with `QrPayloadBuilder.build`.
 6. Atomically persist the original record and next head in your application before arranging delivery. Factory-created records snapshot the tax breakdown.
 

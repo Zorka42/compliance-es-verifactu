@@ -9,6 +9,7 @@ import dev.verifactu.core.TaxIdentifier
 import dev.verifactu.core.ValidationIssue
 import dev.verifactu.core.ValidationReport
 import dev.verifactu.core.ValidationSeverity
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 /** Header data required by the AEAT `RegFactuSistemaFacturacion` batch root. */
@@ -36,12 +37,16 @@ public sealed interface SubmissionBatchBuildResult {
      * Exact batch and SOAP 1.1 request payloads prepared from validated snapshots.
      * Payloads contain fiscal and personal data; their diagnostic string is redacted.
      */
-    public data class Created(
-        public val xml: String,
-        public val soapEnvelope: String,
-    ) : SubmissionBatchBuildResult {
-        override fun toString(): String = "SubmissionBatchBuildResult.Created(xml=<redacted>, soapEnvelope=<redacted>)"
-    }
+    public data class Created
+        @JvmOverloads
+        constructor(
+            public val xml: String,
+            public val soapEnvelope: String,
+            /** Local validation evidence, with record issue paths relative to the supplied list. */
+            public val report: ValidationReport = ValidationReport(emptyList()),
+        ) : SubmissionBatchBuildResult {
+            override fun toString(): String = "SubmissionBatchBuildResult.Created(xml=<redacted>, soapEnvelope=<redacted>)"
+        }
 
     /** Structured local issues; field paths are relative to the supplied header and record list. */
     public data class Invalid(
@@ -55,7 +60,7 @@ public sealed interface SubmissionBatchBuildResult {
  * The caller owns persistence, transport, and retry decisions. This builder never performs I/O.
  */
 public object SubmissionBatchBuilder {
-    /** Snapshots and validates [records], then creates immutable batch and SOAP 1.1 XML strings. */
+    /** Snapshots and validates [records], returning immutable validation evidence and prepared XML strings. */
     @JvmStatic
     public fun build(
         header: SubmissionHeader,
@@ -65,20 +70,21 @@ public object SubmissionBatchBuilder {
         val issues = headerIssues(header).toMutableList()
         if (input.size !in 1..1000) {
             issues.add(batchIssue("VF-BATCH-001", "records", "A batch must contain from one to one thousand records.", BATCH_SOURCE))
-            return SubmissionBatchBuildResult.Invalid(ValidationReport(issues.toList()))
+            return SubmissionBatchBuildResult.Invalid(ValidationReport(BatchIssueSnapshot(issues)))
         }
         val snapshots =
             input.mapIndexedNotNull { index, record ->
                 validateRecord(record, header.issuerTaxIdentifier, "records[$index]", issues)
             }
-        if (issues.isNotEmpty()) return SubmissionBatchBuildResult.Invalid(ValidationReport(issues.toList()))
+        val report = ValidationReport(BatchIssueSnapshot(issues))
+        if (!report.isValid) return SubmissionBatchBuildResult.Invalid(report)
         val xml = SubmissionBatchXmlSerializer.serialize(header, snapshots)
         val body = xml.removePrefix("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
         val soap =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>" +
                 body + "</soap:Body></soap:Envelope>"
-        return SubmissionBatchBuildResult.Created(xml, soap)
+        return SubmissionBatchBuildResult.Created(xml, soap, report)
     }
 }
 
@@ -111,6 +117,17 @@ public object SubmissionBatchXmlSerializer {
     }
 }
 
+private class BatchIssueSnapshot(
+    issues: List<ValidationIssue>,
+) : AbstractList<ValidationIssue>() {
+    private val entries: List<ValidationIssue> = issues.toList()
+
+    override val size: Int
+        get() = entries.size
+
+    override fun get(index: Int): ValidationIssue = entries[index]
+}
+
 private fun validateRecord(
     record: SubmissionRecord,
     issuer: TaxIdentifier,
@@ -128,6 +145,7 @@ private fun validateRecord(
                     null
                 }
                 is RecordCreationResult.Created -> {
+                    issues.addAll(result.report.issues.map { it.copy(fieldPath = "$path.draft.${it.fieldPath}") })
                     verifyHash(record.value.hash, result.record.hash, path, issues)
                     SubmissionRecord.Registration(result.record)
                 }
@@ -145,6 +163,7 @@ private fun validateRecord(
                     null
                 }
                 is RecordCreationResult.Created -> {
+                    issues.addAll(result.report.issues.map { it.copy(fieldPath = "$path.draft.${it.fieldPath}") })
                     verifyHash(record.value.hash, result.record.hash, path, issues)
                     SubmissionRecord.Cancellation(result.record)
                 }

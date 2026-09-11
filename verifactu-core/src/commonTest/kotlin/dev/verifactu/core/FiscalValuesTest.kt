@@ -73,12 +73,25 @@ class FiscalValuesTest {
     }
 
     @Test
-    fun measuresSchemaTextLengthsInJvmSchemaUtf16Units() {
+    fun measuresSchemaTextLengthsInUnicodeCodePoints() {
         val supplementaryCharacter = "\uD83D\uDE00"
-        assertIs<ValueResult.Valid<TaxIdentifier>>(TaxIdentifier.parse("A${supplementaryCharacter}123456"))
-        assertIs<ValueResult.Invalid>(TaxIdentifier.parse("A${supplementaryCharacter}1234567"))
-        assertIs<ValueResult.Valid<InvoiceNumber>>(InvoiceNumber.parse(supplementaryCharacter.repeat(30)))
-        assertIs<ValueResult.Invalid>(InvoiceNumber.parse(supplementaryCharacter.repeat(31)))
+        assertIs<ValueResult.Valid<TaxIdentifier>>(TaxIdentifier.parse("A${supplementaryCharacter}1234567"))
+        assertIs<ValueResult.Invalid>(TaxIdentifier.parse("A${supplementaryCharacter}123456"))
+        assertIs<ValueResult.Valid<InvoiceNumber>>(InvoiceNumber.parse(supplementaryCharacter.repeat(60)))
+        assertIs<ValueResult.Invalid>(InvoiceNumber.parse(supplementaryCharacter.repeat(61)))
         assertEquals("INV\r\n\t1", assertIs<ValueResult.Valid<InvoiceNumber>>(InvoiceNumber.parse("INV\r\n\t1")).value.value)
+    }
+
+    @Test
+    fun countsCodePointsWithoutNormalizingOrTreatingCombiningMarksAsOneGlyph() {
+        assertEquals(0, xmlSchemaCharacterCount(""))
+        assertEquals(1, xmlSchemaCharacterCount("\uD83D\uDE00"))
+        assertEquals(1, xmlSchemaCharacterCount("é"))
+        assertEquals(2, xmlSchemaCharacterCount("e\u0301"))
+        assertEquals(3, xmlSchemaCharacterCount("A\uD83D\uDE00B"))
+        assertEquals(1, xmlSchemaCharacterCount("\uD800"))
+        assertEquals(1, xmlSchemaCharacterCount("\uDC00"))
+        assertIs<ValueResult.Invalid>(InvoiceNumber.parse("\uD800"))
+        assertIs<ValueResult.Invalid>(InvoiceNumber.parse("\uDC00"))
     }
 }

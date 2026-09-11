@@ -58,6 +58,7 @@ public final class dev/verifactu/aeat/AeatCorrelationIssueCode : java/lang/Enum 
 	public static final field EMPTY_SUBMISSION Ldev/verifactu/aeat/AeatCorrelationIssueCode;
 	public static final field MISSING_RESPONSE_IDENTITY Ldev/verifactu/aeat/AeatCorrelationIssueCode;
 	public static final field MISSING_RESPONSE_LINE Ldev/verifactu/aeat/AeatCorrelationIssueCode;
+	public static final field OPERATION_FLAGS_MISMATCH Ldev/verifactu/aeat/AeatCorrelationIssueCode;
 	public static final field UNEXPECTED_RESPONSE_LINE Ldev/verifactu/aeat/AeatCorrelationIssueCode;
 	public static final field UNSUPPORTED_OPERATION Ldev/verifactu/aeat/AeatCorrelationIssueCode;
 	public static final field UNSUPPORTED_OPERATION_FLAGS Ldev/verifactu/aeat/AeatCorrelationIssueCode;
@@ -159,8 +160,19 @@ public final class dev/verifactu/aeat/AeatEnvironment : java/lang/Enum {
 public final class dev/verifactu/aeat/AeatErrorCatalogue {
 	public static final field INSTANCE Ldev/verifactu/aeat/AeatErrorCatalogue;
 	public static final field VERSION Ljava/lang/String;
-	public final fun classify (Ljava/lang/String;Ljava/lang/String;)Ldev/verifactu/aeat/AeatIncidence;
-	public static synthetic fun classify$default (Ldev/verifactu/aeat/AeatErrorCatalogue;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatIncidence;
+	public static final fun classify (Ljava/lang/String;)Ldev/verifactu/aeat/AeatIncidence;
+	public static final fun classify (Ljava/lang/String;Ljava/lang/String;)Ldev/verifactu/aeat/AeatIncidence;
+	public static final fun classify (Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/aeat/AeatErrorLocation;)Ldev/verifactu/aeat/AeatIncidence;
+	public static synthetic fun classify$default (Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/aeat/AeatErrorLocation;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatIncidence;
+}
+
+public final class dev/verifactu/aeat/AeatErrorLocation : java/lang/Enum {
+	public static final field HEADER Ldev/verifactu/aeat/AeatErrorLocation;
+	public static final field RECORD Ldev/verifactu/aeat/AeatErrorLocation;
+	public static final field UNKNOWN Ldev/verifactu/aeat/AeatErrorLocation;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Ldev/verifactu/aeat/AeatErrorLocation;
+	public static fun values ()[Ldev/verifactu/aeat/AeatErrorLocation;
 }
 
 public abstract interface class dev/verifactu/aeat/AeatFlowControl {
@@ -190,17 +202,21 @@ public final class dev/verifactu/aeat/AeatFlowControl$Unknown : dev/verifactu/ae
 
 public final class dev/verifactu/aeat/AeatIncidence {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/aeat/AeatIncidenceDisposition;Ldev/verifactu/aeat/AeatSubsanationRequirement;Ldev/verifactu/aeat/AeatCatalogueReference;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/aeat/AeatIncidenceDisposition;Ldev/verifactu/aeat/AeatSubsanationRequirement;Ldev/verifactu/aeat/AeatCatalogueReference;Ldev/verifactu/aeat/AeatErrorLocation;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/aeat/AeatIncidenceDisposition;Ldev/verifactu/aeat/AeatSubsanationRequirement;Ldev/verifactu/aeat/AeatCatalogueReference;Ldev/verifactu/aeat/AeatErrorLocation;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ldev/verifactu/aeat/AeatIncidenceDisposition;
 	public final fun component4 ()Ldev/verifactu/aeat/AeatSubsanationRequirement;
 	public final fun component5 ()Ldev/verifactu/aeat/AeatCatalogueReference;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/aeat/AeatIncidenceDisposition;Ldev/verifactu/aeat/AeatSubsanationRequirement;Ldev/verifactu/aeat/AeatCatalogueReference;)Ldev/verifactu/aeat/AeatIncidence;
-	public static synthetic fun copy$default (Ldev/verifactu/aeat/AeatIncidence;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/aeat/AeatIncidenceDisposition;Ldev/verifactu/aeat/AeatSubsanationRequirement;Ldev/verifactu/aeat/AeatCatalogueReference;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatIncidence;
+	public final fun component6 ()Ldev/verifactu/aeat/AeatErrorLocation;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/aeat/AeatIncidenceDisposition;Ldev/verifactu/aeat/AeatSubsanationRequirement;Ldev/verifactu/aeat/AeatCatalogueReference;Ldev/verifactu/aeat/AeatErrorLocation;)Ldev/verifactu/aeat/AeatIncidence;
+	public static synthetic fun copy$default (Ldev/verifactu/aeat/AeatIncidence;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/aeat/AeatIncidenceDisposition;Ldev/verifactu/aeat/AeatSubsanationRequirement;Ldev/verifactu/aeat/AeatCatalogueReference;Ldev/verifactu/aeat/AeatErrorLocation;ILjava/lang/Object;)Ldev/verifactu/aeat/AeatIncidence;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCode ()Ljava/lang/String;
 	public final fun getDescription ()Ljava/lang/String;
 	public final fun getDisposition ()Ldev/verifactu/aeat/AeatIncidenceDisposition;
+	public final fun getLocation ()Ldev/verifactu/aeat/AeatErrorLocation;
 	public final fun getSource ()Ldev/verifactu/aeat/AeatCatalogueReference;
 	public final fun getSubsanationRequirement ()Ldev/verifactu/aeat/AeatSubsanationRequirement;
 	public fun hashCode ()I
@@ -589,18 +605,22 @@ public final class dev/verifactu/aeat/CancellationPreparationResult$Invalid : de
 
 public final class dev/verifactu/aeat/CancellationPreparationResult$Prepared : dev/verifactu/aeat/CancellationPreparationResult {
 	public fun <init> (Ldev/verifactu/core/RegistroAnulacion;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ldev/verifactu/core/RegistroAnulacion;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ValidationReport;)V
+	public synthetic fun <init> (Ldev/verifactu/core/RegistroAnulacion;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ValidationReport;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ldev/verifactu/core/RegistroAnulacion;
 	public final fun component2 ()Ldev/verifactu/core/ChainState$PreviousRecord;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
-	public final fun copy (Ldev/verifactu/core/RegistroAnulacion;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ldev/verifactu/aeat/CancellationPreparationResult$Prepared;
-	public static synthetic fun copy$default (Ldev/verifactu/aeat/CancellationPreparationResult$Prepared;Ldev/verifactu/core/RegistroAnulacion;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/aeat/CancellationPreparationResult$Prepared;
+	public final fun component6 ()Ldev/verifactu/core/ValidationReport;
+	public final fun copy (Ldev/verifactu/core/RegistroAnulacion;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ValidationReport;)Ldev/verifactu/aeat/CancellationPreparationResult$Prepared;
+	public static synthetic fun copy$default (Ldev/verifactu/aeat/CancellationPreparationResult$Prepared;Ldev/verifactu/core/RegistroAnulacion;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ValidationReport;ILjava/lang/Object;)Ldev/verifactu/aeat/CancellationPreparationResult$Prepared;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBatchXml ()Ljava/lang/String;
 	public final fun getNextChainState ()Ldev/verifactu/core/ChainState$PreviousRecord;
 	public final fun getRecord ()Ldev/verifactu/core/RegistroAnulacion;
 	public final fun getRecordXml ()Ljava/lang/String;
+	public final fun getReport ()Ldev/verifactu/core/ValidationReport;
 	public final fun getSoapEnvelope ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -647,20 +667,24 @@ public final class dev/verifactu/aeat/RegistrationPreparationResult$Invalid : de
 
 public final class dev/verifactu/aeat/RegistrationPreparationResult$Prepared : dev/verifactu/aeat/RegistrationPreparationResult {
 	public fun <init> (Ldev/verifactu/core/RegistroAlta;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ldev/verifactu/qr/QrPayload;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ldev/verifactu/core/RegistroAlta;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ldev/verifactu/qr/QrPayload;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ValidationReport;)V
+	public synthetic fun <init> (Ldev/verifactu/core/RegistroAlta;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ldev/verifactu/qr/QrPayload;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ValidationReport;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ldev/verifactu/core/RegistroAlta;
 	public final fun component2 ()Ldev/verifactu/core/ChainState$PreviousRecord;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ldev/verifactu/qr/QrPayload;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
-	public final fun copy (Ldev/verifactu/core/RegistroAlta;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ldev/verifactu/qr/QrPayload;Ljava/lang/String;Ljava/lang/String;)Ldev/verifactu/aeat/RegistrationPreparationResult$Prepared;
-	public static synthetic fun copy$default (Ldev/verifactu/aeat/RegistrationPreparationResult$Prepared;Ldev/verifactu/core/RegistroAlta;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ldev/verifactu/qr/QrPayload;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ldev/verifactu/aeat/RegistrationPreparationResult$Prepared;
+	public final fun component7 ()Ldev/verifactu/core/ValidationReport;
+	public final fun copy (Ldev/verifactu/core/RegistroAlta;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ldev/verifactu/qr/QrPayload;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ValidationReport;)Ldev/verifactu/aeat/RegistrationPreparationResult$Prepared;
+	public static synthetic fun copy$default (Ldev/verifactu/aeat/RegistrationPreparationResult$Prepared;Ldev/verifactu/core/RegistroAlta;Ldev/verifactu/core/ChainState$PreviousRecord;Ljava/lang/String;Ldev/verifactu/qr/QrPayload;Ljava/lang/String;Ljava/lang/String;Ldev/verifactu/core/ValidationReport;ILjava/lang/Object;)Ldev/verifactu/aeat/RegistrationPreparationResult$Prepared;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBatchXml ()Ljava/lang/String;
 	public final fun getNextChainState ()Ldev/verifactu/core/ChainState$PreviousRecord;
 	public final fun getQr ()Ldev/verifactu/qr/QrPayload;
 	public final fun getRecord ()Ldev/verifactu/core/RegistroAlta;
 	public final fun getRecordXml ()Ljava/lang/String;
+	public final fun getReport ()Ldev/verifactu/core/ValidationReport;
 	public final fun getSoapEnvelope ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

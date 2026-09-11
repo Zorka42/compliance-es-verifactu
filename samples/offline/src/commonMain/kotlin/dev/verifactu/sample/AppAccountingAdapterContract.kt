@@ -16,6 +16,7 @@ import dev.verifactu.core.RegistroAlta
 import dev.verifactu.core.RegistroAltaDraft
 import dev.verifactu.core.SistemaInformatico
 import dev.verifactu.core.TaxBreakdown
+import dev.verifactu.core.ValidationReport
 import dev.verifactu.qr.QrEnvironment
 import dev.verifactu.xml.SubmissionRecord
 
@@ -65,6 +66,7 @@ internal data class AppAccountingPersistedRegistration(
     val record: RegistroAlta,
     val nextChainState: ChainState.PreviousRecord,
     val soapEnvelope: String,
+    val validationReport: ValidationReport,
 ) {
     override fun toString(): String = "AppAccountingPersistedRegistration(redacted)"
 }
@@ -73,11 +75,17 @@ internal data class AppAccountingPersistedRegistration(
 internal interface AppAccountingFiscalStore {
     fun loadChainState(chainId: String): ChainState
 
-    /** Persists the record and advances the head in one transaction or compare-and-set operation. */
+    fun loadRegistration(applicationInvoiceId: String): AppAccountingPersistedRegistration?
+
+    /**
+     * Persists the record and advances the head in one transaction or compare-and-set operation.
+     * The same transaction enforces uniqueness of the finalized application invoice ID. A
+     * correction is a separate host event; it must not reuse that finalization ID.
+     */
     fun persistRegistrationAndAdvanceChain(
         expectedChainState: ChainState,
         registration: AppAccountingPersistedRegistration,
-    ): Boolean
+    ): AppAccountingPersistenceResult
 
     /** Records an application-owned delivery attempt against the exact persisted request bytes. */
     fun beginAttempt(
@@ -91,6 +99,12 @@ internal interface AppAccountingFiscalStore {
     )
 }
 
+internal enum class AppAccountingPersistenceResult {
+    PERSISTED,
+    CHAIN_CONFLICT,
+    ALREADY_RECORDED,
+}
+
 /** Result of preparing a finalized host invoice and atomically persisting its fiscal artifacts. */
 internal sealed interface AppAccountingPreparationResult {
     data class Persisted(
@@ -102,6 +116,8 @@ internal sealed interface AppAccountingPreparationResult {
     ) : AppAccountingPreparationResult
 
     data object ChainConflict : AppAccountingPreparationResult
+
+    data object AlreadyRecorded : AppAccountingPreparationResult
 }
 
 /**
@@ -135,11 +151,12 @@ internal class AppAccountingVerifactuAdapter(
                         record = result.record,
                         nextChainState = result.nextChainState,
                         soapEnvelope = result.soapEnvelope,
+                        validationReport = result.report,
                     )
-                if (store.persistRegistrationAndAdvanceChain(expectedChainState, registration)) {
-                    AppAccountingPreparationResult.Persisted(registration)
-                } else {
-                    AppAccountingPreparationResult.ChainConflict
+                when (store.persistRegistrationAndAdvanceChain(expectedChainState, registration)) {
+                    AppAccountingPersistenceResult.PERSISTED -> AppAccountingPreparationResult.Persisted(registration)
+                    AppAccountingPersistenceResult.CHAIN_CONFLICT -> AppAccountingPreparationResult.ChainConflict
+                    AppAccountingPersistenceResult.ALREADY_RECORDED -> AppAccountingPreparationResult.AlreadyRecorded
                 }
             }
         }

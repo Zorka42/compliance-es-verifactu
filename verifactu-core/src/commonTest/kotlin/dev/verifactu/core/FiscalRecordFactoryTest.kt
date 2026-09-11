@@ -157,6 +157,7 @@ class FiscalRecordFactoryTest {
                                 operation = TaxOperation.Qualified(Qualification.SUBJECT_REVERSE_CHARGE),
                                 taxableBase = validAmount("111.10"),
                                 tax = TaxType.IVA,
+                                regimeCode = "01",
                                 taxRate = "0",
                                 chargedTax = validAmount("0"),
                             ),
@@ -230,7 +231,7 @@ class FiscalRecordFactoryTest {
                 taxBreakdown = taxBreakdown(TaxOperation.Qualified(Qualification.SUBJECT_REVERSE_CHARGE)),
             )
 
-        assertIssue("VF-RECORD-006", exemptWithTaxFields)
+        assertIssue("VF-TAX-1238", exemptWithTaxFields)
         assertIssue("VF-RECORD-009", nonSubjectWithTaxFields)
         assertIssue("VF-RECORD-007", subjectWithoutRequiredTaxFields)
         assertIssue("VF-RECORD-008", reverseChargeWithoutZeroFields)
@@ -360,12 +361,12 @@ class FiscalRecordFactoryTest {
     }
 
     @Test
-    fun usesUtf16UnitsForXmlLengthValidationCompatibility() {
-        val atBoundary = "a".repeat(498) + "\uD83D\uDE00"
+    fun usesUnicodeCodePointsForXmlLengthValidation() {
+        val atBoundary = "a".repeat(499) + "\uD83D\uDE00"
         val overBoundary = atBoundary + "\uD83D\uDE00"
 
         assertEquals(500, xmlSchemaCharacterCount(atBoundary))
-        assertEquals(502, xmlSchemaCharacterCount(overBoundary))
+        assertEquals(501, xmlSchemaCharacterCount(overBoundary))
         assertTrue(RegistroAltaValidator.validate(registrationDraft().copy(operationDescription = atBoundary)).isValid)
         assertFalse(RegistroAltaValidator.validate(registrationDraft().copy(operationDescription = overBoundary)).isValid)
     }
@@ -490,16 +491,16 @@ class FiscalRecordFactoryTest {
     }
 
     @Test
-    fun acceptsTheJvmSchemaLengthBoundaryForSupplementaryUnicodeCharacters() {
+    fun acceptsTheW3cLengthBoundaryForSupplementaryUnicodeCharacters() {
         val draft = registrationDraft()
         assertIs<RecordCreationResult.Created<RegistroAlta>>(
             FiscalRecordFactory.createRegistration(
-                draft.copy(issuerName = "\uD83D\uDE00".repeat(60)),
+                draft.copy(issuerName = "\uD83D\uDE00".repeat(120)),
             ),
         )
         assertIs<RecordCreationResult.Invalid>(
             FiscalRecordFactory.createRegistration(
-                draft.copy(issuerName = "\uD83D\uDE00".repeat(61)),
+                draft.copy(issuerName = "\uD83D\uDE00".repeat(121)),
             ),
         )
     }
@@ -537,21 +538,15 @@ class FiscalRecordFactoryTest {
                     ),
                     regime,
                 )
-            assertEquals(
-                "VF-RECORD-003",
-                invalid.report.issues
-                    .single()
-                    .code,
-            )
+            assertTrue(invalid.report.issues.any { it.code == "VF-RECORD-003" })
         }
         listOf("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "17", "18", "19", "20", "21")
             .forEach { regime ->
-                assertIs<RecordCreationResult.Created<RegistroAlta>>(
-                    FiscalRecordFactory.createRegistration(
+                val report =
+                    RegistroAltaValidator.validate(
                         draft.copy(taxBreakdown = TaxBreakdown(listOf(detail.copy(regimeCode = regime)))),
-                    ),
-                    regime,
-                )
+                    )
+                assertTrue(report.issues.none { it.code == "VF-RECORD-003" }, regime)
             }
     }
 
@@ -571,6 +566,7 @@ class FiscalRecordFactoryTest {
                             operation = TaxOperation.Qualified(Qualification.SUBJECT_NOT_EXEMPT),
                             taxableBase = validAmount("111.10"),
                             tax = TaxType.IVA,
+                            regimeCode = "01",
                             taxRate = "10",
                             chargedTax = validAmount("12.35"),
                         ),
@@ -609,6 +605,7 @@ class FiscalRecordFactoryTest {
                     operation = operation,
                     taxableBase = validAmount("111.10"),
                     tax = TaxType.IVA,
+                    regimeCode = "01",
                     taxRate = taxRate,
                     chargedTax = chargedTax,
                 ),

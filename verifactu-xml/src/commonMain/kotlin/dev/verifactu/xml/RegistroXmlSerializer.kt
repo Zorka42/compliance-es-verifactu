@@ -26,8 +26,10 @@ public object RegistroXmlSerializer {
             val conditional = draft.conditionalData
             registrationExternalReference(conditional)
             element("NombreRazonEmisor", draft.issuerName)
-            registrationConditionalPrefix(conditional)
+            conditional.subsanation?.let { element("Subsanacion", it.xmlValue) }
+            conditional.previousRejection?.let { element("RechazoPrevio", it.xmlValue) }
             element("TipoFactura", draft.invoiceType.name)
+            registrationConditionalPrefix(conditional)
             element("DescripcionOperacion", draft.operationDescription)
             registrationConditionalDetails(conditional)
             element("Desglose") {
@@ -136,8 +138,6 @@ private class XmlWriter {
     }
 
     fun registrationConditionalPrefix(conditional: dev.verifactu.core.RegistrationConditionalData) {
-        conditional.subsanation?.let { element("Subsanacion", it.xmlValue) }
-        conditional.previousRejection?.let { element("RechazoPrevio", it.xmlValue) }
         conditional.rectification?.let { rectification(it) }
         if (conditional.replacedInvoices.isNotEmpty()) {
             element("FacturasSustituidas") {

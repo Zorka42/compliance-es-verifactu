@@ -258,7 +258,7 @@ private fun AeatXmlFields.responseLine(line: AeatXmlElement): AeatResponseLine? 
         rawStatus = rawStatus,
         duplicate = duplicate,
         externalReference = text(line, RESPONSE_NAMESPACE, "RefExterna"),
-        incidence = errorCode?.let { AeatErrorCatalogue.classify(it, errorDescription) },
+        incidence = errorCode?.let { AeatErrorCatalogue.classify(it, errorDescription, AeatErrorLocation.RECORD) },
     )
 }
 

@@ -181,6 +181,7 @@ class AeatResponseParserTest {
         val parsed = parsed(xml)
         val line = parsed.lines.single()
 
+        assertEquals(AeatErrorLocation.RECORD, line.incidence?.location)
         assertEquals(AeatRecordStatus.ACCEPTED_WITH_ERRORS, line.status)
         assertEquals("2004", line.incidence?.code)
         assertEquals(AeatSubsanationRequirement.REQUIRED, line.incidence?.subsanationRequirement)
@@ -244,6 +245,27 @@ class AeatResponseParserTest {
             val result = assertIs<AeatResponseParseResult.InvalidXml>(AeatResponseParser.parseSubmission(it))
             assertFalse(result.reason.contains(privateText))
         }
+    }
+
+    @Test
+    fun platformReadersPreserveSupplementaryCharactersAtTheInvoiceNumberBoundary() {
+        val number = "\uD83D\uDE00".repeat(60)
+        assertEquals(
+            number,
+            parsed(response(line(number)))
+                .lines
+                .single()
+                .invoice
+                ?.number,
+        )
+        assertEquals(
+            number,
+            parsed(response(line("&#x1F600;".repeat(60))))
+                .lines
+                .single()
+                .invoice
+                ?.number,
+        )
     }
 
     @Test

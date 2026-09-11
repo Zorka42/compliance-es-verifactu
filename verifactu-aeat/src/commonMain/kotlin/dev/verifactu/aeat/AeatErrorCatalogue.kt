@@ -1,5 +1,8 @@
 package dev.verifactu.aeat
 
+import kotlin.jvm.JvmOverloads
+import kotlin.jvm.JvmStatic
+
 /** The source location for a typed AEAT validation-catalogue entry. */
 public data class AeatCatalogueReference(
     public val document: String,
@@ -22,14 +25,28 @@ public enum class AeatSubsanationRequirement {
     UNKNOWN,
 }
 
+/** Where an error was reported; some published codes have different effects in a header and a record. */
+public enum class AeatErrorLocation {
+    RECORD,
+    HEADER,
+    UNKNOWN,
+}
+
 /** A typed and inspectable interpretation of an AEAT error code. */
-public data class AeatIncidence(
-    public val code: String,
-    public val description: String?,
-    public val disposition: AeatIncidenceDisposition,
-    public val subsanationRequirement: AeatSubsanationRequirement,
-    public val source: AeatCatalogueReference?,
-)
+public data class AeatIncidence
+    @JvmOverloads
+    constructor(
+        public val code: String,
+        public val description: String?,
+        public val disposition: AeatIncidenceDisposition,
+        public val subsanationRequirement: AeatSubsanationRequirement,
+        public val source: AeatCatalogueReference?,
+        public val location: AeatErrorLocation = AeatErrorLocation.UNKNOWN,
+    ) {
+        /** Omits raw codes and remote descriptions, which can contain private data. */
+        override fun toString(): String =
+            "AeatIncidence(disposition=$disposition, subsanationRequirement=$subsanationRequirement, details=redacted)"
+    }
 
 /**
  * Conservative classification of selected official AEAT error codes.
@@ -41,10 +58,13 @@ public object AeatErrorCatalogue {
     /** Version of the archived AEAT validation and error catalogue used for these mappings. */
     public const val VERSION: String = "1.2.2 (2026-04-08)"
 
-    /** Classifies an error code without inferring any automatic delivery action. */
+    /** Classifies a code using explicit location when its published effect depends on where it occurred. */
+    @JvmStatic
+    @JvmOverloads
     public fun classify(
         code: String,
         description: String? = null,
+        location: AeatErrorLocation = AeatErrorLocation.UNKNOWN,
     ): AeatIncidence {
         val normalizedCode = code.trim()
         return when (normalizedCode) {
@@ -58,13 +78,13 @@ public object AeatErrorCatalogue {
             "2007",
             "2008",
             "2009",
-            -> acceptedWithErrors(normalizedCode, description, AeatSubsanationRequirement.REQUIRED)
+            -> acceptedWithErrors(normalizedCode, description, AeatSubsanationRequirement.REQUIRED, location)
             "3000",
             "3001",
             "3002",
             "3003",
             "3004",
-            -> recordRejected(normalizedCode, description)
+            -> locationDependentRejection(normalizedCode, description, location)
             in WHOLE_SUBMISSION_REJECTION_CODES ->
                 AeatIncidence(
                     code = normalizedCode,
@@ -72,8 +92,9 @@ public object AeatErrorCatalogue {
                     disposition = AeatIncidenceDisposition.WHOLE_SUBMISSION_REJECTED,
                     subsanationRequirement = AeatSubsanationRequirement.UNKNOWN,
                     source = catalogueReference("4.2 and 4.4"),
+                    location = location,
                 )
-            in RECORD_REJECTION_CODES -> recordRejected(normalizedCode, description)
+            in RECORD_REJECTION_CODES -> locationDependentRejection(normalizedCode, description, location)
             else ->
                 AeatIncidence(
                     code = normalizedCode,
@@ -81,6 +102,7 @@ public object AeatErrorCatalogue {
                     disposition = AeatIncidenceDisposition.UNKNOWN,
                     subsanationRequirement = AeatSubsanationRequirement.UNKNOWN,
                     source = null,
+                    location = location,
                 )
         }
     }
@@ -90,6 +112,7 @@ private fun acceptedWithErrors(
     code: String,
     description: String?,
     requirement: AeatSubsanationRequirement,
+    location: AeatErrorLocation,
 ): AeatIncidence =
     AeatIncidence(
         code = code,
@@ -97,23 +120,31 @@ private fun acceptedWithErrors(
         disposition = AeatIncidenceDisposition.ACCEPTED_WITH_ERRORS,
         subsanationRequirement = requirement,
         source = catalogueReference("4.3.1 and 4.4"),
+        location = location,
     )
 
-private fun recordRejected(
+private fun locationDependentRejection(
     code: String,
     description: String?,
+    location: AeatErrorLocation,
 ): AeatIncidence =
     AeatIncidence(
         code = code,
         description = description,
-        disposition = AeatIncidenceDisposition.RECORD_REJECTED,
+        disposition =
+            when (location) {
+                AeatErrorLocation.RECORD -> AeatIncidenceDisposition.RECORD_REJECTED
+                AeatErrorLocation.HEADER -> AeatIncidenceDisposition.WHOLE_SUBMISSION_REJECTED
+                AeatErrorLocation.UNKNOWN -> AeatIncidenceDisposition.UNKNOWN
+            },
         subsanationRequirement = AeatSubsanationRequirement.UNKNOWN,
-        source = catalogueReference("4.2 and 4.4"),
+        source = catalogueReference("4.2 and 4.4; errores.properties record/header-dependent rejection group"),
+        location = location,
     )
 
 private fun catalogueReference(section: String): AeatCatalogueReference =
     AeatCatalogueReference(
-        document = "AEAT Validaciones y errores",
+        document = "AEAT Validaciones y errores; errores.properties",
         version = AeatErrorCatalogue.VERSION,
         section = section,
     )
