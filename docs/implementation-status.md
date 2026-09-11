@@ -1,6 +1,29 @@
 # Implementation Status
 
-Local assessment and implementation batches: 2026-09-06. **The offline foundation, review fixes, validated preparation, response handling and query utility are locally verified. External acceptance and release remain open.** The authoritative backlog remains [Zorka Accounting – Tasks](https://app.notion.com/p/3bd4f302230980d3bb72ffbd0068aa8b), project `Verifactu`.
+Local assessment updated 2026-09-11; earlier implementation batches are recorded below. **External acceptance and release remain open.** The authoritative backlog remains [Zorka Accounting – Tasks](https://app.notion.com/p/3bd4f302230980d3bb72ffbd0068aa8b), project `Verifactu`.
+
+## Five-Task Acceptance Review — 2026-09-11
+
+The worktree was advanced from `8339528` to the existing `main` commit `51e2321` before reviewing ZA-106–110. Existing `To verify` labels were checked against code and acceptance criteria; they did not establish correctness. Review found invalid conditional XML ordering, mutable conditional lists, a UTF-16 length regression, incorrect correction-response matching, context-free error classification and a response-body timeout gap.
+
+| Task | Implementation and regression evidence |
+| --- | --- |
+| ZA-106 conditional records | F1/F3/R1–R5 fields, source-backed conditional tax rules, immutable factory snapshots for recipients/replacements/rectifications, schema list limits and country enumeration; conditional records validated against the archived XSD |
+| ZA-107 incidence/correction catalogue | Explicit record/header/unknown error location, inspectable unknown codes and redacted summaries; correlation compares submitted subsanation/prior-rejection flags independently from acceptance |
+| ZA-109 Unicode compatibility | W3C character counts in common validation; supplementary/BMP boundaries, provider probes against official XSD and both query roles; no global provider property changes |
+| ZA-108 loopback mTLS | Disposable local identities; client identity, SOAP headers, bounded responses and timeout covering the complete body, including a server that stalls after sending headers |
+| ZA-110 application adapter contract | Finalized data mapping, stale-head comparison, unique finalization, validation failure without persistence, unknown delivery replay and restart after failed response persistence; the Java consumer also exercises an F1 recipient snapshot |
+
+These are library and sample contracts. The real app-accounting database is not wired by this repository's sample. Its inspected `1d54f4f` issue transaction and remaining data requirements are documented in [the adapter contract](app-accounting-adapter-contract.md). Further arithmetic checks, identifier semantics, external validation context and actual app transaction integration are tracked as ZA-113–116 in [the release plan](release-plan.md). No task is `Done` solely from local verification.
+
+### Verification for this batch
+
+- `./gradlew --offline --no-daemon ktlintFormat check compileKotlinMetadata compileKotlinIosArm64 koverXmlReportJvm koverVerifyJvm publishJvmPreview --continue --console=plain` passed: **493 tasks, 341 executed**. This includes static analysis, versioned JVM API checks, compile-tested Kotlin/Java examples, archived contract digests, XML schemas and disposable loopback mTLS.
+- Fresh reports contain **166 JVM, 126 Android host, 139 iOS simulator and 139 macOS tests**, with zero failures, errors or skipped tests in those reports. Intel Apple execution and Android device XSD/transport behavior are not covered by these counts.
+- Core JVM line coverage is **1341/1349 (99.4%)**, above the unchanged 90% gate. Coverage is not a completeness or compliance claim.
+- The independent `samples/maven-consumer` build and run passed against the newly published local artifacts, including F1 construction and Java mutation protection. Compilation targets Java 11; this local run used JDK 22. Java 11 runtime verification remains configured in CI.
+- The selected JAXP provider reported `com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory`, profile `UTF16_UNITS`. The archived-schema probe and both query roles verified that profile, while common validation retained W3C character counts.
+- Dokka completed successfully but caused configuration-cache discard warnings. No successful configuration-cache reuse or external Maven publication is claimed.
 
 ## Starting point
 
@@ -47,7 +70,7 @@ The first implementation package was committed as `29106f9`, merged into main as
 
 The code/architecture review retained the five-module structure. It fixed XML-invalid text, serialized-length checks, calendar/offset validation, regime membership, CR preservation, mutable factory input/output lists, unescaped header identifiers, unsafe diagnostic summaries, dropped response lines and sample invoice mismatches. The response parser uses platform readers behind a common interpretation boundary; core still performs no I/O.
 
-## Latest Local Verification
+## Historical Local Verification — 2026-09-06
 
 - `./gradlew --offline --no-daemon ktlintFormat check compileKotlinMetadata compileKotlinIosArm64 koverXmlReportJvm koverVerifyJvm publishJvmPreview --continue` passed: **776 tasks, 408 executed**.
 - `check` includes formatting/static analysis, API baselines, JVM/Android/Apple tests, Kotlin/Java samples and platform checks configured by the project. The separate metadata/device compilation and coverage gates also passed.
@@ -62,8 +85,8 @@ Dokka 2.0 V1 tasks remain incompatible with configuration cache. Their successfu
 
 ## Remaining Plan
 
-See [the complete release and testing plan](release-plan.md) for the ordered work, required credentials and evidence at each stage. The immediate offline priorities are complete conditional fiscal models, catalogue-backed incidence/correction behavior, final workflow/API review and the app adapter. Existing constructors are intentionally low-level; not every supported XML field or fiscal rule is modeled.
+See [the complete release and testing plan](release-plan.md) for the ordered work, required credentials and evidence at each stage. The remaining offline priorities are exact arithmetic checks, source-backed identifier semantics, explicit context for externally dependent rules, and the real app's durable integration. Existing constructors are intentionally low-level; local validation is not a complete AEAT or legal compliance decision.
 
-After those local contracts are ready, exercise transports with disposable loopback test identities. Real AEAT test calls, actual issued/received history and personal certificates require the separate operational discussion requested by the owner. The query utility is ready for local preparation and saved-response inspection only; it has not retrieved this taxpayer's invoices.
+Loopback transport checks use fresh disposable test identities. Real AEAT test calls, actual issued/received history and personal certificates require the separate operational discussion requested by the owner. The query utility prepares requests and inspects saved responses locally; it has not retrieved this taxpayer's invoices.
 
 Maven Central publication needs its own namespace/credentials/signing setup; producer/component declaration review and repository governance remain release prerequisites. None of these stages is reported as Done from local tests alone.

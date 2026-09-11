@@ -19,6 +19,8 @@ import dev.verifactu.aeat.FiscalSubmissionPreparation;
 import dev.verifactu.aeat.RegistrationPreparationResult;
 import dev.verifactu.core.ChainState;
 import dev.verifactu.core.FiscalAmount;
+import dev.verifactu.core.FiscalParty;
+import dev.verifactu.core.FiscalPartyIdentifier;
 import dev.verifactu.core.InvoiceIdentifier;
 import dev.verifactu.core.InvoiceIssueDate;
 import dev.verifactu.core.InvoiceNumber;
@@ -41,6 +43,7 @@ import dev.verifactu.testkit.AeatResponseFixtures;
 import dev.verifactu.testkit.AeatResponseScenario;
 import dev.verifactu.testkit.FakeAeatTransport;
 import dev.verifactu.xml.SubmissionRecord;
+import java.util.ArrayList;
 import java.util.List;
 
 /** A Java 11 consumer using static entry points and ordinary typed result getters. */
@@ -56,13 +59,19 @@ public final class JavaExample {
             new TaxOperation.Qualified(Qualification.SUBJECT_NOT_EXEMPT), value(FiscalAmount.parse("100.00")),
             TaxType.IVA, "01", "21", null, value(FiscalAmount.parse("21.00")), null, null
         );
+        FiscalParty recipient = new FiscalParty(
+            "Synthetic Java recipient", new FiscalPartyIdentifier.SpanishNif(value(TaxIdentifier.parse("89890002Q")))
+        );
+        List<FiscalParty> recipients = new ArrayList<>(List.of(recipient));
         RegistroAltaDraft draft = new RegistroAltaDraft(
-            RecordVersion.V1_0, invoice, "Example issuer", InvoiceType.F2,
+            RecordVersion.V1_0, invoice, "Example issuer", InvoiceType.F1,
             value(FiscalAmount.parse("21.00")), value(FiscalAmount.parse("121.00")), "Synthetic Java example",
             new TaxBreakdown(List.of(detail)), ChainState.FirstRecord.INSTANCE,
             new SistemaInformatico("Example producer", issuer, "Java sample", "VF", "0.1", "sample-1", true, false, false),
             value(RecordGenerationTimestamp.parse("2024-01-01T12:00:00+01:00")),
-            new RegistrationConditionalData()
+            new RegistrationConditionalData(
+                null, null, null, null, List.of(), null, null, null, null, null, null, recipients, null, null, null
+            )
         );
         RegistrationPreparationResult result = FiscalSubmissionPreparation.prepareRegistration(draft, QrEnvironment.TEST);
         if (!(result instanceof RegistrationPreparationResult.Prepared)) {
@@ -70,6 +79,12 @@ public final class JavaExample {
         }
         RegistrationPreparationResult.Prepared created = (RegistrationPreparationResult.Prepared) result;
         RegistroAlta record = created.getRecord();
+        recipients.clear();
+        List<FiscalParty> preparedRecipients = record.getDraft().getConditionalData().getRecipients();
+        assertReadOnly(preparedRecipients, recipient);
+        if (!preparedRecipients.equals(List.of(recipient))) {
+            throw new IllegalStateException("Prepared recipients changed after caller or getter mutation");
+        }
         List<TaxBreakdownDetail> preparedDetails = record.getDraft().getTaxBreakdown().getDetails();
         try {
             preparedDetails.clear();
@@ -125,6 +140,21 @@ public final class JavaExample {
         System.out.println("Java registration: " + lines.get(0).getStatus());
         System.out.println("Next synthetic chain hash: " + created.getNextChainState().getHash());
         System.out.println("Captured fake requests: " + transport.getRequests().size() + "; network calls: 0");
+    }
+
+    private static <T> void assertReadOnly(List<T> values, T item) {
+        try {
+            values.clear();
+            throw new IllegalStateException("Prepared fiscal list allowed Java mutation");
+        } catch (UnsupportedOperationException expected) {
+            // Prepared lists must also be immutable to Java callers.
+        }
+        try {
+            values.set(0, item);
+            throw new IllegalStateException("Prepared fiscal list allowed Java replacement");
+        } catch (UnsupportedOperationException expected) {
+            // Replacement must not bypass a read-only collection boundary.
+        }
     }
 
     private static <T> T value(ValueResult<T> result) {
