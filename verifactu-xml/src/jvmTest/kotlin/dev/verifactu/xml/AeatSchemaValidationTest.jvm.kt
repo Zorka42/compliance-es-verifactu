@@ -2,22 +2,30 @@ package dev.verifactu.xml
 
 import dev.verifactu.core.ChainState
 import dev.verifactu.core.FiscalAmount
+import dev.verifactu.core.FiscalParty
+import dev.verifactu.core.FiscalPartyIdentifier
 import dev.verifactu.core.FiscalRecordFactory
 import dev.verifactu.core.InvoiceIdentifier
 import dev.verifactu.core.InvoiceIssueDate
 import dev.verifactu.core.InvoiceNumber
+import dev.verifactu.core.InvoiceRectification
 import dev.verifactu.core.InvoiceType
 import dev.verifactu.core.Qualification
 import dev.verifactu.core.RecordCreationResult
 import dev.verifactu.core.RecordGenerationTimestamp
 import dev.verifactu.core.RecordHashCalculator
 import dev.verifactu.core.RecordVersion
+import dev.verifactu.core.RectificationAmounts
+import dev.verifactu.core.RectificationType
+import dev.verifactu.core.RegistrationConditionalData
 import dev.verifactu.core.RegistrationHashInput
+import dev.verifactu.core.RegistrationPreviousRejection
 import dev.verifactu.core.RegistroAlta
 import dev.verifactu.core.RegistroAltaDraft
 import dev.verifactu.core.RegistroAnulacion
 import dev.verifactu.core.RegistroAnulacionDraft
 import dev.verifactu.core.SistemaInformatico
+import dev.verifactu.core.Subsanation
 import dev.verifactu.core.TaxBreakdown
 import dev.verifactu.core.TaxBreakdownDetail
 import dev.verifactu.core.TaxIdentifier
@@ -91,17 +99,87 @@ class AeatSchemaValidationTest {
     }
 
     @Test
-    fun countsSupplementaryUnicodeUtf16UnitsAtTheSameBoundaryAsCommonValidation() {
-        val atBoundary = "a".repeat(118) + "\uD83D\uDE00"
-        val overBoundary = atBoundary + "\uD83D\uDE00"
-        val validXml = REGISTRO_ALTA_V1_GOLDEN_XML.replace("Issuer &amp; Co", atBoundary)
-        val invalidXml = REGISTRO_ALTA_V1_GOLDEN_XML.replace("Issuer &amp; Co", overBoundary)
+    fun recordsTheSelectedProviderLengthProfileWithoutChangingTheCommonContract() {
+        val factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "")
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "")
+        val probe =
+            factory.newSchema(
+                StreamSource(
+                    StringReader(
+                        "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">" +
+                            "<xs:element name=\"value\"><xs:simpleType><xs:restriction base=\"xs:string\">" +
+                            "<xs:maxLength value=\"1\"/></xs:restriction></xs:simpleType></xs:element></xs:schema>",
+                    ),
+                ),
+            )
+        val supplementary = "\uD83D\uDE00"
+        val countsCodePoints = accepts(probe.newValidator(), "<value>$supplementary</value>")
+        val profile = if (countsCodePoints) "CODE_POINTS" else "UTF16_UNITS"
+        println("XSD provider=${factory.javaClass.name}; lengthProfile=$profile")
+        val record = registration("INV-1", "2024-01-01T10:00:00+01:00", supplementary.repeat(120))
+        val xml = RegistroXmlSerializer.serialize(record)
+        val parsed = documents().newDocumentBuilder().parse(InputSource(StringReader(xml)))
 
-        schema().newValidator().validate(StreamSource(StringReader(validXml)))
-        assertFailsWith<SAXException> {
-            schema().newValidator().validate(StreamSource(StringReader(invalidXml)))
+        assertEquals(record.draft.issuerName, parsed.getElementsByTagName("NombreRazonEmisor").item(0).textContent)
+        assertEquals(countsCodePoints, accepts(schema().newValidator(), xml), "Provider: ${factory.javaClass.name}")
+        // JDK 22's default profile is UTF-16; an updated conforming provider may accept this boundary.
+        // Both profiles must accept the intersection fixture and reject text over the W3C limit.
+        assertEquals(true, accepts(schema().newValidator(), xml.replace(supplementary.repeat(120), supplementary.repeat(60))))
+        assertEquals(false, accepts(schema().newValidator(), xml.replace(supplementary.repeat(120), supplementary.repeat(121))))
+    }
+
+    @Test
+    fun validatesConditionalInvoiceTypesInTheCanonicalSchemaSequence() {
+        val base = registration("INV-1", "2024-01-01T10:00:00+01:00", "Issuer").draft
+        val amount = (FiscalAmount.parse("0.00") as ValueResult.Valid).value
+        InvoiceType.entries.forEach { invoiceType ->
+            val rectifying = invoiceType.name.startsWith("R")
+            val conditional =
+                RegistrationConditionalData(
+                    externalReference = "external & reference",
+                    subsanation = Subsanation.YES,
+                    previousRejection = RegistrationPreviousRejection.YES,
+                    rectification =
+                        if (rectifying) {
+                            InvoiceRectification(
+                                RectificationType.REPLACEMENT,
+                                listOf(base.invoice),
+                                RectificationAmounts(amount, amount, amount),
+                            )
+                        } else {
+                            null
+                        },
+                    replacedInvoices = if (invoiceType == InvoiceType.F3) listOf(base.invoice) else emptyList(),
+                    operationDate = base.invoice.issueDate,
+                    recipients =
+                        if (invoiceType in listOf(InvoiceType.F2, InvoiceType.R5)) {
+                            emptyList()
+                        } else {
+                            listOf(FiscalParty("Recipient", FiscalPartyIdentifier.SpanishNif(base.invoice.issuer)))
+                        },
+                    taxationAgreementRegistrationNumber = "agreement-1",
+                    systemAgreementIdentifier = "system-agree-1",
+                )
+            val record =
+                assertIs<RecordCreationResult.Created<RegistroAlta>>(
+                    FiscalRecordFactory.createRegistration(base.copy(invoiceType = invoiceType, conditionalData = conditional)),
+                ).record
+            val xml = RegistroXmlSerializer.serialize(record)
+            schema(includeBatch = true).newValidator().validate(StreamSource(StringReader(xml)))
         }
     }
+
+    private fun accepts(
+        validator: javax.xml.validation.Validator,
+        xml: String,
+    ): Boolean =
+        try {
+            validator.validate(StreamSource(StringReader(xml)))
+            true
+        } catch (_: SAXException) {
+            false
+        }
 
     @Test
     fun schemaAndLocalParserRejectImpossibleTimestampValues() {
@@ -167,7 +245,10 @@ class AeatSchemaValidationTest {
                 totalTax = amount,
                 totalAmount = amount,
                 operationDescription = "Schema regression",
-                taxBreakdown = TaxBreakdown(listOf(TaxBreakdownDetail(TaxOperation.Qualified(Qualification.NOT_SUBJECT), amount))),
+                taxBreakdown =
+                    TaxBreakdown(
+                        listOf(TaxBreakdownDetail(TaxOperation.Qualified(Qualification.NOT_SUBJECT), amount, regimeCode = "01")),
+                    ),
                 chainState = ChainState.FirstRecord,
                 system = SistemaInformatico("Producer", taxId, "VeriFactu", "VF", "1.0", "install-1", true, false, false),
                 generatedAt = (RecordGenerationTimestamp.parse(timestamp) as ValueResult.Valid).value,

@@ -1,7 +1,11 @@
 package dev.verifactu.tools.query
 
+import org.xml.sax.SAXException
 import java.nio.file.Files
 import java.security.MessageDigest
+import javax.xml.XMLConstants
+import javax.xml.transform.stream.StreamSource
+import javax.xml.validation.SchemaFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -29,6 +33,39 @@ class InvoiceQueryTest {
         }
         assertFailsWith<QueryInputException> { query.prepare(QueryDirection.ISSUED, party.copy(nif = "bad"), period) }
         assertFailsWith<QueryInputException> { query.prepare(QueryDirection.ISSUED, party.copy(name = "x\u0001"), period) }
+    }
+
+    @Test
+    fun queryLengthBoundariesFollowTheSelectedValidatorWithoutChangingGlobalSettings() {
+        val factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "")
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "")
+        val probeSchema =
+            factory.newSchema(
+                StreamSource(
+                    """<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                <xs:element name="text"><xs:simpleType><xs:restriction base="xs:string">
+                <xs:maxLength value="1"/></xs:restriction></xs:simpleType></xs:element></xs:schema>""".reader(),
+                ),
+            )
+        val countsCodePoints =
+            try {
+                probeSchema.newValidator().validate(StreamSource("<text>😀</text>".reader()))
+                true
+            } catch (_: SAXException) {
+                false
+            }
+        QueryDirection.entries.forEach { direction ->
+            query.prepare(direction, party.copy(name = "A".repeat(120)), period)
+            query.prepare(direction, party.copy(name = "😀".repeat(60)), period)
+            assertFailsWith<QueryInputException> { query.prepare(direction, party.copy(name = "A".repeat(121)), period) }
+            assertFailsWith<QueryInputException> { query.prepare(direction, party.copy(name = "😀".repeat(121)), period) }
+            if (countsCodePoints) {
+                query.prepare(direction, party.copy(name = "😀".repeat(120)), period)
+            } else {
+                assertFailsWith<QueryInputException> { query.prepare(direction, party.copy(name = "😀".repeat(120)), period) }
+            }
+        }
     }
 
     @Test

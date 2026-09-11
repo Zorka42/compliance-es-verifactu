@@ -8,17 +8,22 @@ import dev.verifactu.core.FiscalRecordFactory
 import dev.verifactu.core.InvoiceIdentifier
 import dev.verifactu.core.InvoiceIssueDate
 import dev.verifactu.core.InvoiceNumber
+import dev.verifactu.core.InvoiceRectification
 import dev.verifactu.core.InvoiceType
 import dev.verifactu.core.Qualification
 import dev.verifactu.core.RecordCreationResult
 import dev.verifactu.core.RecordGenerationTimestamp
 import dev.verifactu.core.RecordVersion
+import dev.verifactu.core.RectificationAmounts
+import dev.verifactu.core.RectificationType
 import dev.verifactu.core.RegistrationConditionalData
+import dev.verifactu.core.RegistrationPreviousRejection
 import dev.verifactu.core.RegistroAlta
 import dev.verifactu.core.RegistroAltaDraft
 import dev.verifactu.core.RegistroAnulacion
 import dev.verifactu.core.RegistroAnulacionDraft
 import dev.verifactu.core.SistemaInformatico
+import dev.verifactu.core.Subsanation
 import dev.verifactu.core.TaxBreakdown
 import dev.verifactu.core.TaxBreakdownDetail
 import dev.verifactu.core.TaxIdentifier
@@ -32,6 +37,75 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class RegistroXmlSerializerTest {
+    @Test
+    fun serializesConditionalGroupsInSchemaOrderOnEveryCommonTarget() {
+        val base = createdRegistration().draft
+        val cases = InvoiceType.entries.flatMap { type -> RectificationType.entries.map { type to it } }
+        cases.forEach { (type, correction) ->
+            val isRectifying = type.name.startsWith("R")
+            val replacedAmounts =
+                if (correction == RectificationType.REPLACEMENT) {
+                    RectificationAmounts(amount("100"), amount("21"))
+                } else {
+                    null
+                }
+            val rectification = if (isRectifying) InvoiceRectification(correction, listOf(base.invoice), replacedAmounts) else null
+            val data =
+                RegistrationConditionalData(
+                    externalReference = "reference & 1",
+                    subsanation = Subsanation.YES,
+                    previousRejection = RegistrationPreviousRejection.YES,
+                    rectification = rectification,
+                    replacedInvoices = if (type == InvoiceType.F3) listOf(base.invoice) else emptyList(),
+                    operationDate = base.invoice.issueDate,
+                    recipients = if (type in listOf(InvoiceType.F2, InvoiceType.R5)) emptyList() else base.conditionalData.recipients,
+                    taxationAgreementRegistrationNumber = "agreement",
+                    systemAgreementIdentifier = "system-agreement",
+                )
+            val record =
+                assertIs<RecordCreationResult.Created<RegistroAlta>>(
+                    FiscalRecordFactory.createRegistration(base.copy(invoiceType = type, conditionalData = data)),
+                ).record
+            val xml = RegistroXmlSerializer.serialize(record)
+            assertContains(xml, "<RefExterna>reference &amp; 1</RefExterna><NombreRazonEmisor>")
+            assertContains(xml, "<Subsanacion>S</Subsanacion><RechazoPrevio>S</RechazoPrevio><TipoFactura>$type</TipoFactura>")
+            assertTrue(xml.indexOf("<TipoFactura>") < xml.indexOf("<FechaOperacion>"))
+            assertTrue(xml.indexOf("<FechaOperacion>") < xml.indexOf("<DescripcionOperacion>"))
+            if (isRectifying) {
+                assertContains(xml, "</TipoFactura><TipoRectificativa>${correction.xmlValue}</TipoRectificativa><FacturasRectificadas>")
+                if (correction == RectificationType.REPLACEMENT) {
+                    assertContains(xml, "</FacturasRectificadas><ImporteRectificacion><BaseRectificada>100</BaseRectificada>")
+                }
+            }
+            if (type == InvoiceType.F3) assertContains(xml, "</TipoFactura><FacturasSustituidas><IDFacturaSustituida>")
+            assertContains(xml, "</FechaHoraHusoGenRegistro><NumRegistroAcuerdoFacturacion>agreement</NumRegistroAcuerdoFacturacion>")
+            assertContains(xml, "<IdAcuerdoSistemaInformatico>system-agreement</IdAcuerdoSistemaInformatico><TipoHuella>")
+        }
+    }
+
+    @Test
+    fun preservesNormativeSupplementaryBoundariesInRecordAndBatchText() {
+        val original = createdRegistration().draft
+        val supplementary = "\uD83D\uDE00"
+        val draft =
+            original.copy(
+                invoice = original.invoice.copy(number = invoiceNumber(supplementary.repeat(60))),
+                issuerName = supplementary.repeat(120),
+                operationDescription = supplementary.repeat(500),
+            )
+        val record = assertIs<RecordCreationResult.Created<RegistroAlta>>(FiscalRecordFactory.createRegistration(draft)).record
+        val created =
+            assertIs<SubmissionBatchBuildResult.Created>(
+                SubmissionBatchBuilder.build(
+                    SubmissionHeader(draft.issuerName, draft.invoice.issuer),
+                    listOf(SubmissionRecord.Registration(record)),
+                ),
+            )
+        assertContains(created.xml, "<NumSerieFactura>${supplementary.repeat(60)}</NumSerieFactura>")
+        assertContains(created.xml, "<NombreRazon>${supplementary.repeat(120)}</NombreRazon>")
+        assertContains(created.xml, "<DescripcionOperacion>${supplementary.repeat(500)}</DescripcionOperacion>")
+    }
+
     @Test
     fun serializesARegistrationRecordInTheAeatSchemaOrder() {
         val xml = RegistroXmlSerializer.serialize(createdRegistration())
@@ -305,6 +379,7 @@ class RegistroXmlSerializerTest {
                                     operation = TaxOperation.Qualified(Qualification.SUBJECT_NOT_EXEMPT),
                                     taxableBase = amount("100.00"),
                                     tax = TaxType.IVA,
+                                    regimeCode = "01",
                                     taxRate = "21",
                                     chargedTax = amount("21.00"),
                                 ),

@@ -125,7 +125,7 @@ public enum class CouponIndicator(
 
 /**
  * Optional registration data whose legal applicability is determined by the invoice type or
- * another registration field. The validator reports every inconsistent combination.
+ * another registration field. The validator reports the implemented structural and conditional rules.
  */
 public data class RegistrationConditionalData(
     public val externalReference: String? = null,
