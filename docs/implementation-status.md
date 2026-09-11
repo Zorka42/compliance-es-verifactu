@@ -10,6 +10,8 @@ The real app-accounting integration is developed separately under ZA-116, using 
 
 All fifteen previously archived public contracts were [refreshed without byte changes](compliance/source-refresh-2026-09-11.md). Additional BOE identifier sources and an explicitly marked Interior checksum fact snapshot are preserved with digests.
 
+The [0.1.0-rc.1 local candidate evidence](release-candidates/0.1.0-rc.1.md) records exact implementation commits, 662 library test executions, coverage, all-platform local artifacts, independent Java consumption and real application SQLite checks. It also records the remaining activation and external-release gates.
+
 ## Previous five-task acceptance review — 2026-09-11
 
 The worktree was advanced from `8339528` to the existing `main` commit `51e2321` before reviewing ZA-106–110. Existing `To verify` labels were checked against code and acceptance criteria; they did not establish correctness. Review found invalid conditional XML ordering, mutable conditional lists, a UTF-16 length regression, incorrect correction-response matching, context-free error classification and a response-body timeout gap.
