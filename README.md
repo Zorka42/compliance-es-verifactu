@@ -54,6 +54,8 @@ JVM, Android local unit tests, iOS arm64 simulator, and macOS arm64 have CI test
 
 The [offline invoice query tool](tools/query/README.md) prepares issued/received consultations and inspects saved responses without network or certificates. [Public contracts](schemas-aeat/README.md) are archived with source URLs and digests.
 
+The [sandbox console tool](tools/sandbox/README.md) prepares registration/cancellation/duplicate bundles, previews XML and demonstrates response handling offline. A separate explicit TEST-only send command is available for a later authorized certificate session; ordinary checks use disposable localhost identities only.
+
 ## Host application boundary
 
 The library does not provide a database, invoice store, durable queue, scheduler, certificate vault, UI, invoice PDF renderer, accounting system, hosted API, or legal/tax advice. The host owns invoice finalization, durable records, concurrency, credentials, and operating the complete SIF. See the compile-tested [app-accounting adapter contract](docs/app-accounting-adapter-contract.md) for the persistence and replay boundary.

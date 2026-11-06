@@ -6,6 +6,7 @@ This project follows Semantic Versioning.
 
 ### Added
 
+- Standalone Java 11+ sandbox CLI with deterministic request bundles, XML/digest review, offline response scenarios, saved-response inspection and an explicit TEST-only delivery command; local disposable mTLS and CI launcher checks.
 - Exact fiscal arithmetic checks for charged tax, simplified-invoice limits and total-consistency warnings, with archived-source boundary fixtures.
 - Explicit receipt-date context shared by record validation, creation and batch/submission preparation; existing Java overloads remain available.
 
