@@ -16,6 +16,8 @@ The Interior archive is an explicitly identified factual extraction, not origina
 
 ## Explicit limits and assumptions
 
+The [2026-11-06 source review](source-gaps-2026-11-06.md) retains these limits after rechecking the unchanged AEAT contracts and additional official NIF guides. It records exact questions for AEAT; no enquiry or authenticated experiment has been performed.
+
 The archived sources establish no implemented algorithm for entity or K/L/M check characters. A structurally matching value returns `VF-ID-CHECKSUM-UNVERIFIED` with `WARNING` severity. It does not silently gain a verified-checksum status. These warnings remain inspectable in factory, batch and preparation reports. The validator also does not infer country-specific passport or other foreign-document algorithms.
 
 For a supplied country code, error 1122 requires agreement with the VAT prefix. The catalogue uses `EL` and `XI`, while the XML country enumeration supplies `GR` and `GB`. Mapping EL→GR and XI→GB is an **inference combining those sources**, rather than a verified interpretation of error 1122's literal first-two-character wording. Those matching pairs therefore return `VF-ID-COUNTRY-PREFIX-ASSUMPTION` with `ASSUMPTION` severity. An omitted VAT country code, which the catalogue permits, needs no mapping. Interoperability evidence remains necessary for the inferred pairs.

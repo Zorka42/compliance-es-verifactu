@@ -228,6 +228,45 @@ class FiscalIdentifierValidationTest {
     }
 
     @Test
+    fun receiptContextDoesNotPromoteUnverifiedChecksumsOrCountryAliasesToVerifiedEvidence() {
+        val source = draft()
+        listOf("GR" to "EL123456789", "GB" to "XI123456789").forEach { (country, value) ->
+            listOf("B12345670", "KAB12CD3Z").forEach { producer ->
+                val draft =
+                    source.copy(
+                        system = source.system.copy(producerTaxIdentifier = taxId(producer)),
+                        conditionalData =
+                            RegistrationConditionalData(
+                                recipients =
+                                    listOf(
+                                        FiscalParty(
+                                            "Synthetic recipient",
+                                            FiscalPartyIdentifier.Other(
+                                                country,
+                                                OtherPartyIdentifierType.VAT_IDENTIFIER,
+                                                value,
+                                            ),
+                                        ),
+                                    ),
+                            ),
+                    )
+                listOf(ValidationContext(), ValidationContext(issueDate("06-11-2026"))).forEach { context ->
+                    val created =
+                        assertIs<RecordCreationResult.Created<RegistroAlta>>(FiscalRecordFactory.createRegistration(draft, context))
+                    assertEquals(
+                        setOf("VF-ID-CHECKSUM-UNVERIFIED", "VF-ID-COUNTRY-PREFIX-ASSUMPTION"),
+                        created.report.issues
+                            .map { it.code }
+                            .toSet(),
+                    )
+                    assertTrue(created.report.issues.all { it.aeatCode == null })
+                    assertTrue(created.report.issues.all { it.source != null })
+                }
+            }
+        }
+    }
+
+    @Test
     fun reportsEveryNestedInvoiceAndPartyPathForRecordWiring() {
         val source = draft()
         val invalidInvoice = source.invoice.copy(number = invoiceNumber("INVALID=1"))
