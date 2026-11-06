@@ -16,6 +16,8 @@ Each production module has common tests. Testkit tests traverse the public cross
 
 CI runs checks on Linux and Apple hosts. It also builds unsigned JVM artifacts into a local repository and compiles/runs an independent Java consumer. The tag-only release workflow reruns the release gate before any signing/publication step; it needs separate Central Portal and PGP credentials and does not run for ordinary commits or pull requests.
 
+The [shared XML regression corpus](xml-regression-corpus.md) runs from common tests on JVM, Android host, iOS simulator arm64 and macOS arm64. The [API policy](api-compatibility.md) describes reviewed JVM/Android declaration baselines, experimental KLib ABI baselines checked on the Apple CI host, and Java 11 artifact execution. ABI dumps do not establish runtime support for experimental Intel targets.
+
 JDK 21 is the build baseline; published JVM bytecode targets Java 11. The Java consumer compiles with `--release 11`. CI explicitly selects Temurin 11 for the independent Maven consumer after building publications on JDK 21. A successful CI run is required before claiming that runtime as release-verified; local checks use the installed JDK.
 
 Native tests require the matching Xcode SDKs and an installed iOS simulator runtime. Android unit tests are host JVM tests, not device or emulator integration tests. Live AEAT TLS behavior is not verified by this matrix.

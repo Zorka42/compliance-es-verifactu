@@ -62,7 +62,7 @@ jobs:
           check compileKotlinMetadata jvmTest testAndroidHostTest
           apiCheck dokkaHtml koverXmlReportJvm koverVerifyJvm publishJvmPreview
       - name: Build the independent consumer distribution
-        run: ./gradlew --no-daemon -p samples/maven-consumer installDist
+        run: ./gradlew --no-daemon -p samples/maven-consumer -PverifactuVersion=${{ needs.tag.outputs.version }} installDist
       - name: Select Java 11 for the independent consumer
         uses: actions/setup-java@v6
         with:
@@ -88,7 +88,7 @@ jobs:
         run: >-
           ./gradlew --no-daemon
           -PreleaseVersion=${{ needs.tag.outputs.version }}
-          compileKotlinMetadata compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test
+          compileKotlinMetadata compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test apiCheck
 
   publish:
     name: Publish signed release

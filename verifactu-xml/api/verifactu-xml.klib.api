@@ -1,0 +1,98 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, macosArm64, macosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.zorka42:verifactu-xml>
+sealed interface dev.verifactu.xml/SubmissionBatchBuildResult { // dev.verifactu.xml/SubmissionBatchBuildResult|null[0]
+    final class Created : dev.verifactu.xml/SubmissionBatchBuildResult { // dev.verifactu.xml/SubmissionBatchBuildResult.Created|null[0]
+        constructor <init>(kotlin/String, kotlin/String, dev.verifactu.core/ValidationReport = ...) // dev.verifactu.xml/SubmissionBatchBuildResult.Created.<init>|<init>(kotlin.String;kotlin.String;dev.verifactu.core.ValidationReport){}[0]
+
+        final val report // dev.verifactu.xml/SubmissionBatchBuildResult.Created.report|{}report[0]
+            final fun <get-report>(): dev.verifactu.core/ValidationReport // dev.verifactu.xml/SubmissionBatchBuildResult.Created.report.<get-report>|<get-report>(){}[0]
+        final val soapEnvelope // dev.verifactu.xml/SubmissionBatchBuildResult.Created.soapEnvelope|{}soapEnvelope[0]
+            final fun <get-soapEnvelope>(): kotlin/String // dev.verifactu.xml/SubmissionBatchBuildResult.Created.soapEnvelope.<get-soapEnvelope>|<get-soapEnvelope>(){}[0]
+        final val xml // dev.verifactu.xml/SubmissionBatchBuildResult.Created.xml|{}xml[0]
+            final fun <get-xml>(): kotlin/String // dev.verifactu.xml/SubmissionBatchBuildResult.Created.xml.<get-xml>|<get-xml>(){}[0]
+
+        final fun component1(): kotlin/String // dev.verifactu.xml/SubmissionBatchBuildResult.Created.component1|component1(){}[0]
+        final fun component2(): kotlin/String // dev.verifactu.xml/SubmissionBatchBuildResult.Created.component2|component2(){}[0]
+        final fun component3(): dev.verifactu.core/ValidationReport // dev.verifactu.xml/SubmissionBatchBuildResult.Created.component3|component3(){}[0]
+        final fun copy(kotlin/String = ..., kotlin/String = ..., dev.verifactu.core/ValidationReport = ...): dev.verifactu.xml/SubmissionBatchBuildResult.Created // dev.verifactu.xml/SubmissionBatchBuildResult.Created.copy|copy(kotlin.String;kotlin.String;dev.verifactu.core.ValidationReport){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.xml/SubmissionBatchBuildResult.Created.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.xml/SubmissionBatchBuildResult.Created.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.xml/SubmissionBatchBuildResult.Created.toString|toString(){}[0]
+    }
+
+    final class Invalid : dev.verifactu.xml/SubmissionBatchBuildResult { // dev.verifactu.xml/SubmissionBatchBuildResult.Invalid|null[0]
+        constructor <init>(dev.verifactu.core/ValidationReport) // dev.verifactu.xml/SubmissionBatchBuildResult.Invalid.<init>|<init>(dev.verifactu.core.ValidationReport){}[0]
+
+        final val report // dev.verifactu.xml/SubmissionBatchBuildResult.Invalid.report|{}report[0]
+            final fun <get-report>(): dev.verifactu.core/ValidationReport // dev.verifactu.xml/SubmissionBatchBuildResult.Invalid.report.<get-report>|<get-report>(){}[0]
+
+        final fun component1(): dev.verifactu.core/ValidationReport // dev.verifactu.xml/SubmissionBatchBuildResult.Invalid.component1|component1(){}[0]
+        final fun copy(dev.verifactu.core/ValidationReport = ...): dev.verifactu.xml/SubmissionBatchBuildResult.Invalid // dev.verifactu.xml/SubmissionBatchBuildResult.Invalid.copy|copy(dev.verifactu.core.ValidationReport){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.xml/SubmissionBatchBuildResult.Invalid.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.xml/SubmissionBatchBuildResult.Invalid.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.xml/SubmissionBatchBuildResult.Invalid.toString|toString(){}[0]
+    }
+}
+
+sealed interface dev.verifactu.xml/SubmissionRecord { // dev.verifactu.xml/SubmissionRecord|null[0]
+    final class Cancellation : dev.verifactu.xml/SubmissionRecord { // dev.verifactu.xml/SubmissionRecord.Cancellation|null[0]
+        constructor <init>(dev.verifactu.core/RegistroAnulacion) // dev.verifactu.xml/SubmissionRecord.Cancellation.<init>|<init>(dev.verifactu.core.RegistroAnulacion){}[0]
+
+        final val value // dev.verifactu.xml/SubmissionRecord.Cancellation.value|{}value[0]
+            final fun <get-value>(): dev.verifactu.core/RegistroAnulacion // dev.verifactu.xml/SubmissionRecord.Cancellation.value.<get-value>|<get-value>(){}[0]
+
+        final fun component1(): dev.verifactu.core/RegistroAnulacion // dev.verifactu.xml/SubmissionRecord.Cancellation.component1|component1(){}[0]
+        final fun copy(dev.verifactu.core/RegistroAnulacion = ...): dev.verifactu.xml/SubmissionRecord.Cancellation // dev.verifactu.xml/SubmissionRecord.Cancellation.copy|copy(dev.verifactu.core.RegistroAnulacion){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.xml/SubmissionRecord.Cancellation.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.xml/SubmissionRecord.Cancellation.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.xml/SubmissionRecord.Cancellation.toString|toString(){}[0]
+    }
+
+    final class Registration : dev.verifactu.xml/SubmissionRecord { // dev.verifactu.xml/SubmissionRecord.Registration|null[0]
+        constructor <init>(dev.verifactu.core/RegistroAlta) // dev.verifactu.xml/SubmissionRecord.Registration.<init>|<init>(dev.verifactu.core.RegistroAlta){}[0]
+
+        final val value // dev.verifactu.xml/SubmissionRecord.Registration.value|{}value[0]
+            final fun <get-value>(): dev.verifactu.core/RegistroAlta // dev.verifactu.xml/SubmissionRecord.Registration.value.<get-value>|<get-value>(){}[0]
+
+        final fun component1(): dev.verifactu.core/RegistroAlta // dev.verifactu.xml/SubmissionRecord.Registration.component1|component1(){}[0]
+        final fun copy(dev.verifactu.core/RegistroAlta = ...): dev.verifactu.xml/SubmissionRecord.Registration // dev.verifactu.xml/SubmissionRecord.Registration.copy|copy(dev.verifactu.core.RegistroAlta){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.xml/SubmissionRecord.Registration.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.xml/SubmissionRecord.Registration.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.xml/SubmissionRecord.Registration.toString|toString(){}[0]
+    }
+}
+
+final class dev.verifactu.xml/SubmissionHeader { // dev.verifactu.xml/SubmissionHeader|null[0]
+    constructor <init>(kotlin/String, dev.verifactu.core/TaxIdentifier) // dev.verifactu.xml/SubmissionHeader.<init>|<init>(kotlin.String;dev.verifactu.core.TaxIdentifier){}[0]
+
+    final val issuerName // dev.verifactu.xml/SubmissionHeader.issuerName|{}issuerName[0]
+        final fun <get-issuerName>(): kotlin/String // dev.verifactu.xml/SubmissionHeader.issuerName.<get-issuerName>|<get-issuerName>(){}[0]
+    final val issuerTaxIdentifier // dev.verifactu.xml/SubmissionHeader.issuerTaxIdentifier|{}issuerTaxIdentifier[0]
+        final fun <get-issuerTaxIdentifier>(): dev.verifactu.core/TaxIdentifier // dev.verifactu.xml/SubmissionHeader.issuerTaxIdentifier.<get-issuerTaxIdentifier>|<get-issuerTaxIdentifier>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.xml/SubmissionHeader.component1|component1(){}[0]
+    final fun component2(): dev.verifactu.core/TaxIdentifier // dev.verifactu.xml/SubmissionHeader.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., dev.verifactu.core/TaxIdentifier = ...): dev.verifactu.xml/SubmissionHeader // dev.verifactu.xml/SubmissionHeader.copy|copy(kotlin.String;dev.verifactu.core.TaxIdentifier){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.xml/SubmissionHeader.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.xml/SubmissionHeader.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.xml/SubmissionHeader.toString|toString(){}[0]
+}
+
+final object dev.verifactu.xml/RegistroXmlSerializer { // dev.verifactu.xml/RegistroXmlSerializer|null[0]
+    final fun serialize(dev.verifactu.core/RegistroAlta): kotlin/String // dev.verifactu.xml/RegistroXmlSerializer.serialize|serialize(dev.verifactu.core.RegistroAlta){}[0]
+    final fun serialize(dev.verifactu.core/RegistroAnulacion): kotlin/String // dev.verifactu.xml/RegistroXmlSerializer.serialize|serialize(dev.verifactu.core.RegistroAnulacion){}[0]
+}
+
+final object dev.verifactu.xml/SubmissionBatchBuilder { // dev.verifactu.xml/SubmissionBatchBuilder|null[0]
+    final fun build(dev.verifactu.xml/SubmissionHeader, kotlin.collections/List<dev.verifactu.xml/SubmissionRecord>, dev.verifactu.core/ValidationContext = ...): dev.verifactu.xml/SubmissionBatchBuildResult // dev.verifactu.xml/SubmissionBatchBuilder.build|build(dev.verifactu.xml.SubmissionHeader;kotlin.collections.List<dev.verifactu.xml.SubmissionRecord>;dev.verifactu.core.ValidationContext){}[0]
+}
+
+final object dev.verifactu.xml/SubmissionBatchXmlSerializer { // dev.verifactu.xml/SubmissionBatchXmlSerializer|null[0]
+    final fun serialize(dev.verifactu.xml/SubmissionHeader, kotlin.collections/List<dev.verifactu.xml/SubmissionRecord>): kotlin/String // dev.verifactu.xml/SubmissionBatchXmlSerializer.serialize|serialize(dev.verifactu.xml.SubmissionHeader;kotlin.collections.List<dev.verifactu.xml.SubmissionRecord>){}[0]
+}

@@ -4,6 +4,10 @@ This project follows Semantic Versioning.
 
 ## Unreleased
 
+- Harden response parsing with XML-only structural whitespace and a shared malformed/namespace/Unicode/resource-boundary corpus on JVM, Android host and Apple.
+- Track experimental Native KLib ABI baselines alongside JVM/Android declarations, document compatibility policy, and verify the selected release version in the Java 11 consumer workflow.
+- Archive additional BOE/AEAT sources and the XML 1.0 contract; record the remaining zero-rate surcharge, VAT-country and unsupported-checksum questions without inventing fiscal validation rules.
+
 ### Added
 
 - Exact fiscal arithmetic checks for charged tax, simplified-invoice limits and total-consistency warnings, with archived-source boundary fixtures.
