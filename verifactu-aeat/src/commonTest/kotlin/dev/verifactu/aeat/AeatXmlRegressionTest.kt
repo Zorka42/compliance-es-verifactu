@@ -92,11 +92,15 @@ class AeatXmlRegressionTest {
     fun acceptsOnlyXmlWhitespaceBetweenStructuralElements() {
         val xml = corpus.response(" \t\r\n" + corpus.line().replace("<IDFactura>", "<IDFactura> \t\r\n"))
         assertEquals(1, parsed(xml).lines.size)
+        assertEquals(1, parsed(corpus.envelope(" \t\r\n$xml \n")).lines.size)
+        assertIs<SoapFaultParseResult.Parsed>(AeatResponseParser.parseSoapFault(corpus.envelope(" \t\r\n${corpus.fault()} \n")))
         listOf("\u00A0", "\u2003", "&#xA0;", "&#x2003;").forEach {
             assertInvalid("non-XML whitespace $it", corpus.response(it))
+            assertInvalid("non-XML whitespace in SOAP body $it", corpus.envelope(it + xml))
             assertIs<SoapFaultParseResult.InvalidXml>(
                 AeatResponseParser.parseSoapFault(corpus.fault().replace("<faultcode>", "$it<faultcode>")),
             )
+            assertIs<SoapFaultParseResult.InvalidXml>(AeatResponseParser.parseSoapFault(corpus.envelope(it + corpus.fault())))
         }
     }
 

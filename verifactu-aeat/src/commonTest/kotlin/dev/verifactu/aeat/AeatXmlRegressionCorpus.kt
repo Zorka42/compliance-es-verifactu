@@ -47,6 +47,7 @@ internal object AeatXmlRegressionCorpus {
                 "mixed-root-text" to response(PRIVATE_MARKER),
                 "unicode-space-in-root" to response("\u00A0"),
                 "unicode-space-in-identity" to response(line().replace("<IDFactura>", "<IDFactura>\u2003")),
+                "unicode-space-in-soap-body" to envelope("\u00A0" + response()),
                 "second-soap-body" to envelope(response()).replace("</s:Envelope>", "<s:Body/> </s:Envelope>"),
                 "second-soap-payload" to envelope(response() + response()),
                 "response-in-header" to "<s:Envelope xmlns:s='$SOAP_NAMESPACE'><s:Header>${response()}</s:Header><s:Body/></s:Envelope>",
