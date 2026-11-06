@@ -40,6 +40,10 @@ last reviewed date
 
 ## Implementation Traceability Matrix
 
+The [ZA-120 public-source review](source-gaps-2026-11-06.md) rechecks the exact validation PDF, error catalogue and common-XSD bytes and archives additional BOE/AEAT evidence. The zero-rate surcharge and supplied EL/GR–XI/GB mappings remain unresolved; entity/K/L/M checksum warnings remain deliberate. No new fiscal rejection is derived from the research.
+
+The [shared XML regression corpus](../xml-regression-corpus.md) traces parser whitespace and Unicode behavior to the archived XML 1.0 Fifth Edition §§2.2, 2.3, 2.10 and 2.11. `AeatResponseParser.kt` now uses XML `S` rather than the broader Kotlin whitespace set for structural text. `AeatXmlRegressionCorpus.kt` and `AeatXmlRegressionTest.kt` provide malformed/ambiguous/extension and exact resource-limit checks through the public parser on JVM, Android host and Apple.
+
 The [fiscal identifier contract](identifier-validation.md) traces invoice-number characters, Spanish NIF formats, DNI/NIE check characters, VAT country formats and GB/XI dates to the archived official sources. `FiscalIdentifierValidator.kt`, `FiscalRecordIdentifierValidation.kt` and `FiscalIdentifierValidationTest.kt` retain the source-to-code-to-test relationship. Entity/K/L/M checksum warnings and inferred EL/GR–XI/GB country mappings remain explicit validation evidence.
 
 The exact decimal checks and their synthetic boundary fixtures are described in [fiscal arithmetic](fiscal-arithmetic.md). The implementation uses the archived validation catalogue 1.2.2 §§3.1.3.15.7–17 and error codes 1140/1142/1143/1144/1150/2005/2006. `FiscalArithmeticValidation.kt` and `FiscalArithmeticValidationTest.kt` retain the source-to-code-to-test relationship, including warning-only totals and the documented regime exceptions.

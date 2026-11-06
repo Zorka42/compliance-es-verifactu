@@ -2,6 +2,8 @@ import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import kotlinx.kover.gradle.plugin.dsl.AggregationType
 import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 import kotlinx.kover.gradle.plugin.dsl.KoverProjectExtension
+import kotlinx.validation.ApiValidationExtension
+import kotlinx.validation.ExperimentalBCVApi
 import org.gradle.jvm.tasks.Jar
 import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.gradle.DokkaTask
@@ -117,6 +119,12 @@ subprojects {
     }
 
     if (name.startsWith("verifactu-")) {
+        extensions.configure<ApiValidationExtension> {
+            @OptIn(ExperimentalBCVApi::class)
+            klib {
+                enabled = true
+            }
+        }
         apply(plugin = "maven-publish")
         if (centralPublishing) {
             apply(plugin = "signing")

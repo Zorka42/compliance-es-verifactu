@@ -47,7 +47,7 @@ jobs:
 
   apple:
     name: Apple targets
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
@@ -58,4 +58,4 @@ jobs:
         with:
           cache-provider: basic
       - name: Compile and test Apple targets
-        run: ./gradlew compileKotlinMetadata compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test
+        run: ./gradlew compileKotlinMetadata compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test apiCheck

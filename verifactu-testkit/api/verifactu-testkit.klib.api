@@ -1,0 +1,51 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, macosArm64, macosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.zorka42:verifactu-testkit>
+final enum class dev.verifactu.testkit/AeatResponseScenario : kotlin/Enum<dev.verifactu.testkit/AeatResponseScenario> { // dev.verifactu.testkit/AeatResponseScenario|null[0]
+    enum entry ACCEPTED // dev.verifactu.testkit/AeatResponseScenario.ACCEPTED|null[0]
+    enum entry ACCEPTED_WITH_ERRORS // dev.verifactu.testkit/AeatResponseScenario.ACCEPTED_WITH_ERRORS|null[0]
+    enum entry DUPLICATE // dev.verifactu.testkit/AeatResponseScenario.DUPLICATE|null[0]
+    enum entry FLOW_CONTROL // dev.verifactu.testkit/AeatResponseScenario.FLOW_CONTROL|null[0]
+    enum entry REJECTED // dev.verifactu.testkit/AeatResponseScenario.REJECTED|null[0]
+
+    final val entries // dev.verifactu.testkit/AeatResponseScenario.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.testkit/AeatResponseScenario> // dev.verifactu.testkit/AeatResponseScenario.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.testkit/AeatResponseScenario // dev.verifactu.testkit/AeatResponseScenario.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.testkit/AeatResponseScenario> // dev.verifactu.testkit/AeatResponseScenario.values|values#static(){}[0]
+}
+
+final class dev.verifactu.testkit/FakeAeatTransport : dev.verifactu.aeat/AeatTransportAdapter { // dev.verifactu.testkit/FakeAeatTransport|null[0]
+    constructor <init>(kotlin.collections/List<dev.verifactu.aeat/AeatTransportResult>) // dev.verifactu.testkit/FakeAeatTransport.<init>|<init>(kotlin.collections.List<dev.verifactu.aeat.AeatTransportResult>){}[0]
+
+    final val remainingResults // dev.verifactu.testkit/FakeAeatTransport.remainingResults|{}remainingResults[0]
+        final fun <get-remainingResults>(): kotlin/Int // dev.verifactu.testkit/FakeAeatTransport.remainingResults.<get-remainingResults>|<get-remainingResults>(){}[0]
+    final val requests // dev.verifactu.testkit/FakeAeatTransport.requests|{}requests[0]
+        final fun <get-requests>(): kotlin.collections/List<dev.verifactu.aeat/AeatTransportRequest> // dev.verifactu.testkit/FakeAeatTransport.requests.<get-requests>|<get-requests>(){}[0]
+
+    final fun execute(dev.verifactu.aeat/AeatTransportRequest): dev.verifactu.aeat/AeatTransportResult // dev.verifactu.testkit/FakeAeatTransport.execute|execute(dev.verifactu.aeat.AeatTransportRequest){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.testkit/FakeAeatTransport.toString|toString(){}[0]
+}
+
+final object dev.verifactu.testkit/AeatResponseFixtures { // dev.verifactu.testkit/AeatResponseFixtures|null[0]
+    final fun response(dev.verifactu.testkit/AeatResponseScenario, dev.verifactu.core/InvoiceIdentifier = ..., dev.verifactu.aeat/AeatOperationType = ...): dev.verifactu.aeat/AeatTransportResult.XmlResponse // dev.verifactu.testkit/AeatResponseFixtures.response|response(dev.verifactu.testkit.AeatResponseScenario;dev.verifactu.core.InvoiceIdentifier;dev.verifactu.aeat.AeatOperationType){}[0]
+    final fun soapFault(): dev.verifactu.aeat/AeatTransportResult.XmlResponse // dev.verifactu.testkit/AeatResponseFixtures.soapFault|soapFault(){}[0]
+}
+
+final object dev.verifactu.testkit/VerifactuFixtures { // dev.verifactu.testkit/VerifactuFixtures|null[0]
+    final fun cancellation(dev.verifactu.core/ChainState = ...): dev.verifactu.core/RecordCreationResult.Created<dev.verifactu.core/RegistroAnulacion> // dev.verifactu.testkit/VerifactuFixtures.cancellation|cancellation(dev.verifactu.core.ChainState){}[0]
+    final fun cancellationDraft(dev.verifactu.core/ChainState = ...): dev.verifactu.core/RegistroAnulacionDraft // dev.verifactu.testkit/VerifactuFixtures.cancellationDraft|cancellationDraft(dev.verifactu.core.ChainState){}[0]
+    final fun cancellationXml(): kotlin/String // dev.verifactu.testkit/VerifactuFixtures.cancellationXml|cancellationXml(){}[0]
+    final fun chainState(): dev.verifactu.core/ChainState.PreviousRecord // dev.verifactu.testkit/VerifactuFixtures.chainState|chainState(){}[0]
+    final fun invoice(kotlin/String = ...): dev.verifactu.core/InvoiceIdentifier // dev.verifactu.testkit/VerifactuFixtures.invoice|invoice(kotlin.String){}[0]
+    final fun qrPayload(): dev.verifactu.qr/QrPayload // dev.verifactu.testkit/VerifactuFixtures.qrPayload|qrPayload(){}[0]
+    final fun registration(dev.verifactu.core/ChainState = ..., kotlin/String = ...): dev.verifactu.core/RecordCreationResult.Created<dev.verifactu.core/RegistroAlta> // dev.verifactu.testkit/VerifactuFixtures.registration|registration(dev.verifactu.core.ChainState;kotlin.String){}[0]
+    final fun registrationDraft(dev.verifactu.core/ChainState = ..., kotlin/String = ...): dev.verifactu.core/RegistroAltaDraft // dev.verifactu.testkit/VerifactuFixtures.registrationDraft|registrationDraft(dev.verifactu.core.ChainState;kotlin.String){}[0]
+    final fun registrationXml(): kotlin/String // dev.verifactu.testkit/VerifactuFixtures.registrationXml|registrationXml(){}[0]
+    final fun system(): dev.verifactu.core/SistemaInformatico // dev.verifactu.testkit/VerifactuFixtures.system|system(){}[0]
+}

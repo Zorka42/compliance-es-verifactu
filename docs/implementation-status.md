@@ -1,6 +1,16 @@
 # Implementation Status
 
-Local assessment updated 2026-09-11; earlier implementation batches are recorded below. **External acceptance and release remain open.** The authoritative backlog remains [Zorka Accounting – Tasks](https://app.notion.com/p/3bd4f302230980d3bb72ffbd0068aa8b), project `Verifactu`.
+Local assessment updated 2026-11-06; earlier implementation batches are recorded below. **External acceptance and release remain open.** The authoritative backlog remains [Zorka Accounting – Tasks](https://app.notion.com/p/3bd4f302230980d3bb72ffbd0068aa8b), project `Verifactu`.
+
+## Source review and XML/API hardening — 2026-11-06
+
+ZA-120 [rechecked the public source gaps](compliance/source-gaps-2026-11-06.md), retained unchanged AEAT PDF/error/schema bytes, archived additional BOE/AEAT material and prepared exact clarification questions. The zero-IVA surcharge rule after September 2024, supplied EL/GR–XI/GB mappings and entity/K/L/M checksum algorithms remain unconfirmed. No new fiscal rejection was invented. Regression tests preserve warnings/assumptions across dates, record creation and supplied receipt context. The task remains blocked on authoritative clarification.
+
+ZA-121 adds the [shared deterministic XML corpus](xml-regression-corpus.md), fixes acceptance of non-XML whitespace between structural elements, and retains Unicode leaf values. The [API policy](api-compatibility.md) accompanies five reviewed experimental KLib ABI baselines; existing JVM/Android declarations are unchanged. Apple CI/release jobs now check Native ABI, and the release consumer selects the same version as the publications.
+
+Local offline verification passed: `ktlintCheck detekt check compileKotlinMetadata compileKotlinIosArm64 koverXmlReportJvm koverVerifyJvm publishJvmPreview`. Test reports contain 200 JVM, 160 Android-host, 173 iOS-simulator-arm64 and 173 macOS-arm64 executions (706 total), with no failures/errors/skips in those reports. Intel Apple test execution is skipped on this host and is not included. Core line coverage remains 1,639/1,648 (99.45%); configured coverage gates pass. All 23 archived contract digests pass the normal query-tool test. Dokka succeeds with the previously documented configuration-cache discard warnings.
+
+A separate `-PreleaseVersion=0.1.0-rc.2 publishJvmPreview` and `-PverifactuVersion=0.1.0-rc.2 installDist` consumer rehearsal passed. All five consumed JVM JARs carry that version. The distribution executed on an isolated Temurin 11.0.33+10 runtime (official archive SHA-256 checked), reporting one fake request and zero network calls. This verifies non-default version selection and Java 11 artifact consumption; it is not a full all-platform release candidate, signed publication or Central upload. No operational AEAT service or existing taxpayer certificate was accessed.
 
 ## Offline validation and candidate preparation — 2026-09-11
 

@@ -1,0 +1,856 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, macosArm64, macosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.zorka42:verifactu-aeat>
+final enum class dev.verifactu.aeat/AeatCertificateAccess : kotlin/Enum<dev.verifactu.aeat/AeatCertificateAccess> { // dev.verifactu.aeat/AeatCertificateAccess|null[0]
+    enum entry SEAL // dev.verifactu.aeat/AeatCertificateAccess.SEAL|null[0]
+    enum entry STANDARD // dev.verifactu.aeat/AeatCertificateAccess.STANDARD|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatCertificateAccess.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatCertificateAccess> // dev.verifactu.aeat/AeatCertificateAccess.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatCertificateAccess // dev.verifactu.aeat/AeatCertificateAccess.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatCertificateAccess> // dev.verifactu.aeat/AeatCertificateAccess.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatCorrelationIssueCode : kotlin/Enum<dev.verifactu.aeat/AeatCorrelationIssueCode> { // dev.verifactu.aeat/AeatCorrelationIssueCode|null[0]
+    enum entry AMBIGUOUS_RESPONSE_KEY // dev.verifactu.aeat/AeatCorrelationIssueCode.AMBIGUOUS_RESPONSE_KEY|null[0]
+    enum entry AMBIGUOUS_SUBMISSION_KEY // dev.verifactu.aeat/AeatCorrelationIssueCode.AMBIGUOUS_SUBMISSION_KEY|null[0]
+    enum entry EMPTY_SUBMISSION // dev.verifactu.aeat/AeatCorrelationIssueCode.EMPTY_SUBMISSION|null[0]
+    enum entry MISSING_RESPONSE_IDENTITY // dev.verifactu.aeat/AeatCorrelationIssueCode.MISSING_RESPONSE_IDENTITY|null[0]
+    enum entry MISSING_RESPONSE_LINE // dev.verifactu.aeat/AeatCorrelationIssueCode.MISSING_RESPONSE_LINE|null[0]
+    enum entry OPERATION_FLAGS_MISMATCH // dev.verifactu.aeat/AeatCorrelationIssueCode.OPERATION_FLAGS_MISMATCH|null[0]
+    enum entry UNEXPECTED_RESPONSE_LINE // dev.verifactu.aeat/AeatCorrelationIssueCode.UNEXPECTED_RESPONSE_LINE|null[0]
+    enum entry UNSUPPORTED_OPERATION // dev.verifactu.aeat/AeatCorrelationIssueCode.UNSUPPORTED_OPERATION|null[0]
+    enum entry UNSUPPORTED_OPERATION_FLAGS // dev.verifactu.aeat/AeatCorrelationIssueCode.UNSUPPORTED_OPERATION_FLAGS|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatCorrelationIssueCode.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatCorrelationIssueCode> // dev.verifactu.aeat/AeatCorrelationIssueCode.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatCorrelationIssueCode // dev.verifactu.aeat/AeatCorrelationIssueCode.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatCorrelationIssueCode> // dev.verifactu.aeat/AeatCorrelationIssueCode.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatCredentialStrategy : kotlin/Enum<dev.verifactu.aeat/AeatCredentialStrategy> { // dev.verifactu.aeat/AeatCredentialStrategy|null[0]
+    enum entry ANDROID_KEY_CHAIN // dev.verifactu.aeat/AeatCredentialStrategy.ANDROID_KEY_CHAIN|null[0]
+    enum entry APPLE_KEYCHAIN // dev.verifactu.aeat/AeatCredentialStrategy.APPLE_KEYCHAIN|null[0]
+    enum entry JVM_KEY_STORE // dev.verifactu.aeat/AeatCredentialStrategy.JVM_KEY_STORE|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatCredentialStrategy.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatCredentialStrategy> // dev.verifactu.aeat/AeatCredentialStrategy.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatCredentialStrategy // dev.verifactu.aeat/AeatCredentialStrategy.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatCredentialStrategy> // dev.verifactu.aeat/AeatCredentialStrategy.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatDeliveryState : kotlin/Enum<dev.verifactu.aeat/AeatDeliveryState> { // dev.verifactu.aeat/AeatDeliveryState|null[0]
+    enum entry NOT_SENT // dev.verifactu.aeat/AeatDeliveryState.NOT_SENT|null[0]
+    enum entry RESPONSE_RECEIVED // dev.verifactu.aeat/AeatDeliveryState.RESPONSE_RECEIVED|null[0]
+    enum entry UNKNOWN // dev.verifactu.aeat/AeatDeliveryState.UNKNOWN|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatDeliveryState.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatDeliveryState> // dev.verifactu.aeat/AeatDeliveryState.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatDeliveryState // dev.verifactu.aeat/AeatDeliveryState.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatDeliveryState> // dev.verifactu.aeat/AeatDeliveryState.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatDuplicateStatus : kotlin/Enum<dev.verifactu.aeat/AeatDuplicateStatus> { // dev.verifactu.aeat/AeatDuplicateStatus|null[0]
+    enum entry ACCEPTED // dev.verifactu.aeat/AeatDuplicateStatus.ACCEPTED|null[0]
+    enum entry ACCEPTED_WITH_ERRORS // dev.verifactu.aeat/AeatDuplicateStatus.ACCEPTED_WITH_ERRORS|null[0]
+    enum entry CANCELLED // dev.verifactu.aeat/AeatDuplicateStatus.CANCELLED|null[0]
+    enum entry UNKNOWN_STATE // dev.verifactu.aeat/AeatDuplicateStatus.UNKNOWN_STATE|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatDuplicateStatus.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatDuplicateStatus> // dev.verifactu.aeat/AeatDuplicateStatus.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatDuplicateStatus // dev.verifactu.aeat/AeatDuplicateStatus.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatDuplicateStatus> // dev.verifactu.aeat/AeatDuplicateStatus.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatEnvironment : kotlin/Enum<dev.verifactu.aeat/AeatEnvironment> { // dev.verifactu.aeat/AeatEnvironment|null[0]
+    enum entry PRODUCTION // dev.verifactu.aeat/AeatEnvironment.PRODUCTION|null[0]
+    enum entry TEST // dev.verifactu.aeat/AeatEnvironment.TEST|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatEnvironment.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatEnvironment> // dev.verifactu.aeat/AeatEnvironment.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatEnvironment // dev.verifactu.aeat/AeatEnvironment.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatEnvironment> // dev.verifactu.aeat/AeatEnvironment.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatErrorLocation : kotlin/Enum<dev.verifactu.aeat/AeatErrorLocation> { // dev.verifactu.aeat/AeatErrorLocation|null[0]
+    enum entry HEADER // dev.verifactu.aeat/AeatErrorLocation.HEADER|null[0]
+    enum entry RECORD // dev.verifactu.aeat/AeatErrorLocation.RECORD|null[0]
+    enum entry UNKNOWN // dev.verifactu.aeat/AeatErrorLocation.UNKNOWN|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatErrorLocation.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatErrorLocation> // dev.verifactu.aeat/AeatErrorLocation.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatErrorLocation // dev.verifactu.aeat/AeatErrorLocation.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatErrorLocation> // dev.verifactu.aeat/AeatErrorLocation.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatIncidenceDisposition : kotlin/Enum<dev.verifactu.aeat/AeatIncidenceDisposition> { // dev.verifactu.aeat/AeatIncidenceDisposition|null[0]
+    enum entry ACCEPTED_WITH_ERRORS // dev.verifactu.aeat/AeatIncidenceDisposition.ACCEPTED_WITH_ERRORS|null[0]
+    enum entry RECORD_REJECTED // dev.verifactu.aeat/AeatIncidenceDisposition.RECORD_REJECTED|null[0]
+    enum entry UNKNOWN // dev.verifactu.aeat/AeatIncidenceDisposition.UNKNOWN|null[0]
+    enum entry WHOLE_SUBMISSION_REJECTED // dev.verifactu.aeat/AeatIncidenceDisposition.WHOLE_SUBMISSION_REJECTED|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatIncidenceDisposition.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatIncidenceDisposition> // dev.verifactu.aeat/AeatIncidenceDisposition.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatIncidenceDisposition // dev.verifactu.aeat/AeatIncidenceDisposition.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatIncidenceDisposition> // dev.verifactu.aeat/AeatIncidenceDisposition.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatOperationType : kotlin/Enum<dev.verifactu.aeat/AeatOperationType> { // dev.verifactu.aeat/AeatOperationType|null[0]
+    enum entry CANCELLATION // dev.verifactu.aeat/AeatOperationType.CANCELLATION|null[0]
+    enum entry REGISTRATION // dev.verifactu.aeat/AeatOperationType.REGISTRATION|null[0]
+    enum entry UNKNOWN_STATE // dev.verifactu.aeat/AeatOperationType.UNKNOWN_STATE|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatOperationType.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatOperationType> // dev.verifactu.aeat/AeatOperationType.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatOperationType // dev.verifactu.aeat/AeatOperationType.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatOperationType> // dev.verifactu.aeat/AeatOperationType.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatRecordStatus : kotlin/Enum<dev.verifactu.aeat/AeatRecordStatus> { // dev.verifactu.aeat/AeatRecordStatus|null[0]
+    enum entry ACCEPTED // dev.verifactu.aeat/AeatRecordStatus.ACCEPTED|null[0]
+    enum entry ACCEPTED_WITH_ERRORS // dev.verifactu.aeat/AeatRecordStatus.ACCEPTED_WITH_ERRORS|null[0]
+    enum entry DUPLICATE // dev.verifactu.aeat/AeatRecordStatus.DUPLICATE|null[0]
+    enum entry REJECTED // dev.verifactu.aeat/AeatRecordStatus.REJECTED|null[0]
+    enum entry UNKNOWN_STATE // dev.verifactu.aeat/AeatRecordStatus.UNKNOWN_STATE|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatRecordStatus.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatRecordStatus> // dev.verifactu.aeat/AeatRecordStatus.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatRecordStatus // dev.verifactu.aeat/AeatRecordStatus.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatRecordStatus> // dev.verifactu.aeat/AeatRecordStatus.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatServiceVersion : kotlin/Enum<dev.verifactu.aeat/AeatServiceVersion> { // dev.verifactu.aeat/AeatServiceVersion|null[0]
+    enum entry TIKE_V1_0 // dev.verifactu.aeat/AeatServiceVersion.TIKE_V1_0|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatServiceVersion.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatServiceVersion> // dev.verifactu.aeat/AeatServiceVersion.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatServiceVersion // dev.verifactu.aeat/AeatServiceVersion.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatServiceVersion> // dev.verifactu.aeat/AeatServiceVersion.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatSubmissionFeature : kotlin/Enum<dev.verifactu.aeat/AeatSubmissionFeature> { // dev.verifactu.aeat/AeatSubmissionFeature|null[0]
+    enum entry RECORD_QUERY // dev.verifactu.aeat/AeatSubmissionFeature.RECORD_QUERY|null[0]
+    enum entry REGISTRATION_SUBMISSION // dev.verifactu.aeat/AeatSubmissionFeature.REGISTRATION_SUBMISSION|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatSubmissionFeature.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatSubmissionFeature> // dev.verifactu.aeat/AeatSubmissionFeature.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatSubmissionFeature // dev.verifactu.aeat/AeatSubmissionFeature.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatSubmissionFeature> // dev.verifactu.aeat/AeatSubmissionFeature.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatSubmissionStatus : kotlin/Enum<dev.verifactu.aeat/AeatSubmissionStatus> { // dev.verifactu.aeat/AeatSubmissionStatus|null[0]
+    enum entry ACCEPTED // dev.verifactu.aeat/AeatSubmissionStatus.ACCEPTED|null[0]
+    enum entry PARTIALLY_ACCEPTED // dev.verifactu.aeat/AeatSubmissionStatus.PARTIALLY_ACCEPTED|null[0]
+    enum entry REJECTED // dev.verifactu.aeat/AeatSubmissionStatus.REJECTED|null[0]
+    enum entry UNKNOWN_STATE // dev.verifactu.aeat/AeatSubmissionStatus.UNKNOWN_STATE|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatSubmissionStatus.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatSubmissionStatus> // dev.verifactu.aeat/AeatSubmissionStatus.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatSubmissionStatus // dev.verifactu.aeat/AeatSubmissionStatus.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatSubmissionStatus> // dev.verifactu.aeat/AeatSubmissionStatus.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.aeat/AeatSubsanationRequirement : kotlin/Enum<dev.verifactu.aeat/AeatSubsanationRequirement> { // dev.verifactu.aeat/AeatSubsanationRequirement|null[0]
+    enum entry NOT_REQUIRED // dev.verifactu.aeat/AeatSubsanationRequirement.NOT_REQUIRED|null[0]
+    enum entry REQUIRED // dev.verifactu.aeat/AeatSubsanationRequirement.REQUIRED|null[0]
+    enum entry UNKNOWN // dev.verifactu.aeat/AeatSubsanationRequirement.UNKNOWN|null[0]
+
+    final val entries // dev.verifactu.aeat/AeatSubsanationRequirement.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.aeat/AeatSubsanationRequirement> // dev.verifactu.aeat/AeatSubsanationRequirement.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.aeat/AeatSubsanationRequirement // dev.verifactu.aeat/AeatSubsanationRequirement.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.aeat/AeatSubsanationRequirement> // dev.verifactu.aeat/AeatSubsanationRequirement.values|values#static(){}[0]
+}
+
+abstract interface dev.verifactu.aeat/AeatClientCredential { // dev.verifactu.aeat/AeatClientCredential|null[0]
+    abstract val metadata // dev.verifactu.aeat/AeatClientCredential.metadata|{}metadata[0]
+        abstract fun <get-metadata>(): dev.verifactu.aeat/AeatCredentialMetadata // dev.verifactu.aeat/AeatClientCredential.metadata.<get-metadata>|<get-metadata>(){}[0]
+}
+
+abstract interface dev.verifactu.aeat/AeatTransportAdapter { // dev.verifactu.aeat/AeatTransportAdapter|null[0]
+    abstract fun execute(dev.verifactu.aeat/AeatTransportRequest): dev.verifactu.aeat/AeatTransportResult // dev.verifactu.aeat/AeatTransportAdapter.execute|execute(dev.verifactu.aeat.AeatTransportRequest){}[0]
+}
+
+sealed interface dev.verifactu.aeat/AeatFlowControl { // dev.verifactu.aeat/AeatFlowControl|null[0]
+    final class Known : dev.verifactu.aeat/AeatFlowControl { // dev.verifactu.aeat/AeatFlowControl.Known|null[0]
+        constructor <init>(kotlin/Int) // dev.verifactu.aeat/AeatFlowControl.Known.<init>|<init>(kotlin.Int){}[0]
+
+        final val seconds // dev.verifactu.aeat/AeatFlowControl.Known.seconds|{}seconds[0]
+            final fun <get-seconds>(): kotlin/Int // dev.verifactu.aeat/AeatFlowControl.Known.seconds.<get-seconds>|<get-seconds>(){}[0]
+
+        final fun component1(): kotlin/Int // dev.verifactu.aeat/AeatFlowControl.Known.component1|component1(){}[0]
+        final fun copy(kotlin/Int = ...): dev.verifactu.aeat/AeatFlowControl.Known // dev.verifactu.aeat/AeatFlowControl.Known.copy|copy(kotlin.Int){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatFlowControl.Known.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatFlowControl.Known.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatFlowControl.Known.toString|toString(){}[0]
+    }
+
+    final class Unknown : dev.verifactu.aeat/AeatFlowControl { // dev.verifactu.aeat/AeatFlowControl.Unknown|null[0]
+        constructor <init>(kotlin/String?) // dev.verifactu.aeat/AeatFlowControl.Unknown.<init>|<init>(kotlin.String?){}[0]
+
+        final val rawValue // dev.verifactu.aeat/AeatFlowControl.Unknown.rawValue|{}rawValue[0]
+            final fun <get-rawValue>(): kotlin/String? // dev.verifactu.aeat/AeatFlowControl.Unknown.rawValue.<get-rawValue>|<get-rawValue>(){}[0]
+
+        final fun component1(): kotlin/String? // dev.verifactu.aeat/AeatFlowControl.Unknown.component1|component1(){}[0]
+        final fun copy(kotlin/String? = ...): dev.verifactu.aeat/AeatFlowControl.Unknown // dev.verifactu.aeat/AeatFlowControl.Unknown.copy|copy(kotlin.String?){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatFlowControl.Unknown.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatFlowControl.Unknown.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatFlowControl.Unknown.toString|toString(){}[0]
+    }
+}
+
+sealed interface dev.verifactu.aeat/AeatResponseCorrelationResult { // dev.verifactu.aeat/AeatResponseCorrelationResult|null[0]
+    final class Matched : dev.verifactu.aeat/AeatResponseCorrelationResult { // dev.verifactu.aeat/AeatResponseCorrelationResult.Matched|null[0]
+        constructor <init>(kotlin.collections/List<dev.verifactu.aeat/AeatResponseLine>) // dev.verifactu.aeat/AeatResponseCorrelationResult.Matched.<init>|<init>(kotlin.collections.List<dev.verifactu.aeat.AeatResponseLine>){}[0]
+
+        final val lines // dev.verifactu.aeat/AeatResponseCorrelationResult.Matched.lines|{}lines[0]
+            final fun <get-lines>(): kotlin.collections/List<dev.verifactu.aeat/AeatResponseLine> // dev.verifactu.aeat/AeatResponseCorrelationResult.Matched.lines.<get-lines>|<get-lines>(){}[0]
+
+        final fun component1(): kotlin.collections/List<dev.verifactu.aeat/AeatResponseLine> // dev.verifactu.aeat/AeatResponseCorrelationResult.Matched.component1|component1(){}[0]
+        final fun copy(kotlin.collections/List<dev.verifactu.aeat/AeatResponseLine> = ...): dev.verifactu.aeat/AeatResponseCorrelationResult.Matched // dev.verifactu.aeat/AeatResponseCorrelationResult.Matched.copy|copy(kotlin.collections.List<dev.verifactu.aeat.AeatResponseLine>){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatResponseCorrelationResult.Matched.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatResponseCorrelationResult.Matched.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatResponseCorrelationResult.Matched.toString|toString(){}[0]
+    }
+
+    final class Mismatch : dev.verifactu.aeat/AeatResponseCorrelationResult { // dev.verifactu.aeat/AeatResponseCorrelationResult.Mismatch|null[0]
+        constructor <init>(kotlin.collections/List<dev.verifactu.aeat/AeatCorrelationIssue>) // dev.verifactu.aeat/AeatResponseCorrelationResult.Mismatch.<init>|<init>(kotlin.collections.List<dev.verifactu.aeat.AeatCorrelationIssue>){}[0]
+
+        final val issues // dev.verifactu.aeat/AeatResponseCorrelationResult.Mismatch.issues|{}issues[0]
+            final fun <get-issues>(): kotlin.collections/List<dev.verifactu.aeat/AeatCorrelationIssue> // dev.verifactu.aeat/AeatResponseCorrelationResult.Mismatch.issues.<get-issues>|<get-issues>(){}[0]
+
+        final fun component1(): kotlin.collections/List<dev.verifactu.aeat/AeatCorrelationIssue> // dev.verifactu.aeat/AeatResponseCorrelationResult.Mismatch.component1|component1(){}[0]
+        final fun copy(kotlin.collections/List<dev.verifactu.aeat/AeatCorrelationIssue> = ...): dev.verifactu.aeat/AeatResponseCorrelationResult.Mismatch // dev.verifactu.aeat/AeatResponseCorrelationResult.Mismatch.copy|copy(kotlin.collections.List<dev.verifactu.aeat.AeatCorrelationIssue>){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatResponseCorrelationResult.Mismatch.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatResponseCorrelationResult.Mismatch.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatResponseCorrelationResult.Mismatch.toString|toString(){}[0]
+    }
+}
+
+sealed interface dev.verifactu.aeat/AeatResponseParseResult { // dev.verifactu.aeat/AeatResponseParseResult|null[0]
+    final class InvalidXml : dev.verifactu.aeat/AeatResponseParseResult { // dev.verifactu.aeat/AeatResponseParseResult.InvalidXml|null[0]
+        constructor <init>(kotlin/String) // dev.verifactu.aeat/AeatResponseParseResult.InvalidXml.<init>|<init>(kotlin.String){}[0]
+
+        final val reason // dev.verifactu.aeat/AeatResponseParseResult.InvalidXml.reason|{}reason[0]
+            final fun <get-reason>(): kotlin/String // dev.verifactu.aeat/AeatResponseParseResult.InvalidXml.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun component1(): kotlin/String // dev.verifactu.aeat/AeatResponseParseResult.InvalidXml.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): dev.verifactu.aeat/AeatResponseParseResult.InvalidXml // dev.verifactu.aeat/AeatResponseParseResult.InvalidXml.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatResponseParseResult.InvalidXml.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatResponseParseResult.InvalidXml.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatResponseParseResult.InvalidXml.toString|toString(){}[0]
+    }
+
+    final class Parsed : dev.verifactu.aeat/AeatResponseParseResult { // dev.verifactu.aeat/AeatResponseParseResult.Parsed|null[0]
+        constructor <init>(dev.verifactu.aeat/AeatSubmissionResponse) // dev.verifactu.aeat/AeatResponseParseResult.Parsed.<init>|<init>(dev.verifactu.aeat.AeatSubmissionResponse){}[0]
+
+        final val response // dev.verifactu.aeat/AeatResponseParseResult.Parsed.response|{}response[0]
+            final fun <get-response>(): dev.verifactu.aeat/AeatSubmissionResponse // dev.verifactu.aeat/AeatResponseParseResult.Parsed.response.<get-response>|<get-response>(){}[0]
+
+        final fun component1(): dev.verifactu.aeat/AeatSubmissionResponse // dev.verifactu.aeat/AeatResponseParseResult.Parsed.component1|component1(){}[0]
+        final fun copy(dev.verifactu.aeat/AeatSubmissionResponse = ...): dev.verifactu.aeat/AeatResponseParseResult.Parsed // dev.verifactu.aeat/AeatResponseParseResult.Parsed.copy|copy(dev.verifactu.aeat.AeatSubmissionResponse){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatResponseParseResult.Parsed.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatResponseParseResult.Parsed.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatResponseParseResult.Parsed.toString|toString(){}[0]
+    }
+}
+
+sealed interface dev.verifactu.aeat/AeatTransportResult { // dev.verifactu.aeat/AeatTransportResult|null[0]
+    open val deliveryState // dev.verifactu.aeat/AeatTransportResult.deliveryState|{}deliveryState[0]
+        open fun <get-deliveryState>(): dev.verifactu.aeat/AeatDeliveryState // dev.verifactu.aeat/AeatTransportResult.deliveryState.<get-deliveryState>|<get-deliveryState>(){}[0]
+
+    final class InvalidEndpoint : dev.verifactu.aeat/AeatTransportResult { // dev.verifactu.aeat/AeatTransportResult.InvalidEndpoint|null[0]
+        constructor <init>(kotlin/String) // dev.verifactu.aeat/AeatTransportResult.InvalidEndpoint.<init>|<init>(kotlin.String){}[0]
+
+        final val reason // dev.verifactu.aeat/AeatTransportResult.InvalidEndpoint.reason|{}reason[0]
+            final fun <get-reason>(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.InvalidEndpoint.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun component1(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.InvalidEndpoint.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): dev.verifactu.aeat/AeatTransportResult.InvalidEndpoint // dev.verifactu.aeat/AeatTransportResult.InvalidEndpoint.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatTransportResult.InvalidEndpoint.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.InvalidEndpoint.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.InvalidEndpoint.toString|toString(){}[0]
+    }
+
+    final class NetworkFailure : dev.verifactu.aeat/AeatTransportResult { // dev.verifactu.aeat/AeatTransportResult.NetworkFailure|null[0]
+        constructor <init>(kotlin/String) // dev.verifactu.aeat/AeatTransportResult.NetworkFailure.<init>|<init>(kotlin.String){}[0]
+
+        final val reason // dev.verifactu.aeat/AeatTransportResult.NetworkFailure.reason|{}reason[0]
+            final fun <get-reason>(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.NetworkFailure.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun component1(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.NetworkFailure.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): dev.verifactu.aeat/AeatTransportResult.NetworkFailure // dev.verifactu.aeat/AeatTransportResult.NetworkFailure.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatTransportResult.NetworkFailure.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.NetworkFailure.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.NetworkFailure.toString|toString(){}[0]
+    }
+
+    final class NonXmlResponse : dev.verifactu.aeat/AeatTransportResult { // dev.verifactu.aeat/AeatTransportResult.NonXmlResponse|null[0]
+        constructor <init>(kotlin/Int, kotlin/String?) // dev.verifactu.aeat/AeatTransportResult.NonXmlResponse.<init>|<init>(kotlin.Int;kotlin.String?){}[0]
+
+        final val contentType // dev.verifactu.aeat/AeatTransportResult.NonXmlResponse.contentType|{}contentType[0]
+            final fun <get-contentType>(): kotlin/String? // dev.verifactu.aeat/AeatTransportResult.NonXmlResponse.contentType.<get-contentType>|<get-contentType>(){}[0]
+        final val statusCode // dev.verifactu.aeat/AeatTransportResult.NonXmlResponse.statusCode|{}statusCode[0]
+            final fun <get-statusCode>(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.NonXmlResponse.statusCode.<get-statusCode>|<get-statusCode>(){}[0]
+
+        final fun component1(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.NonXmlResponse.component1|component1(){}[0]
+        final fun component2(): kotlin/String? // dev.verifactu.aeat/AeatTransportResult.NonXmlResponse.component2|component2(){}[0]
+        final fun copy(kotlin/Int = ..., kotlin/String? = ...): dev.verifactu.aeat/AeatTransportResult.NonXmlResponse // dev.verifactu.aeat/AeatTransportResult.NonXmlResponse.copy|copy(kotlin.Int;kotlin.String?){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatTransportResult.NonXmlResponse.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.NonXmlResponse.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.NonXmlResponse.toString|toString(){}[0]
+    }
+
+    final class NotSent : dev.verifactu.aeat/AeatTransportResult { // dev.verifactu.aeat/AeatTransportResult.NotSent|null[0]
+        constructor <init>(kotlin/String) // dev.verifactu.aeat/AeatTransportResult.NotSent.<init>|<init>(kotlin.String){}[0]
+
+        final val reason // dev.verifactu.aeat/AeatTransportResult.NotSent.reason|{}reason[0]
+            final fun <get-reason>(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.NotSent.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun component1(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.NotSent.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): dev.verifactu.aeat/AeatTransportResult.NotSent // dev.verifactu.aeat/AeatTransportResult.NotSent.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatTransportResult.NotSent.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.NotSent.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.NotSent.toString|toString(){}[0]
+    }
+
+    final class ResponseTooLarge : dev.verifactu.aeat/AeatTransportResult { // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge|null[0]
+        constructor <init>(kotlin/Int, kotlin/String?, kotlin/Int) // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.<init>|<init>(kotlin.Int;kotlin.String?;kotlin.Int){}[0]
+
+        final val contentType // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.contentType|{}contentType[0]
+            final fun <get-contentType>(): kotlin/String? // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.contentType.<get-contentType>|<get-contentType>(){}[0]
+        final val maxBodyBytes // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.maxBodyBytes|{}maxBodyBytes[0]
+            final fun <get-maxBodyBytes>(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.maxBodyBytes.<get-maxBodyBytes>|<get-maxBodyBytes>(){}[0]
+        final val statusCode // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.statusCode|{}statusCode[0]
+            final fun <get-statusCode>(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.statusCode.<get-statusCode>|<get-statusCode>(){}[0]
+
+        final fun component1(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.component1|component1(){}[0]
+        final fun component2(): kotlin/String? // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.component2|component2(){}[0]
+        final fun component3(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.component3|component3(){}[0]
+        final fun copy(kotlin/Int = ..., kotlin/String? = ..., kotlin/Int = ...): dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.copy|copy(kotlin.Int;kotlin.String?;kotlin.Int){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.ResponseTooLarge.toString|toString(){}[0]
+    }
+
+    final class Timeout : dev.verifactu.aeat/AeatTransportResult { // dev.verifactu.aeat/AeatTransportResult.Timeout|null[0]
+        constructor <init>(kotlin/String) // dev.verifactu.aeat/AeatTransportResult.Timeout.<init>|<init>(kotlin.String){}[0]
+
+        final val reason // dev.verifactu.aeat/AeatTransportResult.Timeout.reason|{}reason[0]
+            final fun <get-reason>(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.Timeout.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun component1(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.Timeout.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): dev.verifactu.aeat/AeatTransportResult.Timeout // dev.verifactu.aeat/AeatTransportResult.Timeout.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatTransportResult.Timeout.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.Timeout.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.Timeout.toString|toString(){}[0]
+    }
+
+    final class UnknownDelivery : dev.verifactu.aeat/AeatTransportResult { // dev.verifactu.aeat/AeatTransportResult.UnknownDelivery|null[0]
+        constructor <init>(kotlin/String) // dev.verifactu.aeat/AeatTransportResult.UnknownDelivery.<init>|<init>(kotlin.String){}[0]
+
+        final val reason // dev.verifactu.aeat/AeatTransportResult.UnknownDelivery.reason|{}reason[0]
+            final fun <get-reason>(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.UnknownDelivery.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun component1(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.UnknownDelivery.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): dev.verifactu.aeat/AeatTransportResult.UnknownDelivery // dev.verifactu.aeat/AeatTransportResult.UnknownDelivery.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatTransportResult.UnknownDelivery.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.UnknownDelivery.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.UnknownDelivery.toString|toString(){}[0]
+    }
+
+    final class XmlResponse : dev.verifactu.aeat/AeatTransportResult { // dev.verifactu.aeat/AeatTransportResult.XmlResponse|null[0]
+        constructor <init>(kotlin/Int, kotlin/String?, kotlin/String) // dev.verifactu.aeat/AeatTransportResult.XmlResponse.<init>|<init>(kotlin.Int;kotlin.String?;kotlin.String){}[0]
+
+        final val contentType // dev.verifactu.aeat/AeatTransportResult.XmlResponse.contentType|{}contentType[0]
+            final fun <get-contentType>(): kotlin/String? // dev.verifactu.aeat/AeatTransportResult.XmlResponse.contentType.<get-contentType>|<get-contentType>(){}[0]
+        final val statusCode // dev.verifactu.aeat/AeatTransportResult.XmlResponse.statusCode|{}statusCode[0]
+            final fun <get-statusCode>(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.XmlResponse.statusCode.<get-statusCode>|<get-statusCode>(){}[0]
+        final val xml // dev.verifactu.aeat/AeatTransportResult.XmlResponse.xml|{}xml[0]
+            final fun <get-xml>(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.XmlResponse.xml.<get-xml>|<get-xml>(){}[0]
+
+        final fun component1(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.XmlResponse.component1|component1(){}[0]
+        final fun component2(): kotlin/String? // dev.verifactu.aeat/AeatTransportResult.XmlResponse.component2|component2(){}[0]
+        final fun component3(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.XmlResponse.component3|component3(){}[0]
+        final fun copy(kotlin/Int = ..., kotlin/String? = ..., kotlin/String = ...): dev.verifactu.aeat/AeatTransportResult.XmlResponse // dev.verifactu.aeat/AeatTransportResult.XmlResponse.copy|copy(kotlin.Int;kotlin.String?;kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatTransportResult.XmlResponse.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatTransportResult.XmlResponse.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/AeatTransportResult.XmlResponse.toString|toString(){}[0]
+    }
+}
+
+sealed interface dev.verifactu.aeat/CancellationPreparationResult { // dev.verifactu.aeat/CancellationPreparationResult|null[0]
+    final class Invalid : dev.verifactu.aeat/CancellationPreparationResult { // dev.verifactu.aeat/CancellationPreparationResult.Invalid|null[0]
+        constructor <init>(dev.verifactu.core/ValidationReport) // dev.verifactu.aeat/CancellationPreparationResult.Invalid.<init>|<init>(dev.verifactu.core.ValidationReport){}[0]
+
+        final val report // dev.verifactu.aeat/CancellationPreparationResult.Invalid.report|{}report[0]
+            final fun <get-report>(): dev.verifactu.core/ValidationReport // dev.verifactu.aeat/CancellationPreparationResult.Invalid.report.<get-report>|<get-report>(){}[0]
+
+        final fun component1(): dev.verifactu.core/ValidationReport // dev.verifactu.aeat/CancellationPreparationResult.Invalid.component1|component1(){}[0]
+        final fun copy(dev.verifactu.core/ValidationReport = ...): dev.verifactu.aeat/CancellationPreparationResult.Invalid // dev.verifactu.aeat/CancellationPreparationResult.Invalid.copy|copy(dev.verifactu.core.ValidationReport){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/CancellationPreparationResult.Invalid.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/CancellationPreparationResult.Invalid.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/CancellationPreparationResult.Invalid.toString|toString(){}[0]
+    }
+
+    final class Prepared : dev.verifactu.aeat/CancellationPreparationResult { // dev.verifactu.aeat/CancellationPreparationResult.Prepared|null[0]
+        constructor <init>(dev.verifactu.core/RegistroAnulacion, dev.verifactu.core/ChainState.PreviousRecord, kotlin/String, kotlin/String, kotlin/String, dev.verifactu.core/ValidationReport = ...) // dev.verifactu.aeat/CancellationPreparationResult.Prepared.<init>|<init>(dev.verifactu.core.RegistroAnulacion;dev.verifactu.core.ChainState.PreviousRecord;kotlin.String;kotlin.String;kotlin.String;dev.verifactu.core.ValidationReport){}[0]
+
+        final val batchXml // dev.verifactu.aeat/CancellationPreparationResult.Prepared.batchXml|{}batchXml[0]
+            final fun <get-batchXml>(): kotlin/String // dev.verifactu.aeat/CancellationPreparationResult.Prepared.batchXml.<get-batchXml>|<get-batchXml>(){}[0]
+        final val nextChainState // dev.verifactu.aeat/CancellationPreparationResult.Prepared.nextChainState|{}nextChainState[0]
+            final fun <get-nextChainState>(): dev.verifactu.core/ChainState.PreviousRecord // dev.verifactu.aeat/CancellationPreparationResult.Prepared.nextChainState.<get-nextChainState>|<get-nextChainState>(){}[0]
+        final val record // dev.verifactu.aeat/CancellationPreparationResult.Prepared.record|{}record[0]
+            final fun <get-record>(): dev.verifactu.core/RegistroAnulacion // dev.verifactu.aeat/CancellationPreparationResult.Prepared.record.<get-record>|<get-record>(){}[0]
+        final val recordXml // dev.verifactu.aeat/CancellationPreparationResult.Prepared.recordXml|{}recordXml[0]
+            final fun <get-recordXml>(): kotlin/String // dev.verifactu.aeat/CancellationPreparationResult.Prepared.recordXml.<get-recordXml>|<get-recordXml>(){}[0]
+        final val report // dev.verifactu.aeat/CancellationPreparationResult.Prepared.report|{}report[0]
+            final fun <get-report>(): dev.verifactu.core/ValidationReport // dev.verifactu.aeat/CancellationPreparationResult.Prepared.report.<get-report>|<get-report>(){}[0]
+        final val soapEnvelope // dev.verifactu.aeat/CancellationPreparationResult.Prepared.soapEnvelope|{}soapEnvelope[0]
+            final fun <get-soapEnvelope>(): kotlin/String // dev.verifactu.aeat/CancellationPreparationResult.Prepared.soapEnvelope.<get-soapEnvelope>|<get-soapEnvelope>(){}[0]
+
+        final fun component1(): dev.verifactu.core/RegistroAnulacion // dev.verifactu.aeat/CancellationPreparationResult.Prepared.component1|component1(){}[0]
+        final fun component2(): dev.verifactu.core/ChainState.PreviousRecord // dev.verifactu.aeat/CancellationPreparationResult.Prepared.component2|component2(){}[0]
+        final fun component3(): kotlin/String // dev.verifactu.aeat/CancellationPreparationResult.Prepared.component3|component3(){}[0]
+        final fun component4(): kotlin/String // dev.verifactu.aeat/CancellationPreparationResult.Prepared.component4|component4(){}[0]
+        final fun component5(): kotlin/String // dev.verifactu.aeat/CancellationPreparationResult.Prepared.component5|component5(){}[0]
+        final fun component6(): dev.verifactu.core/ValidationReport // dev.verifactu.aeat/CancellationPreparationResult.Prepared.component6|component6(){}[0]
+        final fun copy(dev.verifactu.core/RegistroAnulacion = ..., dev.verifactu.core/ChainState.PreviousRecord = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., dev.verifactu.core/ValidationReport = ...): dev.verifactu.aeat/CancellationPreparationResult.Prepared // dev.verifactu.aeat/CancellationPreparationResult.Prepared.copy|copy(dev.verifactu.core.RegistroAnulacion;dev.verifactu.core.ChainState.PreviousRecord;kotlin.String;kotlin.String;kotlin.String;dev.verifactu.core.ValidationReport){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/CancellationPreparationResult.Prepared.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/CancellationPreparationResult.Prepared.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/CancellationPreparationResult.Prepared.toString|toString(){}[0]
+    }
+}
+
+sealed interface dev.verifactu.aeat/RegistrationPreparationResult { // dev.verifactu.aeat/RegistrationPreparationResult|null[0]
+    final class Invalid : dev.verifactu.aeat/RegistrationPreparationResult { // dev.verifactu.aeat/RegistrationPreparationResult.Invalid|null[0]
+        constructor <init>(dev.verifactu.core/ValidationReport) // dev.verifactu.aeat/RegistrationPreparationResult.Invalid.<init>|<init>(dev.verifactu.core.ValidationReport){}[0]
+
+        final val report // dev.verifactu.aeat/RegistrationPreparationResult.Invalid.report|{}report[0]
+            final fun <get-report>(): dev.verifactu.core/ValidationReport // dev.verifactu.aeat/RegistrationPreparationResult.Invalid.report.<get-report>|<get-report>(){}[0]
+
+        final fun component1(): dev.verifactu.core/ValidationReport // dev.verifactu.aeat/RegistrationPreparationResult.Invalid.component1|component1(){}[0]
+        final fun copy(dev.verifactu.core/ValidationReport = ...): dev.verifactu.aeat/RegistrationPreparationResult.Invalid // dev.verifactu.aeat/RegistrationPreparationResult.Invalid.copy|copy(dev.verifactu.core.ValidationReport){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/RegistrationPreparationResult.Invalid.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/RegistrationPreparationResult.Invalid.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/RegistrationPreparationResult.Invalid.toString|toString(){}[0]
+    }
+
+    final class Prepared : dev.verifactu.aeat/RegistrationPreparationResult { // dev.verifactu.aeat/RegistrationPreparationResult.Prepared|null[0]
+        constructor <init>(dev.verifactu.core/RegistroAlta, dev.verifactu.core/ChainState.PreviousRecord, kotlin/String, dev.verifactu.qr/QrPayload, kotlin/String, kotlin/String, dev.verifactu.core/ValidationReport = ...) // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.<init>|<init>(dev.verifactu.core.RegistroAlta;dev.verifactu.core.ChainState.PreviousRecord;kotlin.String;dev.verifactu.qr.QrPayload;kotlin.String;kotlin.String;dev.verifactu.core.ValidationReport){}[0]
+
+        final val batchXml // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.batchXml|{}batchXml[0]
+            final fun <get-batchXml>(): kotlin/String // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.batchXml.<get-batchXml>|<get-batchXml>(){}[0]
+        final val nextChainState // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.nextChainState|{}nextChainState[0]
+            final fun <get-nextChainState>(): dev.verifactu.core/ChainState.PreviousRecord // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.nextChainState.<get-nextChainState>|<get-nextChainState>(){}[0]
+        final val qr // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.qr|{}qr[0]
+            final fun <get-qr>(): dev.verifactu.qr/QrPayload // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.qr.<get-qr>|<get-qr>(){}[0]
+        final val record // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.record|{}record[0]
+            final fun <get-record>(): dev.verifactu.core/RegistroAlta // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.record.<get-record>|<get-record>(){}[0]
+        final val recordXml // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.recordXml|{}recordXml[0]
+            final fun <get-recordXml>(): kotlin/String // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.recordXml.<get-recordXml>|<get-recordXml>(){}[0]
+        final val report // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.report|{}report[0]
+            final fun <get-report>(): dev.verifactu.core/ValidationReport // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.report.<get-report>|<get-report>(){}[0]
+        final val soapEnvelope // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.soapEnvelope|{}soapEnvelope[0]
+            final fun <get-soapEnvelope>(): kotlin/String // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.soapEnvelope.<get-soapEnvelope>|<get-soapEnvelope>(){}[0]
+
+        final fun component1(): dev.verifactu.core/RegistroAlta // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.component1|component1(){}[0]
+        final fun component2(): dev.verifactu.core/ChainState.PreviousRecord // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.component2|component2(){}[0]
+        final fun component3(): kotlin/String // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.component3|component3(){}[0]
+        final fun component4(): dev.verifactu.qr/QrPayload // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.component4|component4(){}[0]
+        final fun component5(): kotlin/String // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.component5|component5(){}[0]
+        final fun component6(): kotlin/String // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.component6|component6(){}[0]
+        final fun component7(): dev.verifactu.core/ValidationReport // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.component7|component7(){}[0]
+        final fun copy(dev.verifactu.core/RegistroAlta = ..., dev.verifactu.core/ChainState.PreviousRecord = ..., kotlin/String = ..., dev.verifactu.qr/QrPayload = ..., kotlin/String = ..., kotlin/String = ..., dev.verifactu.core/ValidationReport = ...): dev.verifactu.aeat/RegistrationPreparationResult.Prepared // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.copy|copy(dev.verifactu.core.RegistroAlta;dev.verifactu.core.ChainState.PreviousRecord;kotlin.String;dev.verifactu.qr.QrPayload;kotlin.String;kotlin.String;dev.verifactu.core.ValidationReport){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/RegistrationPreparationResult.Prepared.toString|toString(){}[0]
+    }
+}
+
+sealed interface dev.verifactu.aeat/SoapFaultParseResult { // dev.verifactu.aeat/SoapFaultParseResult|null[0]
+    final class InvalidXml : dev.verifactu.aeat/SoapFaultParseResult { // dev.verifactu.aeat/SoapFaultParseResult.InvalidXml|null[0]
+        constructor <init>(kotlin/String) // dev.verifactu.aeat/SoapFaultParseResult.InvalidXml.<init>|<init>(kotlin.String){}[0]
+
+        final val reason // dev.verifactu.aeat/SoapFaultParseResult.InvalidXml.reason|{}reason[0]
+            final fun <get-reason>(): kotlin/String // dev.verifactu.aeat/SoapFaultParseResult.InvalidXml.reason.<get-reason>|<get-reason>(){}[0]
+
+        final fun component1(): kotlin/String // dev.verifactu.aeat/SoapFaultParseResult.InvalidXml.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): dev.verifactu.aeat/SoapFaultParseResult.InvalidXml // dev.verifactu.aeat/SoapFaultParseResult.InvalidXml.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/SoapFaultParseResult.InvalidXml.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/SoapFaultParseResult.InvalidXml.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/SoapFaultParseResult.InvalidXml.toString|toString(){}[0]
+    }
+
+    final class Parsed : dev.verifactu.aeat/SoapFaultParseResult { // dev.verifactu.aeat/SoapFaultParseResult.Parsed|null[0]
+        constructor <init>(dev.verifactu.aeat/SoapFault) // dev.verifactu.aeat/SoapFaultParseResult.Parsed.<init>|<init>(dev.verifactu.aeat.SoapFault){}[0]
+
+        final val fault // dev.verifactu.aeat/SoapFaultParseResult.Parsed.fault|{}fault[0]
+            final fun <get-fault>(): dev.verifactu.aeat/SoapFault // dev.verifactu.aeat/SoapFaultParseResult.Parsed.fault.<get-fault>|<get-fault>(){}[0]
+
+        final fun component1(): dev.verifactu.aeat/SoapFault // dev.verifactu.aeat/SoapFaultParseResult.Parsed.component1|component1(){}[0]
+        final fun copy(dev.verifactu.aeat/SoapFault = ...): dev.verifactu.aeat/SoapFaultParseResult.Parsed // dev.verifactu.aeat/SoapFaultParseResult.Parsed.copy|copy(dev.verifactu.aeat.SoapFault){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/SoapFaultParseResult.Parsed.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.aeat/SoapFaultParseResult.Parsed.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.aeat/SoapFaultParseResult.Parsed.toString|toString(){}[0]
+    }
+}
+
+final class dev.verifactu.aeat/AeatAdvancedEndpointConfiguration { // dev.verifactu.aeat/AeatAdvancedEndpointConfiguration|null[0]
+    constructor <init>(kotlin/String) // dev.verifactu.aeat/AeatAdvancedEndpointConfiguration.<init>|<init>(kotlin.String){}[0]
+
+    final val submissionUrl // dev.verifactu.aeat/AeatAdvancedEndpointConfiguration.submissionUrl|{}submissionUrl[0]
+        final fun <get-submissionUrl>(): kotlin/String // dev.verifactu.aeat/AeatAdvancedEndpointConfiguration.submissionUrl.<get-submissionUrl>|<get-submissionUrl>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.aeat/AeatAdvancedEndpointConfiguration.component1|component1(){}[0]
+    final fun copy(kotlin/String = ...): dev.verifactu.aeat/AeatAdvancedEndpointConfiguration // dev.verifactu.aeat/AeatAdvancedEndpointConfiguration.copy|copy(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatAdvancedEndpointConfiguration.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatAdvancedEndpointConfiguration.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatAdvancedEndpointConfiguration.toString|toString(){}[0]
+}
+
+final class dev.verifactu.aeat/AeatCatalogueReference { // dev.verifactu.aeat/AeatCatalogueReference|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String) // dev.verifactu.aeat/AeatCatalogueReference.<init>|<init>(kotlin.String;kotlin.String;kotlin.String){}[0]
+
+    final val document // dev.verifactu.aeat/AeatCatalogueReference.document|{}document[0]
+        final fun <get-document>(): kotlin/String // dev.verifactu.aeat/AeatCatalogueReference.document.<get-document>|<get-document>(){}[0]
+    final val section // dev.verifactu.aeat/AeatCatalogueReference.section|{}section[0]
+        final fun <get-section>(): kotlin/String // dev.verifactu.aeat/AeatCatalogueReference.section.<get-section>|<get-section>(){}[0]
+    final val version // dev.verifactu.aeat/AeatCatalogueReference.version|{}version[0]
+        final fun <get-version>(): kotlin/String // dev.verifactu.aeat/AeatCatalogueReference.version.<get-version>|<get-version>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.aeat/AeatCatalogueReference.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.verifactu.aeat/AeatCatalogueReference.component2|component2(){}[0]
+    final fun component3(): kotlin/String // dev.verifactu.aeat/AeatCatalogueReference.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ...): dev.verifactu.aeat/AeatCatalogueReference // dev.verifactu.aeat/AeatCatalogueReference.copy|copy(kotlin.String;kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatCatalogueReference.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatCatalogueReference.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatCatalogueReference.toString|toString(){}[0]
+}
+
+final class dev.verifactu.aeat/AeatCorrelationIssue { // dev.verifactu.aeat/AeatCorrelationIssue|null[0]
+    constructor <init>(dev.verifactu.aeat/AeatCorrelationIssueCode, kotlin/Int? = ..., kotlin/Int? = ...) // dev.verifactu.aeat/AeatCorrelationIssue.<init>|<init>(dev.verifactu.aeat.AeatCorrelationIssueCode;kotlin.Int?;kotlin.Int?){}[0]
+
+    final val code // dev.verifactu.aeat/AeatCorrelationIssue.code|{}code[0]
+        final fun <get-code>(): dev.verifactu.aeat/AeatCorrelationIssueCode // dev.verifactu.aeat/AeatCorrelationIssue.code.<get-code>|<get-code>(){}[0]
+    final val responseIndex // dev.verifactu.aeat/AeatCorrelationIssue.responseIndex|{}responseIndex[0]
+        final fun <get-responseIndex>(): kotlin/Int? // dev.verifactu.aeat/AeatCorrelationIssue.responseIndex.<get-responseIndex>|<get-responseIndex>(){}[0]
+    final val submittedIndex // dev.verifactu.aeat/AeatCorrelationIssue.submittedIndex|{}submittedIndex[0]
+        final fun <get-submittedIndex>(): kotlin/Int? // dev.verifactu.aeat/AeatCorrelationIssue.submittedIndex.<get-submittedIndex>|<get-submittedIndex>(){}[0]
+
+    final fun component1(): dev.verifactu.aeat/AeatCorrelationIssueCode // dev.verifactu.aeat/AeatCorrelationIssue.component1|component1(){}[0]
+    final fun component2(): kotlin/Int? // dev.verifactu.aeat/AeatCorrelationIssue.component2|component2(){}[0]
+    final fun component3(): kotlin/Int? // dev.verifactu.aeat/AeatCorrelationIssue.component3|component3(){}[0]
+    final fun copy(dev.verifactu.aeat/AeatCorrelationIssueCode = ..., kotlin/Int? = ..., kotlin/Int? = ...): dev.verifactu.aeat/AeatCorrelationIssue // dev.verifactu.aeat/AeatCorrelationIssue.copy|copy(dev.verifactu.aeat.AeatCorrelationIssueCode;kotlin.Int?;kotlin.Int?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatCorrelationIssue.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatCorrelationIssue.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatCorrelationIssue.toString|toString(){}[0]
+}
+
+final class dev.verifactu.aeat/AeatCredentialMetadata { // dev.verifactu.aeat/AeatCredentialMetadata|null[0]
+    constructor <init>(dev.verifactu.aeat/AeatCredentialStrategy, dev.verifactu.aeat/AeatCredentialReference) // dev.verifactu.aeat/AeatCredentialMetadata.<init>|<init>(dev.verifactu.aeat.AeatCredentialStrategy;dev.verifactu.aeat.AeatCredentialReference){}[0]
+
+    final val reference // dev.verifactu.aeat/AeatCredentialMetadata.reference|{}reference[0]
+        final fun <get-reference>(): dev.verifactu.aeat/AeatCredentialReference // dev.verifactu.aeat/AeatCredentialMetadata.reference.<get-reference>|<get-reference>(){}[0]
+    final val strategy // dev.verifactu.aeat/AeatCredentialMetadata.strategy|{}strategy[0]
+        final fun <get-strategy>(): dev.verifactu.aeat/AeatCredentialStrategy // dev.verifactu.aeat/AeatCredentialMetadata.strategy.<get-strategy>|<get-strategy>(){}[0]
+
+    final fun component1(): dev.verifactu.aeat/AeatCredentialStrategy // dev.verifactu.aeat/AeatCredentialMetadata.component1|component1(){}[0]
+    final fun component2(): dev.verifactu.aeat/AeatCredentialReference // dev.verifactu.aeat/AeatCredentialMetadata.component2|component2(){}[0]
+    final fun copy(dev.verifactu.aeat/AeatCredentialStrategy = ..., dev.verifactu.aeat/AeatCredentialReference = ...): dev.verifactu.aeat/AeatCredentialMetadata // dev.verifactu.aeat/AeatCredentialMetadata.copy|copy(dev.verifactu.aeat.AeatCredentialStrategy;dev.verifactu.aeat.AeatCredentialReference){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatCredentialMetadata.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatCredentialMetadata.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatCredentialMetadata.toString|toString(){}[0]
+}
+
+final class dev.verifactu.aeat/AeatCredentialReference { // dev.verifactu.aeat/AeatCredentialReference|null[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatCredentialReference.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatCredentialReference.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatCredentialReference.toString|toString(){}[0]
+
+    final object Companion { // dev.verifactu.aeat/AeatCredentialReference.Companion|null[0]
+        final fun fromAlias(kotlin/String): dev.verifactu.aeat/AeatCredentialReference // dev.verifactu.aeat/AeatCredentialReference.Companion.fromAlias|fromAlias(kotlin.String){}[0]
+    }
+}
+
+final class dev.verifactu.aeat/AeatDuplicateRecord { // dev.verifactu.aeat/AeatDuplicateRecord|null[0]
+    constructor <init>(kotlin/String, dev.verifactu.aeat/AeatDuplicateStatus, kotlin/String?, kotlin/String? = ..., kotlin/String? = ...) // dev.verifactu.aeat/AeatDuplicateRecord.<init>|<init>(kotlin.String;dev.verifactu.aeat.AeatDuplicateStatus;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val errorCode // dev.verifactu.aeat/AeatDuplicateRecord.errorCode|{}errorCode[0]
+        final fun <get-errorCode>(): kotlin/String? // dev.verifactu.aeat/AeatDuplicateRecord.errorCode.<get-errorCode>|<get-errorCode>(){}[0]
+    final val errorDescription // dev.verifactu.aeat/AeatDuplicateRecord.errorDescription|{}errorDescription[0]
+        final fun <get-errorDescription>(): kotlin/String? // dev.verifactu.aeat/AeatDuplicateRecord.errorDescription.<get-errorDescription>|<get-errorDescription>(){}[0]
+    final val rawStatus // dev.verifactu.aeat/AeatDuplicateRecord.rawStatus|{}rawStatus[0]
+        final fun <get-rawStatus>(): kotlin/String? // dev.verifactu.aeat/AeatDuplicateRecord.rawStatus.<get-rawStatus>|<get-rawStatus>(){}[0]
+    final val requestId // dev.verifactu.aeat/AeatDuplicateRecord.requestId|{}requestId[0]
+        final fun <get-requestId>(): kotlin/String // dev.verifactu.aeat/AeatDuplicateRecord.requestId.<get-requestId>|<get-requestId>(){}[0]
+    final val status // dev.verifactu.aeat/AeatDuplicateRecord.status|{}status[0]
+        final fun <get-status>(): dev.verifactu.aeat/AeatDuplicateStatus // dev.verifactu.aeat/AeatDuplicateRecord.status.<get-status>|<get-status>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.aeat/AeatDuplicateRecord.component1|component1(){}[0]
+    final fun component2(): dev.verifactu.aeat/AeatDuplicateStatus // dev.verifactu.aeat/AeatDuplicateRecord.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // dev.verifactu.aeat/AeatDuplicateRecord.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // dev.verifactu.aeat/AeatDuplicateRecord.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // dev.verifactu.aeat/AeatDuplicateRecord.component5|component5(){}[0]
+    final fun copy(kotlin/String = ..., dev.verifactu.aeat/AeatDuplicateStatus = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): dev.verifactu.aeat/AeatDuplicateRecord // dev.verifactu.aeat/AeatDuplicateRecord.copy|copy(kotlin.String;dev.verifactu.aeat.AeatDuplicateStatus;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatDuplicateRecord.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatDuplicateRecord.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatDuplicateRecord.toString|toString(){}[0]
+}
+
+final class dev.verifactu.aeat/AeatIncidence { // dev.verifactu.aeat/AeatIncidence|null[0]
+    constructor <init>(kotlin/String, kotlin/String?, dev.verifactu.aeat/AeatIncidenceDisposition, dev.verifactu.aeat/AeatSubsanationRequirement, dev.verifactu.aeat/AeatCatalogueReference?, dev.verifactu.aeat/AeatErrorLocation = ...) // dev.verifactu.aeat/AeatIncidence.<init>|<init>(kotlin.String;kotlin.String?;dev.verifactu.aeat.AeatIncidenceDisposition;dev.verifactu.aeat.AeatSubsanationRequirement;dev.verifactu.aeat.AeatCatalogueReference?;dev.verifactu.aeat.AeatErrorLocation){}[0]
+
+    final val code // dev.verifactu.aeat/AeatIncidence.code|{}code[0]
+        final fun <get-code>(): kotlin/String // dev.verifactu.aeat/AeatIncidence.code.<get-code>|<get-code>(){}[0]
+    final val description // dev.verifactu.aeat/AeatIncidence.description|{}description[0]
+        final fun <get-description>(): kotlin/String? // dev.verifactu.aeat/AeatIncidence.description.<get-description>|<get-description>(){}[0]
+    final val disposition // dev.verifactu.aeat/AeatIncidence.disposition|{}disposition[0]
+        final fun <get-disposition>(): dev.verifactu.aeat/AeatIncidenceDisposition // dev.verifactu.aeat/AeatIncidence.disposition.<get-disposition>|<get-disposition>(){}[0]
+    final val location // dev.verifactu.aeat/AeatIncidence.location|{}location[0]
+        final fun <get-location>(): dev.verifactu.aeat/AeatErrorLocation // dev.verifactu.aeat/AeatIncidence.location.<get-location>|<get-location>(){}[0]
+    final val source // dev.verifactu.aeat/AeatIncidence.source|{}source[0]
+        final fun <get-source>(): dev.verifactu.aeat/AeatCatalogueReference? // dev.verifactu.aeat/AeatIncidence.source.<get-source>|<get-source>(){}[0]
+    final val subsanationRequirement // dev.verifactu.aeat/AeatIncidence.subsanationRequirement|{}subsanationRequirement[0]
+        final fun <get-subsanationRequirement>(): dev.verifactu.aeat/AeatSubsanationRequirement // dev.verifactu.aeat/AeatIncidence.subsanationRequirement.<get-subsanationRequirement>|<get-subsanationRequirement>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.aeat/AeatIncidence.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // dev.verifactu.aeat/AeatIncidence.component2|component2(){}[0]
+    final fun component3(): dev.verifactu.aeat/AeatIncidenceDisposition // dev.verifactu.aeat/AeatIncidence.component3|component3(){}[0]
+    final fun component4(): dev.verifactu.aeat/AeatSubsanationRequirement // dev.verifactu.aeat/AeatIncidence.component4|component4(){}[0]
+    final fun component5(): dev.verifactu.aeat/AeatCatalogueReference? // dev.verifactu.aeat/AeatIncidence.component5|component5(){}[0]
+    final fun component6(): dev.verifactu.aeat/AeatErrorLocation // dev.verifactu.aeat/AeatIncidence.component6|component6(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., dev.verifactu.aeat/AeatIncidenceDisposition = ..., dev.verifactu.aeat/AeatSubsanationRequirement = ..., dev.verifactu.aeat/AeatCatalogueReference? = ..., dev.verifactu.aeat/AeatErrorLocation = ...): dev.verifactu.aeat/AeatIncidence // dev.verifactu.aeat/AeatIncidence.copy|copy(kotlin.String;kotlin.String?;dev.verifactu.aeat.AeatIncidenceDisposition;dev.verifactu.aeat.AeatSubsanationRequirement;dev.verifactu.aeat.AeatCatalogueReference?;dev.verifactu.aeat.AeatErrorLocation){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatIncidence.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatIncidence.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatIncidence.toString|toString(){}[0]
+}
+
+final class dev.verifactu.aeat/AeatInvoiceReference { // dev.verifactu.aeat/AeatInvoiceReference|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String) // dev.verifactu.aeat/AeatInvoiceReference.<init>|<init>(kotlin.String;kotlin.String;kotlin.String){}[0]
+
+    final val issueDate // dev.verifactu.aeat/AeatInvoiceReference.issueDate|{}issueDate[0]
+        final fun <get-issueDate>(): kotlin/String // dev.verifactu.aeat/AeatInvoiceReference.issueDate.<get-issueDate>|<get-issueDate>(){}[0]
+    final val issuer // dev.verifactu.aeat/AeatInvoiceReference.issuer|{}issuer[0]
+        final fun <get-issuer>(): kotlin/String // dev.verifactu.aeat/AeatInvoiceReference.issuer.<get-issuer>|<get-issuer>(){}[0]
+    final val number // dev.verifactu.aeat/AeatInvoiceReference.number|{}number[0]
+        final fun <get-number>(): kotlin/String // dev.verifactu.aeat/AeatInvoiceReference.number.<get-number>|<get-number>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.aeat/AeatInvoiceReference.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.verifactu.aeat/AeatInvoiceReference.component2|component2(){}[0]
+    final fun component3(): kotlin/String // dev.verifactu.aeat/AeatInvoiceReference.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ...): dev.verifactu.aeat/AeatInvoiceReference // dev.verifactu.aeat/AeatInvoiceReference.copy|copy(kotlin.String;kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatInvoiceReference.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatInvoiceReference.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatInvoiceReference.toString|toString(){}[0]
+}
+
+final class dev.verifactu.aeat/AeatResponseLine { // dev.verifactu.aeat/AeatResponseLine|null[0]
+    constructor <init>(dev.verifactu.aeat/AeatRecordStatus, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., dev.verifactu.aeat/AeatInvoiceReference? = ..., dev.verifactu.aeat/AeatResponseOperation? = ..., dev.verifactu.aeat/AeatRecordStatus = ..., kotlin/String? = ..., dev.verifactu.aeat/AeatDuplicateRecord? = ..., kotlin/String? = ..., dev.verifactu.aeat/AeatIncidence? = ...) // dev.verifactu.aeat/AeatResponseLine.<init>|<init>(dev.verifactu.aeat.AeatRecordStatus;kotlin.String?;kotlin.String?;kotlin.String?;dev.verifactu.aeat.AeatInvoiceReference?;dev.verifactu.aeat.AeatResponseOperation?;dev.verifactu.aeat.AeatRecordStatus;kotlin.String?;dev.verifactu.aeat.AeatDuplicateRecord?;kotlin.String?;dev.verifactu.aeat.AeatIncidence?){}[0]
+
+    final val declaredStatus // dev.verifactu.aeat/AeatResponseLine.declaredStatus|{}declaredStatus[0]
+        final fun <get-declaredStatus>(): dev.verifactu.aeat/AeatRecordStatus // dev.verifactu.aeat/AeatResponseLine.declaredStatus.<get-declaredStatus>|<get-declaredStatus>(){}[0]
+    final val duplicate // dev.verifactu.aeat/AeatResponseLine.duplicate|{}duplicate[0]
+        final fun <get-duplicate>(): dev.verifactu.aeat/AeatDuplicateRecord? // dev.verifactu.aeat/AeatResponseLine.duplicate.<get-duplicate>|<get-duplicate>(){}[0]
+    final val duplicateRequestId // dev.verifactu.aeat/AeatResponseLine.duplicateRequestId|{}duplicateRequestId[0]
+        final fun <get-duplicateRequestId>(): kotlin/String? // dev.verifactu.aeat/AeatResponseLine.duplicateRequestId.<get-duplicateRequestId>|<get-duplicateRequestId>(){}[0]
+    final val errorCode // dev.verifactu.aeat/AeatResponseLine.errorCode|{}errorCode[0]
+        final fun <get-errorCode>(): kotlin/String? // dev.verifactu.aeat/AeatResponseLine.errorCode.<get-errorCode>|<get-errorCode>(){}[0]
+    final val errorDescription // dev.verifactu.aeat/AeatResponseLine.errorDescription|{}errorDescription[0]
+        final fun <get-errorDescription>(): kotlin/String? // dev.verifactu.aeat/AeatResponseLine.errorDescription.<get-errorDescription>|<get-errorDescription>(){}[0]
+    final val externalReference // dev.verifactu.aeat/AeatResponseLine.externalReference|{}externalReference[0]
+        final fun <get-externalReference>(): kotlin/String? // dev.verifactu.aeat/AeatResponseLine.externalReference.<get-externalReference>|<get-externalReference>(){}[0]
+    final val incidence // dev.verifactu.aeat/AeatResponseLine.incidence|{}incidence[0]
+        final fun <get-incidence>(): dev.verifactu.aeat/AeatIncidence? // dev.verifactu.aeat/AeatResponseLine.incidence.<get-incidence>|<get-incidence>(){}[0]
+    final val invoice // dev.verifactu.aeat/AeatResponseLine.invoice|{}invoice[0]
+        final fun <get-invoice>(): dev.verifactu.aeat/AeatInvoiceReference? // dev.verifactu.aeat/AeatResponseLine.invoice.<get-invoice>|<get-invoice>(){}[0]
+    final val operation // dev.verifactu.aeat/AeatResponseLine.operation|{}operation[0]
+        final fun <get-operation>(): dev.verifactu.aeat/AeatResponseOperation? // dev.verifactu.aeat/AeatResponseLine.operation.<get-operation>|<get-operation>(){}[0]
+    final val rawStatus // dev.verifactu.aeat/AeatResponseLine.rawStatus|{}rawStatus[0]
+        final fun <get-rawStatus>(): kotlin/String? // dev.verifactu.aeat/AeatResponseLine.rawStatus.<get-rawStatus>|<get-rawStatus>(){}[0]
+    final val status // dev.verifactu.aeat/AeatResponseLine.status|{}status[0]
+        final fun <get-status>(): dev.verifactu.aeat/AeatRecordStatus // dev.verifactu.aeat/AeatResponseLine.status.<get-status>|<get-status>(){}[0]
+
+    final fun component1(): dev.verifactu.aeat/AeatRecordStatus // dev.verifactu.aeat/AeatResponseLine.component1|component1(){}[0]
+    final fun component10(): kotlin/String? // dev.verifactu.aeat/AeatResponseLine.component10|component10(){}[0]
+    final fun component11(): dev.verifactu.aeat/AeatIncidence? // dev.verifactu.aeat/AeatResponseLine.component11|component11(){}[0]
+    final fun component2(): kotlin/String? // dev.verifactu.aeat/AeatResponseLine.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // dev.verifactu.aeat/AeatResponseLine.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // dev.verifactu.aeat/AeatResponseLine.component4|component4(){}[0]
+    final fun component5(): dev.verifactu.aeat/AeatInvoiceReference? // dev.verifactu.aeat/AeatResponseLine.component5|component5(){}[0]
+    final fun component6(): dev.verifactu.aeat/AeatResponseOperation? // dev.verifactu.aeat/AeatResponseLine.component6|component6(){}[0]
+    final fun component7(): dev.verifactu.aeat/AeatRecordStatus // dev.verifactu.aeat/AeatResponseLine.component7|component7(){}[0]
+    final fun component8(): kotlin/String? // dev.verifactu.aeat/AeatResponseLine.component8|component8(){}[0]
+    final fun component9(): dev.verifactu.aeat/AeatDuplicateRecord? // dev.verifactu.aeat/AeatResponseLine.component9|component9(){}[0]
+    final fun copy(dev.verifactu.aeat/AeatRecordStatus = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., dev.verifactu.aeat/AeatInvoiceReference? = ..., dev.verifactu.aeat/AeatResponseOperation? = ..., dev.verifactu.aeat/AeatRecordStatus = ..., kotlin/String? = ..., dev.verifactu.aeat/AeatDuplicateRecord? = ..., kotlin/String? = ..., dev.verifactu.aeat/AeatIncidence? = ...): dev.verifactu.aeat/AeatResponseLine // dev.verifactu.aeat/AeatResponseLine.copy|copy(dev.verifactu.aeat.AeatRecordStatus;kotlin.String?;kotlin.String?;kotlin.String?;dev.verifactu.aeat.AeatInvoiceReference?;dev.verifactu.aeat.AeatResponseOperation?;dev.verifactu.aeat.AeatRecordStatus;kotlin.String?;dev.verifactu.aeat.AeatDuplicateRecord?;kotlin.String?;dev.verifactu.aeat.AeatIncidence?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatResponseLine.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatResponseLine.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatResponseLine.toString|toString(){}[0]
+}
+
+final class dev.verifactu.aeat/AeatResponseOperation { // dev.verifactu.aeat/AeatResponseOperation|null[0]
+    constructor <init>(dev.verifactu.aeat/AeatOperationType, kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // dev.verifactu.aeat/AeatResponseOperation.<init>|<init>(dev.verifactu.aeat.AeatOperationType;kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val rawType // dev.verifactu.aeat/AeatResponseOperation.rawType|{}rawType[0]
+        final fun <get-rawType>(): kotlin/String // dev.verifactu.aeat/AeatResponseOperation.rawType.<get-rawType>|<get-rawType>(){}[0]
+    final val rechazoPrevio // dev.verifactu.aeat/AeatResponseOperation.rechazoPrevio|{}rechazoPrevio[0]
+        final fun <get-rechazoPrevio>(): kotlin/String? // dev.verifactu.aeat/AeatResponseOperation.rechazoPrevio.<get-rechazoPrevio>|<get-rechazoPrevio>(){}[0]
+    final val sinRegistroPrevio // dev.verifactu.aeat/AeatResponseOperation.sinRegistroPrevio|{}sinRegistroPrevio[0]
+        final fun <get-sinRegistroPrevio>(): kotlin/String? // dev.verifactu.aeat/AeatResponseOperation.sinRegistroPrevio.<get-sinRegistroPrevio>|<get-sinRegistroPrevio>(){}[0]
+    final val subsanacion // dev.verifactu.aeat/AeatResponseOperation.subsanacion|{}subsanacion[0]
+        final fun <get-subsanacion>(): kotlin/String? // dev.verifactu.aeat/AeatResponseOperation.subsanacion.<get-subsanacion>|<get-subsanacion>(){}[0]
+    final val type // dev.verifactu.aeat/AeatResponseOperation.type|{}type[0]
+        final fun <get-type>(): dev.verifactu.aeat/AeatOperationType // dev.verifactu.aeat/AeatResponseOperation.type.<get-type>|<get-type>(){}[0]
+
+    final fun component1(): dev.verifactu.aeat/AeatOperationType // dev.verifactu.aeat/AeatResponseOperation.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.verifactu.aeat/AeatResponseOperation.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // dev.verifactu.aeat/AeatResponseOperation.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // dev.verifactu.aeat/AeatResponseOperation.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // dev.verifactu.aeat/AeatResponseOperation.component5|component5(){}[0]
+    final fun copy(dev.verifactu.aeat/AeatOperationType = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): dev.verifactu.aeat/AeatResponseOperation // dev.verifactu.aeat/AeatResponseOperation.copy|copy(dev.verifactu.aeat.AeatOperationType;kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatResponseOperation.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatResponseOperation.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatResponseOperation.toString|toString(){}[0]
+}
+
+final class dev.verifactu.aeat/AeatSubmissionEndpoint { // dev.verifactu.aeat/AeatSubmissionEndpoint|null[0]
+    constructor <init>(dev.verifactu.aeat/AeatEnvironment, dev.verifactu.aeat/AeatCertificateAccess, dev.verifactu.aeat/AeatServiceVersion, kotlin/String, kotlin/String, kotlin.collections/List<dev.verifactu.aeat/AeatSubmissionFeature>) // dev.verifactu.aeat/AeatSubmissionEndpoint.<init>|<init>(dev.verifactu.aeat.AeatEnvironment;dev.verifactu.aeat.AeatCertificateAccess;dev.verifactu.aeat.AeatServiceVersion;kotlin.String;kotlin.String;kotlin.collections.List<dev.verifactu.aeat.AeatSubmissionFeature>){}[0]
+
+    final val certificateAccess // dev.verifactu.aeat/AeatSubmissionEndpoint.certificateAccess|{}certificateAccess[0]
+        final fun <get-certificateAccess>(): dev.verifactu.aeat/AeatCertificateAccess // dev.verifactu.aeat/AeatSubmissionEndpoint.certificateAccess.<get-certificateAccess>|<get-certificateAccess>(){}[0]
+    final val environment // dev.verifactu.aeat/AeatSubmissionEndpoint.environment|{}environment[0]
+        final fun <get-environment>(): dev.verifactu.aeat/AeatEnvironment // dev.verifactu.aeat/AeatSubmissionEndpoint.environment.<get-environment>|<get-environment>(){}[0]
+    final val features // dev.verifactu.aeat/AeatSubmissionEndpoint.features|{}features[0]
+        final fun <get-features>(): kotlin.collections/List<dev.verifactu.aeat/AeatSubmissionFeature> // dev.verifactu.aeat/AeatSubmissionEndpoint.features.<get-features>|<get-features>(){}[0]
+    final val sourceUrl // dev.verifactu.aeat/AeatSubmissionEndpoint.sourceUrl|{}sourceUrl[0]
+        final fun <get-sourceUrl>(): kotlin/String // dev.verifactu.aeat/AeatSubmissionEndpoint.sourceUrl.<get-sourceUrl>|<get-sourceUrl>(){}[0]
+    final val url // dev.verifactu.aeat/AeatSubmissionEndpoint.url|{}url[0]
+        final fun <get-url>(): kotlin/String // dev.verifactu.aeat/AeatSubmissionEndpoint.url.<get-url>|<get-url>(){}[0]
+    final val version // dev.verifactu.aeat/AeatSubmissionEndpoint.version|{}version[0]
+        final fun <get-version>(): dev.verifactu.aeat/AeatServiceVersion // dev.verifactu.aeat/AeatSubmissionEndpoint.version.<get-version>|<get-version>(){}[0]
+
+    final fun component1(): dev.verifactu.aeat/AeatEnvironment // dev.verifactu.aeat/AeatSubmissionEndpoint.component1|component1(){}[0]
+    final fun component2(): dev.verifactu.aeat/AeatCertificateAccess // dev.verifactu.aeat/AeatSubmissionEndpoint.component2|component2(){}[0]
+    final fun component3(): dev.verifactu.aeat/AeatServiceVersion // dev.verifactu.aeat/AeatSubmissionEndpoint.component3|component3(){}[0]
+    final fun component4(): kotlin/String // dev.verifactu.aeat/AeatSubmissionEndpoint.component4|component4(){}[0]
+    final fun component5(): kotlin/String // dev.verifactu.aeat/AeatSubmissionEndpoint.component5|component5(){}[0]
+    final fun component6(): kotlin.collections/List<dev.verifactu.aeat/AeatSubmissionFeature> // dev.verifactu.aeat/AeatSubmissionEndpoint.component6|component6(){}[0]
+    final fun copy(dev.verifactu.aeat/AeatEnvironment = ..., dev.verifactu.aeat/AeatCertificateAccess = ..., dev.verifactu.aeat/AeatServiceVersion = ..., kotlin/String = ..., kotlin/String = ..., kotlin.collections/List<dev.verifactu.aeat/AeatSubmissionFeature> = ...): dev.verifactu.aeat/AeatSubmissionEndpoint // dev.verifactu.aeat/AeatSubmissionEndpoint.copy|copy(dev.verifactu.aeat.AeatEnvironment;dev.verifactu.aeat.AeatCertificateAccess;dev.verifactu.aeat.AeatServiceVersion;kotlin.String;kotlin.String;kotlin.collections.List<dev.verifactu.aeat.AeatSubmissionFeature>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatSubmissionEndpoint.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatSubmissionEndpoint.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatSubmissionEndpoint.toString|toString(){}[0]
+}
+
+final class dev.verifactu.aeat/AeatSubmissionResponse { // dev.verifactu.aeat/AeatSubmissionResponse|null[0]
+    constructor <init>(dev.verifactu.aeat/AeatSubmissionStatus, kotlin/String?, kotlin/Int?, kotlin.collections/List<dev.verifactu.aeat/AeatResponseLine>, kotlin/String? = ..., dev.verifactu.aeat/AeatFlowControl = ...) // dev.verifactu.aeat/AeatSubmissionResponse.<init>|<init>(dev.verifactu.aeat.AeatSubmissionStatus;kotlin.String?;kotlin.Int?;kotlin.collections.List<dev.verifactu.aeat.AeatResponseLine>;kotlin.String?;dev.verifactu.aeat.AeatFlowControl){}[0]
+
+    final val csv // dev.verifactu.aeat/AeatSubmissionResponse.csv|{}csv[0]
+        final fun <get-csv>(): kotlin/String? // dev.verifactu.aeat/AeatSubmissionResponse.csv.<get-csv>|<get-csv>(){}[0]
+    final val flowControl // dev.verifactu.aeat/AeatSubmissionResponse.flowControl|{}flowControl[0]
+        final fun <get-flowControl>(): dev.verifactu.aeat/AeatFlowControl // dev.verifactu.aeat/AeatSubmissionResponse.flowControl.<get-flowControl>|<get-flowControl>(){}[0]
+    final val lines // dev.verifactu.aeat/AeatSubmissionResponse.lines|{}lines[0]
+        final fun <get-lines>(): kotlin.collections/List<dev.verifactu.aeat/AeatResponseLine> // dev.verifactu.aeat/AeatSubmissionResponse.lines.<get-lines>|<get-lines>(){}[0]
+    final val rawStatus // dev.verifactu.aeat/AeatSubmissionResponse.rawStatus|{}rawStatus[0]
+        final fun <get-rawStatus>(): kotlin/String? // dev.verifactu.aeat/AeatSubmissionResponse.rawStatus.<get-rawStatus>|<get-rawStatus>(){}[0]
+    final val retryAfterSeconds // dev.verifactu.aeat/AeatSubmissionResponse.retryAfterSeconds|{}retryAfterSeconds[0]
+        final fun <get-retryAfterSeconds>(): kotlin/Int? // dev.verifactu.aeat/AeatSubmissionResponse.retryAfterSeconds.<get-retryAfterSeconds>|<get-retryAfterSeconds>(){}[0]
+    final val status // dev.verifactu.aeat/AeatSubmissionResponse.status|{}status[0]
+        final fun <get-status>(): dev.verifactu.aeat/AeatSubmissionStatus // dev.verifactu.aeat/AeatSubmissionResponse.status.<get-status>|<get-status>(){}[0]
+
+    final fun component1(): dev.verifactu.aeat/AeatSubmissionStatus // dev.verifactu.aeat/AeatSubmissionResponse.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // dev.verifactu.aeat/AeatSubmissionResponse.component2|component2(){}[0]
+    final fun component3(): kotlin/Int? // dev.verifactu.aeat/AeatSubmissionResponse.component3|component3(){}[0]
+    final fun component4(): kotlin.collections/List<dev.verifactu.aeat/AeatResponseLine> // dev.verifactu.aeat/AeatSubmissionResponse.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // dev.verifactu.aeat/AeatSubmissionResponse.component5|component5(){}[0]
+    final fun component6(): dev.verifactu.aeat/AeatFlowControl // dev.verifactu.aeat/AeatSubmissionResponse.component6|component6(){}[0]
+    final fun copy(dev.verifactu.aeat/AeatSubmissionStatus = ..., kotlin/String? = ..., kotlin/Int? = ..., kotlin.collections/List<dev.verifactu.aeat/AeatResponseLine> = ..., kotlin/String? = ..., dev.verifactu.aeat/AeatFlowControl = ...): dev.verifactu.aeat/AeatSubmissionResponse // dev.verifactu.aeat/AeatSubmissionResponse.copy|copy(dev.verifactu.aeat.AeatSubmissionStatus;kotlin.String?;kotlin.Int?;kotlin.collections.List<dev.verifactu.aeat.AeatResponseLine>;kotlin.String?;dev.verifactu.aeat.AeatFlowControl){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatSubmissionResponse.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatSubmissionResponse.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatSubmissionResponse.toString|toString(){}[0]
+}
+
+final class dev.verifactu.aeat/AeatTransportRequest { // dev.verifactu.aeat/AeatTransportRequest|null[0]
+    constructor <init>(dev.verifactu.aeat/AeatSubmissionEndpoint, kotlin/String) // dev.verifactu.aeat/AeatTransportRequest.<init>|<init>(dev.verifactu.aeat.AeatSubmissionEndpoint;kotlin.String){}[0]
+
+    final val endpoint // dev.verifactu.aeat/AeatTransportRequest.endpoint|{}endpoint[0]
+        final fun <get-endpoint>(): dev.verifactu.aeat/AeatSubmissionEndpoint // dev.verifactu.aeat/AeatTransportRequest.endpoint.<get-endpoint>|<get-endpoint>(){}[0]
+    final val xmlPayload // dev.verifactu.aeat/AeatTransportRequest.xmlPayload|{}xmlPayload[0]
+        final fun <get-xmlPayload>(): kotlin/String // dev.verifactu.aeat/AeatTransportRequest.xmlPayload.<get-xmlPayload>|<get-xmlPayload>(){}[0]
+
+    final fun component1(): dev.verifactu.aeat/AeatSubmissionEndpoint // dev.verifactu.aeat/AeatTransportRequest.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.verifactu.aeat/AeatTransportRequest.component2|component2(){}[0]
+    final fun copy(dev.verifactu.aeat/AeatSubmissionEndpoint = ..., kotlin/String = ...): dev.verifactu.aeat/AeatTransportRequest // dev.verifactu.aeat/AeatTransportRequest.copy|copy(dev.verifactu.aeat.AeatSubmissionEndpoint;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/AeatTransportRequest.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/AeatTransportRequest.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/AeatTransportRequest.toString|toString(){}[0]
+}
+
+final class dev.verifactu.aeat/AppleAeatTransport { // dev.verifactu.aeat/AppleAeatTransport|null[0]
+    constructor <init>(dev.verifactu.aeat/AeatTransportAdapter) // dev.verifactu.aeat/AppleAeatTransport.<init>|<init>(dev.verifactu.aeat.AeatTransportAdapter){}[0]
+
+    final fun submit(dev.verifactu.aeat/AeatSubmissionEndpoint, kotlin/String): dev.verifactu.aeat/AeatTransportResult // dev.verifactu.aeat/AppleAeatTransport.submit|submit(dev.verifactu.aeat.AeatSubmissionEndpoint;kotlin.String){}[0]
+}
+
+final class dev.verifactu.aeat/SoapFault { // dev.verifactu.aeat/SoapFault|null[0]
+    constructor <init>(kotlin/String?, kotlin/String?) // dev.verifactu.aeat/SoapFault.<init>|<init>(kotlin.String?;kotlin.String?){}[0]
+
+    final val code // dev.verifactu.aeat/SoapFault.code|{}code[0]
+        final fun <get-code>(): kotlin/String? // dev.verifactu.aeat/SoapFault.code.<get-code>|<get-code>(){}[0]
+    final val message // dev.verifactu.aeat/SoapFault.message|{}message[0]
+        final fun <get-message>(): kotlin/String? // dev.verifactu.aeat/SoapFault.message.<get-message>|<get-message>(){}[0]
+
+    final fun component1(): kotlin/String? // dev.verifactu.aeat/SoapFault.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // dev.verifactu.aeat/SoapFault.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/String? = ...): dev.verifactu.aeat/SoapFault // dev.verifactu.aeat/SoapFault.copy|copy(kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.aeat/SoapFault.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.aeat/SoapFault.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.aeat/SoapFault.toString|toString(){}[0]
+}
+
+final object dev.verifactu.aeat/AeatEndpointConfiguration { // dev.verifactu.aeat/AeatEndpointConfiguration|null[0]
+    final const val OFFICIAL_WSDL_URL // dev.verifactu.aeat/AeatEndpointConfiguration.OFFICIAL_WSDL_URL|{}OFFICIAL_WSDL_URL[0]
+        final fun <get-OFFICIAL_WSDL_URL>(): kotlin/String // dev.verifactu.aeat/AeatEndpointConfiguration.OFFICIAL_WSDL_URL.<get-OFFICIAL_WSDL_URL>|<get-OFFICIAL_WSDL_URL>(){}[0]
+
+    final fun defaultSubmissionEndpoint(dev.verifactu.aeat/AeatEnvironment, dev.verifactu.aeat/AeatCertificateAccess = ...): dev.verifactu.aeat/AeatSubmissionEndpoint // dev.verifactu.aeat/AeatEndpointConfiguration.defaultSubmissionEndpoint|defaultSubmissionEndpoint(dev.verifactu.aeat.AeatEnvironment;dev.verifactu.aeat.AeatCertificateAccess){}[0]
+    final fun submissionEndpointWithAdvancedOverride(dev.verifactu.aeat/AeatEnvironment, dev.verifactu.aeat/AeatCertificateAccess = ..., dev.verifactu.aeat/AeatAdvancedEndpointConfiguration): dev.verifactu.aeat/AeatSubmissionEndpoint // dev.verifactu.aeat/AeatEndpointConfiguration.submissionEndpointWithAdvancedOverride|submissionEndpointWithAdvancedOverride(dev.verifactu.aeat.AeatEnvironment;dev.verifactu.aeat.AeatCertificateAccess;dev.verifactu.aeat.AeatAdvancedEndpointConfiguration){}[0]
+}
+
+final object dev.verifactu.aeat/AeatErrorCatalogue { // dev.verifactu.aeat/AeatErrorCatalogue|null[0]
+    final const val VERSION // dev.verifactu.aeat/AeatErrorCatalogue.VERSION|{}VERSION[0]
+        final fun <get-VERSION>(): kotlin/String // dev.verifactu.aeat/AeatErrorCatalogue.VERSION.<get-VERSION>|<get-VERSION>(){}[0]
+
+    final fun classify(kotlin/String, kotlin/String? = ..., dev.verifactu.aeat/AeatErrorLocation = ...): dev.verifactu.aeat/AeatIncidence // dev.verifactu.aeat/AeatErrorCatalogue.classify|classify(kotlin.String;kotlin.String?;dev.verifactu.aeat.AeatErrorLocation){}[0]
+}
+
+final object dev.verifactu.aeat/AeatResponseCorrelation { // dev.verifactu.aeat/AeatResponseCorrelation|null[0]
+    final fun correlate(kotlin.collections/List<dev.verifactu.xml/SubmissionRecord>, dev.verifactu.aeat/AeatSubmissionResponse): dev.verifactu.aeat/AeatResponseCorrelationResult // dev.verifactu.aeat/AeatResponseCorrelation.correlate|correlate(kotlin.collections.List<dev.verifactu.xml.SubmissionRecord>;dev.verifactu.aeat.AeatSubmissionResponse){}[0]
+}
+
+final object dev.verifactu.aeat/AeatResponseParser { // dev.verifactu.aeat/AeatResponseParser|null[0]
+    final fun parseSoapFault(kotlin/String): dev.verifactu.aeat/SoapFaultParseResult // dev.verifactu.aeat/AeatResponseParser.parseSoapFault|parseSoapFault(kotlin.String){}[0]
+    final fun parseSubmission(kotlin/String): dev.verifactu.aeat/AeatResponseParseResult // dev.verifactu.aeat/AeatResponseParser.parseSubmission|parseSubmission(kotlin.String){}[0]
+}
+
+final object dev.verifactu.aeat/FiscalSubmissionPreparation { // dev.verifactu.aeat/FiscalSubmissionPreparation|null[0]
+    final fun prepareBatch(dev.verifactu.xml/SubmissionHeader, kotlin.collections/List<dev.verifactu.xml/SubmissionRecord>, dev.verifactu.core/ValidationContext = ...): dev.verifactu.xml/SubmissionBatchBuildResult // dev.verifactu.aeat/FiscalSubmissionPreparation.prepareBatch|prepareBatch(dev.verifactu.xml.SubmissionHeader;kotlin.collections.List<dev.verifactu.xml.SubmissionRecord>;dev.verifactu.core.ValidationContext){}[0]
+    final fun prepareCancellation(dev.verifactu.core/RegistroAnulacionDraft, dev.verifactu.xml/SubmissionHeader): dev.verifactu.aeat/CancellationPreparationResult // dev.verifactu.aeat/FiscalSubmissionPreparation.prepareCancellation|prepareCancellation(dev.verifactu.core.RegistroAnulacionDraft;dev.verifactu.xml.SubmissionHeader){}[0]
+    final fun prepareRegistration(dev.verifactu.core/RegistroAltaDraft, dev.verifactu.qr/QrEnvironment, dev.verifactu.core/ValidationContext = ...): dev.verifactu.aeat/RegistrationPreparationResult // dev.verifactu.aeat/FiscalSubmissionPreparation.prepareRegistration|prepareRegistration(dev.verifactu.core.RegistroAltaDraft;dev.verifactu.qr.QrEnvironment;dev.verifactu.core.ValidationContext){}[0]
+}
