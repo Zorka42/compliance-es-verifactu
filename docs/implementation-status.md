@@ -2,6 +2,12 @@
 
 Local assessment updated 2026-11-06; earlier implementation batches are recorded below. **External acceptance and release remain open.** The authoritative backlog remains [Zorka Accounting – Tasks](https://app.notion.com/p/3bd4f302230980d3bb72ffbd0068aa8b), project `Verifactu`.
 
+## Sandbox console tool — 2026-11-06
+
+[ZA-122](https://app.notion.com/p/4104f3022309817aac19eb09e1a1772a) adds a standalone JVM host tool under [tools/sandbox](../tools/sandbox/README.md). Registration, direct chained cancellation and exact duplicates are prepared through the library and archived XSDs. XML/digest review, eight offline response scenarios and saved-response inspection are available without credentials. An explicit TEST-only send command requires a selected PKCS#12 alias/password source and the reviewed digest, records the start before invoking transport, preserves raw returned XML and never retries automatically.
+
+Local evidence: 28 JVM tests, including real localhost mTLS using newly generated disposable identities; ktlint, detekt, API checks and the full repository `check` passed. Additional response-contradiction, failure-receipt, credential and Unicode cases exercise partial branches required by the patch-coverage gate. Metadata and iOS device compilation, Dokka, JVM coverage reports/gates also passed. The installed launcher ran on Temurin 11.0.33 through registration, preview, all eight response scenarios, cancellation, byte-identical duplicate and offline-send rejection. CI includes that Java 11 smoke check. Intel Apple execution and Windows launcher/ACL behavior are not verified. No operational AEAT request or existing personal certificate was used; real service acceptance remains a separately authorized step.
+
 ## Source review and XML/API hardening — 2026-11-06
 
 ZA-120 [rechecked the public source gaps](compliance/source-gaps-2026-11-06.md), retained unchanged AEAT PDF/error/schema bytes, archived additional BOE/AEAT material and prepared exact clarification questions. The zero-IVA surcharge rule after September 2024, supplied EL/GR–XI/GB mappings and entity/K/L/M checksum algorithms remain unconfirmed. No new fiscal rejection was invented. Regression tests preserve warnings/assumptions across dates, record creation and supplied receipt context. The task remains blocked on authoritative clarification.

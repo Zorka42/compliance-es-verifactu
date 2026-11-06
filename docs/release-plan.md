@@ -37,6 +37,8 @@ Supplementary invoice-number fixtures exercise the low-level XSD/parser contract
 
 ## Where Certificates or AEAT Are Needed
 
+As of 2026-11-06, [ZA-122](https://app.notion.com/p/4104f3022309817aac19eb09e1a1772a) adds the [sandbox console tool](../tools/sandbox/README.md): prepare registration, directly chained cancellation and exact duplicate requests; review XML/digest; demonstrate all response branches; inspect saved responses. Its separate TEST-only `send` command requires explicit identity selection and the reviewed digest. Local localhost mTLS tests establish wiring only. Next, agree on explicit test identities and data, then separately authorize AEAT interoperability tests; receipt reconciliation and real issued/received queries remain open. The older offline task list above is the September assessment, not a claim that later work was merged.
+
 | Stage | Credentials / service | What it proves |
 | --- | --- | --- |
 | Normal build, schema/golden tests, fake transport, offline query tool | None | Deterministic local behavior and compatibility with archived contracts |

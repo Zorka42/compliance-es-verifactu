@@ -24,4 +24,5 @@ include(
     ":verifactu-testkit",
     ":samples:offline",
     ":tools:query",
+    ":tools:sandbox",
 )

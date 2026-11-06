@@ -29,6 +29,8 @@ jobs:
         run: ./gradlew publishJvmPreview
       - name: Build the independent consumer distribution
         run: ./gradlew --no-daemon -p samples/maven-consumer installDist
+      - name: Build the standalone sandbox tool
+        run: ./gradlew :tools:sandbox:installDist
       - name: Select Java 11 for the independent consumer
         uses: actions/setup-java@v6
         with:
@@ -38,11 +40,16 @@ jobs:
         run: |
           java -version
           samples/maven-consumer/build/install/verifactu-java-consumer/bin/verifactu-java-consumer
+      - name: Verify the standalone sandbox tool offline on Java 11
+        run: |
+          sandbox_dir="$(mktemp -d)"
+          tools/sandbox/build/install/verifactu-sandbox/bin/verifactu-sandbox prepare --scenario registration --config tools/sandbox/examples/offline.properties --out "$sandbox_dir/registration"
+          tools/sandbox/build/install/verifactu-sandbox/bin/verifactu-sandbox demo --bundle "$sandbox_dir/registration"
       - name: Upload JVM coverage
         if: ${{ env.CODECOV_TOKEN != '' }}
         uses: codecov/codecov-action@v7
         with:
-          files: verifactu-core/build/reports/kover/reportJvm.xml,verifactu-xml/build/reports/kover/reportJvm.xml,verifactu-qr/build/reports/kover/reportJvm.xml,verifactu-aeat/build/reports/kover/reportJvm.xml
+          files: verifactu-core/build/reports/kover/reportJvm.xml,verifactu-xml/build/reports/kover/reportJvm.xml,verifactu-qr/build/reports/kover/reportJvm.xml,verifactu-aeat/build/reports/kover/reportJvm.xml,tools/sandbox/build/reports/kover/reportJvm.xml
           fail_ci_if_error: true
 
   apple:
