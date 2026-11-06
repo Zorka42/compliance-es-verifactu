@@ -76,7 +76,7 @@ private fun renderConsultation(
 ): CliResult =
     try {
         val rowsFile = output.resolve("invoices.tsv")
-        val rows = if (Files.isRegularFile(rowsFile)) readPrivateInput(rowsFile, MAX_XML_BYTES).trimEnd() else ""
+        val rows = if (Files.isRegularFile(rowsFile)) readPrivateInput(rowsFile, MAX_XML_BYTES).removeSuffix("\n") else ""
         val rendered = if (format == "tsv") rows else invoiceTable(rows)
         CliResult(rendered, result.output + "\nEvidence directory: $output", result.exitCode)
     } catch (_: IOException) {

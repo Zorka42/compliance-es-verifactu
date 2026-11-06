@@ -241,6 +241,41 @@ class CliTest {
             assertFalse(Files.exists(root.resolve("native")))
         }
 
+    @Test
+    fun sparseCancelledFinalRowPreservesTheEmptyAmountInTsvAndTableOutput() =
+        workspace { root ->
+            val settings = initialized(root)
+            val rows =
+                "direction\tissuer\tinvoice\tissue_date\tstate\ttotal\n" +
+                    "received\t89890001K\tCANCELLED-1\t01-11-2026\tAnulada\t\n"
+            listOf("table", "tsv").forEach { format ->
+                val directory = root.resolve(format)
+                val result =
+                    cliResult(
+                        listOf("sandbox", "invoices", "list", "--format=$format", "--out", directory.toString()),
+                        settings,
+                        {
+                            privateDirectory(directory)
+                            privateFile(directory.resolve("invoices.tsv"), rows)
+                            QueryRunResult("COMPLETE")
+                        },
+                    )
+                assertEquals(0, result.exitCode)
+                assertTrue(result.output.contains("CANCELLED-1"))
+                if (format == "tsv") {
+                    assertEquals(rows.removeSuffix("\n"), result.output)
+                    assertEquals(
+                        6,
+                        result.output
+                            .lines()
+                            .last()
+                            .split('\t')
+                            .size,
+                    )
+                }
+            }
+        }
+
     private fun initialized(root: Path): CliSettings {
         val settings = settings(root).copy(prompt = { if (it.contains("NIF")) "89890001K" else "Synthetic taxpayer" })
         assertEquals(0, cliResult(listOf("config", "init"), settings).exitCode)
