@@ -52,7 +52,7 @@ The [shared Kotlin example](samples/offline/src/commonMain/kotlin/dev/verifactu/
 
 JVM, Android local unit tests, iOS arm64 simulator, and macOS arm64 have CI test coverage. iOS device code is compiled; on-device execution is not verified. Intel Apple targets remain configured but are not advertised as supported. See the [platform matrix](docs/platform-support.md).
 
-The [offline invoice query tool](tools/query/README.md) prepares issued/received consultations and inspects saved responses without network or certificates. [Public contracts](schemas-aeat/README.md) are archived with source URLs and digests.
+The [VeriFactu CLI](tools/query/README.md) provides one-command offline demos (`./verifactu sandbox demo`) and explicit read-only TEST consultations (`./verifactu sandbox invoices list`). On macOS, listing uses the native certificate picker without key export. Build once with `./gradlew :tools:query:installDist`; run `./verifactu --help` to discover commands. [Public contracts](schemas-aeat/README.md) are archived with source URLs and digests.
 
 The [sandbox console tool](tools/sandbox/README.md) prepares registration/cancellation/duplicate bundles, previews XML and demonstrates response handling offline. A separate explicit TEST-only send command is available for a later authorized certificate session; ordinary checks use disposable localhost identities only.
 

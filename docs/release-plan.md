@@ -14,7 +14,7 @@ The next offline tasks are:
 2. [Correlate durable receipts and expose reconciliation state](https://app.notion.com/3d84f302230981b89fa6fa234ca2eac2): interpret saved responses against saved identity/operation evidence, with restart tests.
 3. [Resolve remaining public-source gaps](https://app.notion.com/3d84f302230981109fadf80c8a0a74b6): zero-rate surcharge, special VAT-country pairs and unsupported checksum algorithms.
 4. [Expand the parser and API regression corpus](https://app.notion.com/3d84f3022309812c95dacc865eb5ba17): malformed inputs, resource limits, unknown protocol additions and Java/native compatibility evidence.
-5. Complete the release-owner inputs and agree on the separately authorized AEAT test stage described below. The offline issued/received query tool is ready for saved fixtures, but has not read this taxpayer's records.
+5. Complete the release-owner inputs and agree on the separately authorized AEAT test stage described below. The unified CLI supports explicit TEST reads through macOS Keychain, but has not read this taxpayer's records.
 
 | Work | Outcome needed | Verification |
 | --- | --- | --- |
@@ -60,4 +60,4 @@ No personal certificate, private key, authenticated AEAT portal, registration we
 5. After separate production-read authorization, query one agreed month for both issued and received records using the query operation. Follow the returned pagination key; compare with user-provided expectations. Record authorization failures separately from empty query results. Supplier invoices are visible only where the supplier's VERI*FACTU record identifies this recipient.
 6. Complete release review: regulatory/source versions, producer declaration responsibilities, full license inventory, signed artifacts and verified Maven consumption. Publish only after the release prerequisites and external permissions are concrete.
 
-The [query access document](compliance/query-access.md) contains the exact operation, namespaces, rights and source versions. [tools/query](../tools/query/README.md) already prepares requests and inspects saved responses for both directions; adding live read transport is a later, separately authorized step.
+The [query access document](compliance/query-access.md) contains the exact operation, namespaces, rights and source versions. [tools/query](../tools/query/README.md) now includes explicit TEST-only read transport through native macOS identities as well as offline preparation/inspection. The owner has authorized read-only TEST verification; registration/cancellation and production access remain separate. Actual system dialogs, authorization and returned history still require manual verification.

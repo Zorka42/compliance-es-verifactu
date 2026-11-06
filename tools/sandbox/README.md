@@ -1,4 +1,6 @@
-# Sandbox console tool
+# Advanced sandbox console tool
+
+For everyday use, start with the unified [VeriFactu CLI](../query/README.md): build once with `./gradlew :tools:query:installDist`, then run `./verifactu sandbox demo` or `./verifactu sandbox demo --response timeout`. The commands below expose the explicit bundle/XML workflow for diagnostics and separately authorized submissions.
 
 A standalone JVM host utility for preparing VERI*FACTU test requests, reviewing XML, exercising response scenarios and inspecting saved responses. Build and test it locally without AEAT access or an existing certificate. It is separate from the published library and is not a complete invoicing system.
 

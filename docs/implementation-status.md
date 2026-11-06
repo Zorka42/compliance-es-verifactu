@@ -1,5 +1,10 @@
 # Implementation Status
 
+Current local work: [ZA-123](https://app.notion.com/p/4104f3022309813cbda7d29926c54a5a) adds the unified [VeriFactu CLI](../tools/query/README.md), one-command synthetic demo and macOS read-only TEST consultation with native certificate selection. Local tests use disposable memory-only identities. The actual native picker and AEAT TEST read have not been exercised with a personal identity; older dated assessments below describe earlier stages. No production access or real registration/cancellation is part of this work.
+Local verification for ZA-123 (2026-11-07): repository `check`, metadata and iOS device compilation, API checks, Kover verification, installed distribution and native helper tests pass. Standard target reports contain 251 JVM, 160 Android-host, 173 iOS-simulator-arm64 and 173 macOS-arm64 executions (757 total), with no failures/errors/skips; the native helper adds four passing XCTest cases. Query/CLI JVM line coverage is 604/633 (95.42%). The installed synthetic demo and nested help also pass on a real Java 11 runtime. These results establish local behavior, not live AEAT authorization or system-dialog acceptance.
+
+
+
 Local assessment updated 2026-11-06; earlier implementation batches are recorded below. **External acceptance and release remain open.** The authoritative backlog remains [Zorka Accounting – Tasks](https://app.notion.com/p/3bd4f302230980d3bb72ffbd0068aa8b), project `Verifactu`.
 
 ## Sandbox console tool — 2026-11-06

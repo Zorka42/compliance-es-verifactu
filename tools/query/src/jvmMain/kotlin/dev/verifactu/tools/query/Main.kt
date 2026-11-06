@@ -7,10 +7,12 @@ import java.nio.file.StandardOpenOption
 import java.util.Properties
 import kotlin.system.exitProcess
 
-/** Runs the local query preparation and saved-response inspection tool. */
+/** Runs query preparation, saved-response inspection, or an explicit TEST Keychain consultation. */
 public fun main(args: Array<String>) {
     try {
-        println(runCommand(args.toList()))
+        val result = queryCommand(args.toList())
+        println(result.output)
+        if (result.exitCode != 0) exitProcess(result.exitCode)
     } catch (error: QueryInputException) {
         System.err.println(error.message)
         exitProcess(2)
@@ -19,6 +21,9 @@ public fun main(args: Array<String>) {
         exitProcess(2)
     } catch (_: IOException) {
         System.err.println("Cannot read or create the requested local file. Existing output files are never overwritten.")
+        exitProcess(2)
+    } catch (_: SecurityException) {
+        System.err.println("Local resource access was denied.")
         exitProcess(2)
     }
 }
@@ -97,7 +102,7 @@ private fun inspectCommand(options: Map<String, String>): String {
         }
 }
 
-private fun parseOptions(args: List<String>): Map<String, String> {
+internal fun parseOptions(args: List<String>): Map<String, String> {
     val options = mutableMapOf<String, String>()
     var index = 0
     while (index < args.size) {
@@ -111,22 +116,25 @@ private fun parseOptions(args: List<String>): Map<String, String> {
         index++
         val value =
             if (key ==
-                "details"
+                "details" ||
+                key == "keychain"
             ) {
                 "true"
             } else {
-                args.getOrNull(index++) ?: throw QueryInputException("A command option needs a value.")
+                val next = args.getOrNull(index++) ?: throw QueryInputException("A command option needs a value.")
+                queryRequire(!next.startsWith("--"), "A command option needs a value.")
+                next
             }
         options[key] = value
     }
     return options
 }
 
-private fun Map<String, String>.allow(vararg names: String) {
+internal fun Map<String, String>.allow(vararg names: String) {
     if (keys.any { it !in names }) throw QueryInputException("Unsupported command option.")
 }
 
-private fun Map<String, String>.required(name: String): String = get(name) ?: throw QueryInputException("Missing --$name option.")
+internal fun Map<String, String>.required(name: String): String = get(name) ?: throw QueryInputException("Missing --$name option.")
 
 private fun readLimited(path: String): String =
     Files.newInputStream(Path.of(path)).use {
@@ -143,8 +151,9 @@ private fun readLimited(path: String): String =
     }
 
 private const val USAGE =
-    "Local VERI*FACTU query tool (no network or certificate access).\n" +
+    "VERI*FACTU query tool. Only explicit fetch --keychain contacts AEAT TEST.\n" +
         "prepare --direction issued|received --party-file party.properties --year YYYY --month MM " +
         "--out request.xml [--page-from response.xml]\n" +
         "inspect --input response.xml [--details]\n" +
+        "fetch --keychain --direction issued|received|both --party-file party.properties --year YYYY --month MM --out new-directory\n" +
         "party.properties is UTF-8 with nif and name keys. Default inspection omits personal invoice details."

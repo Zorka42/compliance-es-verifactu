@@ -23,7 +23,7 @@ The README stays short. Product scope, integration details, and compliance expla
 - [Release governance and tag workflow](release-governance.md)
 - [First public release readiness checklist](release-readiness-checklist.md)
 - [Implementation status and local backlog report](implementation-status.md)
-- [Offline issued/received invoice query tool](../tools/query/README.md)
+- [VeriFactu CLI: offline demo and read-only TEST queries](../tools/query/README.md)
 - [Sandbox console tool: prepared scenarios, XML review and response inspection](../tools/sandbox/README.md)
 - [Query scope, access and testing plan](compliance/query-access.md)
 - [Archived public contracts](../schemas-aeat/README.md)
