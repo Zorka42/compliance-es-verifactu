@@ -14,6 +14,42 @@ import kotlin.test.assertTrue
 
 class SandboxSendTest {
     @Test
+    fun persistsFailureEvidenceAndHttpStatusWithoutSavingNonXmlOrRetrying() =
+        withWorkspace { root ->
+            val bundle = fixtureBundle(root, "aeat-test")
+            val results =
+                listOf(
+                    AeatTransportResult.NotSent("PRIVATE") to "unavailable",
+                    AeatTransportResult.Timeout("PRIVATE") to "unavailable",
+                    AeatTransportResult.NonXmlResponse(403, "PRIVATE-MEDIA") to "403",
+                    AeatTransportResult.ResponseTooLarge(200, "PRIVATE-MEDIA", 1024) to "200",
+                    AeatTransportResult.XmlResponse(200, "text/xml", "") to "200",
+                    simulatedResponse(bundle, "soap-fault") to "500",
+                )
+            results.forEachIndexed { index, (response, expectedHttpStatus) ->
+                val output = "failure-$index"
+                var calls = 0
+                val result =
+                    runCommand(sendArguments(root, bundle.sha256, output), { "DISPOSABLE" }) { _, _, _ ->
+                        object : AeatTransportAdapter {
+                            override fun execute(request: AeatTransportRequest): AeatTransportResult {
+                                calls++
+                                assertTrue(Files.exists(root.resolve("$output/started.properties")))
+                                return response
+                            }
+                        }
+                    }
+                assertEquals(1, calls)
+                assertEquals(if (response is AeatTransportResult.XmlResponse) 3 else 4, result.exitCode)
+                assertFalse(result.output.contains("PRIVATE"))
+                val receipt = readProperties(root.resolve("$output/outcome.properties"))
+                assertEquals(response.deliveryState.name, receipt["delivery"])
+                assertEquals(expectedHttpStatus, receipt["http.status"])
+                assertEquals(response is AeatTransportResult.XmlResponse, Files.exists(root.resolve("$output/response.xml")))
+            }
+        }
+
+    @Test
     fun preflightRejectsOfflineUnreviewedOrModifiedInputsBeforeCredentialAccess() =
         withWorkspace { root ->
             var reads = 0
@@ -152,6 +188,7 @@ class SandboxSendTest {
                 ),
                 listOf("show", "--bundle", "x", "--bundle", "y"),
                 listOf("show", "--bundle"),
+                listOf("show"),
                 listOf("show", "bundle"),
                 listOf("show", "--bundle", "--input"),
                 listOf("show", "--"),

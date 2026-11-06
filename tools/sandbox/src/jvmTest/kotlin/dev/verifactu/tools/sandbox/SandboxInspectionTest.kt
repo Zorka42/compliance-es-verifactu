@@ -9,6 +9,42 @@ import kotlin.test.assertTrue
 
 class SandboxInspectionTest {
     @Test
+    fun contradictoryOrIncompleteStatusesNeverBecomeCleanAcceptance() =
+        withWorkspace { root ->
+            val bundle = fixtureBundle(root)
+            val xml = (simulatedResponse(bundle, "accepted") as AeatTransportResult.XmlResponse).xml
+            listOf(
+                xml.replace("<EstadoRegistro>Correcto</EstadoRegistro>", "<EstadoRegistro>Future</EstadoRegistro>"),
+                xml.replace("<EstadoEnvio>Correcto</EstadoEnvio>", "<EstadoEnvio>Future</EstadoEnvio>"),
+                xml.replace("<EstadoEnvio>Correcto</EstadoEnvio>", "<EstadoEnvio>ParcialmenteCorrecto</EstadoEnvio>"),
+                xml.replace("<EstadoRegistro>Correcto</EstadoRegistro>", "<EstadoRegistro>AceptadoConErrores</EstadoRegistro>"),
+                xml.replace(
+                    "<EstadoRegistro>Correcto</EstadoRegistro>",
+                    "<EstadoRegistro>Correcto</EstadoRegistro><DescripcionErrorRegistro>PRIVATE</DescripcionErrorRegistro>",
+                ),
+            ).forEach {
+                val result = inspectXml(bundle, it, false)
+                assertEquals(3, result.exitCode)
+                assertFalse(result.output.contains("PRIVATE"))
+            }
+            assertEquals(3, inspectXml(bundle, xml, false, 199).exitCode)
+            val duplicate = (simulatedResponse(bundle, "duplicate") as AeatTransportResult.XmlResponse).xml
+            val details = inspectXml(bundle, duplicate, true)
+            assertEquals(3, details.exitCode)
+            assertTrue(details.output.contains("duplicate=TEST-REQUEST"))
+        }
+
+    @Test
+    fun emptyFaultDiagnosticsAreRejectedWithoutInventingAcceptance() =
+        withWorkspace { root ->
+            val bundle = fixtureBundle(root)
+            val xml = "<soap:Fault xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><faultcode/><faultstring/></soap:Fault>"
+            val result = inspectXml(bundle, xml, true)
+            assertEquals(3, result.exitCode)
+            assertTrue(result.output.contains("INVALID_XML"))
+        }
+
+    @Test
     fun interpretsAllOfflineBranchesWithoutCredentialsOrNetwork() =
         withWorkspace { root ->
             val bundle = fixtureBundle(root)
@@ -81,7 +117,7 @@ class SandboxInspectionTest {
         withWorkspace { root ->
             val bundle = fixtureBundle(root)
             val response = (simulatedResponse(bundle, "warning") as AeatTransportResult.XmlResponse).xml
-            val private = "PRIVATE\t\n\u202EMARKER"
+            val private = "PRIVATE\t\n\u202EMARKER\u2067\u3000"
             val xml = response.replace("Synthetic warning", private)
             val summary = inspectXml(bundle, xml, false)
             assertFalse(summary.output.contains("PRIVATE"))
@@ -89,6 +125,8 @@ class SandboxInspectionTest {
             assertTrue(details.output.contains("89890001K"))
             assertTrue(details.output.contains("PRIVATE\\u0009\\u000a\\u202eMARKER"))
             assertFalse(details.output.contains('\u202E'))
+            assertTrue(details.output.contains("\\u2067"))
+            assertTrue(details.output.contains('\u3000'))
             val fault = (simulatedResponse(bundle, "soap-fault") as AeatTransportResult.XmlResponse).xml.replace("Synthetic fault", private)
             assertFalse(inspectXml(bundle, fault, false).output.contains("PRIVATE"))
             assertTrue(inspectXml(bundle, fault, true).output.contains("PRIVATE\\u0009"))

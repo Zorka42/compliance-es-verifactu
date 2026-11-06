@@ -65,6 +65,30 @@ class SandboxMtlsTest {
                         )
                     }
                 assertFalse(wrongPassword.message.orEmpty().contains("WRONG-PRIVATE"))
+                val password = DISPOSABLE_PASSWORD.toCharArray()
+                val store =
+                    java.security.KeyStore.getInstance("PKCS12").apply {
+                        Files.newInputStream(tls.clientFile).use { load(it, password) }
+                        setKeyEntry(
+                            "different-key-password",
+                            getKey("selected-client", password),
+                            "OTHER-PRIVATE".toCharArray(),
+                            getCertificateChain("selected-client"),
+                        )
+                        setEntry(
+                            "secret-key",
+                            java.security.KeyStore.SecretKeyEntry(javax.crypto.spec.SecretKeySpec(ByteArray(16), "AES")),
+                            java.security.KeyStore.PasswordProtection(password),
+                        )
+                    }
+                val alternate = root.resolve("alternate.p12")
+                Files.newOutputStream(alternate).use { store.store(it, password) }
+                val keyPasswordFailure =
+                    assertFailsWith<SandboxInputException> {
+                        loadCredential(alternate, "different-key-password", password)
+                    }
+                assertFalse(keyPasswordFailure.message.orEmpty().contains("OTHER-PRIVATE"))
+                assertFailsWith<SandboxInputException> { loadCredential(alternate, "secret-key", password) }
             }
             assertFailsWith<SandboxInputException> { loadSandboxTransport(root.resolve("missing.p12"), "none", charArrayOf()) }
             val damaged = root.resolve("invalid.p12")

@@ -120,6 +120,11 @@ class SandboxPreparationTest {
             }
             prepareBundle(BundlePreparation(config, root.resolve("cancel"), "cancellation", "offline", "standard", root.resolve("bundle")))
             assertFailsWith<SandboxInputException> {
+                prepareBundle(
+                    BundlePreparation(config, root.resolve("cancel-again"), "cancellation", "offline", "standard", root.resolve("cancel")),
+                )
+            }
+            assertFailsWith<SandboxInputException> {
                 prepareBundle(BundlePreparation(null, root.resolve("f"), "duplicate", "offline", "standard", root.resolve("cancel")))
             }
         }
@@ -148,6 +153,7 @@ class SandboxPreparationTest {
             val invalid =
                 listOf(
                     TEST_INPUTS - "issuer.name",
+                    TEST_INPUTS + ("issuer.name" to ""),
                     TEST_INPUTS + ("endpoint" to "https://example.invalid/"),
                     TEST_INPUTS + ("invoice.date" to "bad-date"),
                     TEST_INPUTS + ("issuer.nif" to "12345678A"),
@@ -222,9 +228,11 @@ class SandboxPreparationTest {
             Files.createSymbolicLink(root.resolve("link"), file)
             assertFailsWith<SandboxInputException> { readText(root.resolve("link")) }
             assertEquals(
-                " leading\nvalue=:#\\\t",
-                readProperties(configFile(root, mapOf("k" to " leading\nvalue=:#\\\t"), "roundtrip")).getValue("k"),
+                " leading\nvalue=:#\\\t\r!",
+                readProperties(configFile(root, mapOf("k" to " leading\nvalue=:#\\\t\r!"), "roundtrip")).getValue("k"),
             )
+            val request = BundlePreparation(file, root.resolve("PRIVATE-OUTPUT"), "registration", "offline", "standard", null)
+            assertFalse(request.toString().contains("PRIVATE-OUTPUT"))
         }
 
     @Test

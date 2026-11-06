@@ -9,6 +9,19 @@ import kotlin.test.assertTrue
 
 class SandboxCommandTest {
     @Test
+    fun entryPointPrintsHelpWithoutExitingOrStartingTransport() {
+        val output = java.io.ByteArrayOutputStream()
+        val previous = System.out
+        try {
+            System.setOut(java.io.PrintStream(output, true, "UTF-8"))
+            main(arrayOf("--help"))
+        } finally {
+            System.setOut(previous)
+        }
+        assertTrue(output.toString("UTF-8").startsWith("VeriFactu sandbox CLI (TEST only)."))
+    }
+
+    @Test
     fun commandWorkflowPreparesAndReviewsWithoutReadingCredentials() =
         withWorkspace { root ->
             val config = configFile(root)
@@ -55,17 +68,47 @@ class SandboxCommandTest {
             assertTrue(
                 runCommand(listOf("demo", "--bundle", bundle.toString(), "--response", "warning")).output.contains("REVIEW_REQUIRED"),
             )
+            val liveArgs =
+                listOf(
+                    "prepare",
+                    "--scenario",
+                    "registration",
+                    "--config",
+                    config.toString(),
+                    "--mode",
+                    "aeat-test",
+                    "--out",
+                    root.resolve("explicit-test").toString(),
+                )
+            assertTrue(runCommand(liveArgs).output.contains("Mode: aeat-test"))
+            val cancelArgs =
+                listOf(
+                    "prepare",
+                    "--scenario",
+                    "cancellation",
+                    "--config",
+                    config.toString(),
+                    "--previous",
+                    root.resolve("explicit-test").toString(),
+                    "--mode",
+                    "aeat-test",
+                    "--out",
+                    root.resolve("explicit-cancel").toString(),
+                )
+            assertTrue(runCommand(cancelArgs).output.contains("Scenario: cancellation"))
             assertFailsWith<SandboxInputException> { runCommand(listOf("demo", "--bundle", bundle.toString(), "--response", "other")) }
         }
 
     @Test
     fun previewEscapesDirectionalTextWhileDigestStillCoversOriginalUtf8Bytes() =
         withWorkspace { root ->
-            val config = configFile(root, TEST_INPUTS + ("issuer.name" to "Synthetic \u202Eissuer"))
+            val config = configFile(root, TEST_INPUTS + ("issuer.name" to "Synthetic \u202Eissuer\u2067\u3000"))
             val bundle = prepareBundle(BundlePreparation(config, root.resolve("bundle"), "registration", "offline", "standard", null))
             val preview = runCommand(listOf("show", "--bundle", root.resolve("bundle").toString())).output
             assertFalse(preview.contains('\u202E'))
             assertTrue(preview.contains("\\u202e"))
+            assertTrue(preview.contains("\\u2067"))
+            assertTrue(preview.contains('\u3000'))
             assertTrue(preview.contains(bundle.sha256))
             assertTrue(Files.readString(root.resolve("bundle/request.xml")).contains('\u202E'))
         }
