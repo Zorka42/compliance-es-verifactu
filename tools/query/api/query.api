@@ -1,3 +1,7 @@
+public final class dev/verifactu/tools/query/CliKt {
+	public static final fun main ([Ljava/lang/String;)V
+}
+
 public final class dev/verifactu/tools/query/MainKt {
 	public static final fun main ([Ljava/lang/String;)V
 }

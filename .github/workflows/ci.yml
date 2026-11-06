@@ -29,8 +29,8 @@ jobs:
         run: ./gradlew publishJvmPreview
       - name: Build the independent consumer distribution
         run: ./gradlew --no-daemon -p samples/maven-consumer installDist
-      - name: Build the standalone sandbox tool
-        run: ./gradlew :tools:sandbox:installDist
+      - name: Build the CLI distributions
+        run: ./gradlew :tools:sandbox:installDist :tools:query:installDist
       - name: Select Java 11 for the independent consumer
         uses: actions/setup-java@v6
         with:
@@ -45,11 +45,14 @@ jobs:
           sandbox_dir="$(mktemp -d)"
           tools/sandbox/build/install/verifactu-sandbox/bin/verifactu-sandbox prepare --scenario registration --config tools/sandbox/examples/offline.properties --out "$sandbox_dir/registration"
           tools/sandbox/build/install/verifactu-sandbox/bin/verifactu-sandbox demo --bundle "$sandbox_dir/registration"
+          ./verifactu sandbox demo --response timeout
+          ./verifactu sandbox invoices list --help
+          tools/query/build/install/verifactu-query/bin/verifactu-query inspect --input tools/query/src/jvmTest/resources/query-fixtures/issued-empty.xml
       - name: Upload JVM coverage
         if: ${{ env.CODECOV_TOKEN != '' }}
         uses: codecov/codecov-action@v7
         with:
-          files: verifactu-core/build/reports/kover/reportJvm.xml,verifactu-xml/build/reports/kover/reportJvm.xml,verifactu-qr/build/reports/kover/reportJvm.xml,verifactu-aeat/build/reports/kover/reportJvm.xml,tools/sandbox/build/reports/kover/reportJvm.xml
+          files: verifactu-core/build/reports/kover/reportJvm.xml,verifactu-xml/build/reports/kover/reportJvm.xml,verifactu-qr/build/reports/kover/reportJvm.xml,verifactu-aeat/build/reports/kover/reportJvm.xml,tools/sandbox/build/reports/kover/reportJvm.xml,tools/query/build/reports/kover/reportJvm.xml
           fail_ci_if_error: true
 
   apple:
@@ -66,3 +69,5 @@ jobs:
           cache-provider: basic
       - name: Compile and test Apple targets
         run: ./gradlew compileKotlinMetadata compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test apiCheck
+      - name: Verify native Keychain query helper offline
+        run: ./gradlew :tools:query:testKeychainHelper :tools:query:installDist
