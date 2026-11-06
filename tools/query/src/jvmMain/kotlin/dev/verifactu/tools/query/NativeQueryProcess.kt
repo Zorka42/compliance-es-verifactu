@@ -23,14 +23,21 @@ internal data class NativeQueryReceipt(
     override fun toString(): String = "NativeQueryReceipt(kind=$kind, delivery=$delivery, details=redacted)"
 }
 
-internal fun installedHelper(): Path {
-    queryRequire(System.getProperty("os.name").startsWith("Mac"), "Interactive Keychain consultation requires macOS.")
-    val jar =
+internal fun installedHelper(): Path =
+    locateNativeHelper(
+        System.getProperty("os.name"),
         Path.of(
             InvoiceQuery::class.java.protectionDomain.codeSource.location
                 .toURI(),
-        )
-    queryRequire(jar.toString().endsWith(".jar"), "Build :tools:query:installDist and use the installed verifactu-query launcher.")
+        ),
+    )
+
+internal fun locateNativeHelper(
+    osName: String,
+    jar: Path,
+): Path {
+    queryRequire(osName.startsWith("Mac"), "Interactive Keychain consultation requires macOS.")
+    queryRequire(jar.toString().endsWith(".jar"), "Build :tools:query:installDist and use the installed verifactu launcher.")
     val helper = jar.parent.parent.resolve("bin/verifactu-query-keychain")
     queryRequire(Files.isRegularFile(helper) && Files.isExecutable(helper), "The installed native Keychain helper is unavailable.")
     return helper

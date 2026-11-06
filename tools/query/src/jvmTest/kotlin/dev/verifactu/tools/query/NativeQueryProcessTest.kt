@@ -45,6 +45,7 @@ class NativeQueryProcessTest {
             val invalid =
                 listOf(
                     "kind=PRIVATE\ndelivery=RESPONSE_RECEIVED\nhttp.status=200",
+                    "",
                     "kind=XML_RESPONSE\ndelivery=NOT_SENT\nhttp.status=200",
                     "kind=XML_RESPONSE\ndelivery=RESPONSE_RECEIVED\nhttp.status=999",
                     "kind=XML_RESPONSE\ndelivery=RESPONSE_RECEIVED\nhttp.status=unavailable",
@@ -102,6 +103,24 @@ class NativeQueryProcessTest {
             Files.createSymbolicLink(root.resolve("link"), input)
             assertFailsWith<QueryInputException> { readPrivateInput(root.resolve("link"), 10) }
             assertFailsWith<QueryInputException> { readPrivateInput(root, 10) }
+        }
+
+    @Test
+    fun unreadableReceiptStaysUnknownAndAbsentOptionalHttpStatusIsValidForCancellation() =
+        workspace { root ->
+            val cancelled = executeNativeQuery(helper(root, "kind=SELECTION_CANCELLED\ndelivery=NOT_SENT"), call(root))
+            assertEquals("NOT_SENT", cancelled.delivery)
+            val call = call(root)
+            val receipt = root.resolve("native.properties")
+            Files.writeString(receipt, "private")
+            Files.setPosixFilePermissions(receipt, PosixFilePermissions.fromString("---------"))
+            val executable = root.resolve("noop")
+            script(executable, "#!/bin/sh\nexit 0\n")
+            try {
+                assertEquals("UNKNOWN", executeNativeQuery(executable, call).delivery)
+            } finally {
+                Files.setPosixFilePermissions(receipt, PosixFilePermissions.fromString("rw-------"))
+            }
         }
 
     private fun call(root: Path): NativeQueryCall {

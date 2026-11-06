@@ -9,10 +9,18 @@ import dev.verifactu.tools.sandbox.main as sandboxMain
 
 /** Runs the user-facing CLI. Only sandbox invoices list explicitly accesses AEAT TEST and Keychain. */
 public fun main(args: Array<String>) {
-    val result = cliResult(args.toList())
-    if (result.output.isNotEmpty()) println(result.output)
-    if (result.diagnostic.isNotEmpty()) System.err.println(result.diagnostic)
-    if (result.exitCode != 0) exitProcess(result.exitCode)
+    val exit = printCliResult(cliResult(args.toList()), System.out, System.err)
+    if (exit != 0) exitProcess(exit)
+}
+
+internal fun printCliResult(
+    result: CliResult,
+    output: java.io.PrintStream,
+    error: java.io.PrintStream,
+): Int {
+    if (result.output.isNotEmpty()) output.println(result.output)
+    if (result.diagnostic.isNotEmpty()) error.println(result.diagnostic)
+    return result.exitCode
 }
 
 internal data class CliResult(

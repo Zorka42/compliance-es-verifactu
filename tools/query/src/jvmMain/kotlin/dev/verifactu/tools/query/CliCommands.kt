@@ -14,10 +14,14 @@ internal fun initializeTaxpayer(
     options.allow("party-file")
     queryRequire(!Files.exists(settings.taxpayerFile), "Taxpayer configuration already exists; it was not replaced.")
     val party =
-        options["party-file"]?.let { queryProperties(Path.of(it)) } ?: mapOf(
-            "nif" to promptRequired(settings, "Taxpayer NIF: "),
-            "name" to promptRequired(settings, "Taxpayer legal name: "),
-        )
+        if ("party-file" in options) {
+            queryProperties(Path.of(options.getValue("party-file")))
+        } else {
+            mapOf(
+                "nif" to promptRequired(settings, "Taxpayer NIF: "),
+                "name" to promptRequired(settings, "Taxpayer legal name: "),
+            )
+        }
     validateParty(party)
     Files.createDirectories(
         settings.taxpayerFile.parent,
@@ -51,10 +55,17 @@ internal fun listInvoices(
     queryRequire(direction in listOf("issued", "received", "both"), "--direction must be issued, received, or both.")
     val format = options["format"] ?: "table"
     queryRequire(format in listOf("table", "tsv"), "--format must be table or tsv.")
-    val party = options["party-file"]?.let { Path.of(it) } ?: settings.taxpayerFile
+    val party = if ("party-file" in options) Path.of(options.getValue("party-file")) else settings.taxpayerFile
     queryRequire(Files.isRegularFile(party), "Configure your taxpayer first: verifactu config init (or use --party-file FILE).")
     validateParty(queryProperties(party))
-    val output = options["out"]?.let { Path.of(it) } ?: Files.createTempDirectory("verifactu-test-").resolve("consultation")
+    val output =
+        if ("out" in
+            options
+        ) {
+            Path.of(options.getValue("out"))
+        } else {
+            Files.createTempDirectory("verifactu-test-").resolve("consultation")
+        }
     val result =
         fetch(
             mapOf(
@@ -126,7 +137,7 @@ internal fun runDemo(
         privateFile(config, text)
         val bundle = root.resolve("registration").toString()
         sandbox(listOf("prepare", "--scenario", "registration", "--config", config.toString(), "--out", bundle))
-        sandbox(listOf("demo", "--bundle", bundle) + (response?.let { listOf("--response", it) } ?: emptyList()))
+        sandbox(listOf("demo", "--bundle", bundle) + (if (response != null) listOf("--response", response) else emptyList()))
     } finally {
         root.toFile().deleteRecursively()
     }
