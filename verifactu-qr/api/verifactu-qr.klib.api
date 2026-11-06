@@ -1,0 +1,82 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, macosArm64, macosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.zorka42:verifactu-qr>
+final enum class dev.verifactu.qr/QrEnvironment : kotlin/Enum<dev.verifactu.qr/QrEnvironment> { // dev.verifactu.qr/QrEnvironment|null[0]
+    enum entry PRODUCTION // dev.verifactu.qr/QrEnvironment.PRODUCTION|null[0]
+    enum entry TEST // dev.verifactu.qr/QrEnvironment.TEST|null[0]
+
+    final val entries // dev.verifactu.qr/QrEnvironment.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.qr/QrEnvironment> // dev.verifactu.qr/QrEnvironment.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.qr/QrEnvironment // dev.verifactu.qr/QrEnvironment.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.qr/QrEnvironment> // dev.verifactu.qr/QrEnvironment.values|values#static(){}[0]
+}
+
+sealed interface dev.verifactu.qr/QrPayloadResult { // dev.verifactu.qr/QrPayloadResult|null[0]
+    final class Created : dev.verifactu.qr/QrPayloadResult { // dev.verifactu.qr/QrPayloadResult.Created|null[0]
+        constructor <init>(dev.verifactu.qr/QrPayload) // dev.verifactu.qr/QrPayloadResult.Created.<init>|<init>(dev.verifactu.qr.QrPayload){}[0]
+
+        final val payload // dev.verifactu.qr/QrPayloadResult.Created.payload|{}payload[0]
+            final fun <get-payload>(): dev.verifactu.qr/QrPayload // dev.verifactu.qr/QrPayloadResult.Created.payload.<get-payload>|<get-payload>(){}[0]
+
+        final fun component1(): dev.verifactu.qr/QrPayload // dev.verifactu.qr/QrPayloadResult.Created.component1|component1(){}[0]
+        final fun copy(dev.verifactu.qr/QrPayload = ...): dev.verifactu.qr/QrPayloadResult.Created // dev.verifactu.qr/QrPayloadResult.Created.copy|copy(dev.verifactu.qr.QrPayload){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.qr/QrPayloadResult.Created.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.qr/QrPayloadResult.Created.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.qr/QrPayloadResult.Created.toString|toString(){}[0]
+    }
+
+    final class Invalid : dev.verifactu.qr/QrPayloadResult { // dev.verifactu.qr/QrPayloadResult.Invalid|null[0]
+        constructor <init>(dev.verifactu.core/ValidationReport) // dev.verifactu.qr/QrPayloadResult.Invalid.<init>|<init>(dev.verifactu.core.ValidationReport){}[0]
+
+        final val report // dev.verifactu.qr/QrPayloadResult.Invalid.report|{}report[0]
+            final fun <get-report>(): dev.verifactu.core/ValidationReport // dev.verifactu.qr/QrPayloadResult.Invalid.report.<get-report>|<get-report>(){}[0]
+
+        final fun component1(): dev.verifactu.core/ValidationReport // dev.verifactu.qr/QrPayloadResult.Invalid.component1|component1(){}[0]
+        final fun copy(dev.verifactu.core/ValidationReport = ...): dev.verifactu.qr/QrPayloadResult.Invalid // dev.verifactu.qr/QrPayloadResult.Invalid.copy|copy(dev.verifactu.core.ValidationReport){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.qr/QrPayloadResult.Invalid.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.qr/QrPayloadResult.Invalid.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.qr/QrPayloadResult.Invalid.toString|toString(){}[0]
+    }
+}
+
+final class dev.verifactu.qr/QrPayload { // dev.verifactu.qr/QrPayload|null[0]
+    constructor <init>(kotlin/String) // dev.verifactu.qr/QrPayload.<init>|<init>(kotlin.String){}[0]
+
+    final val url // dev.verifactu.qr/QrPayload.url|{}url[0]
+        final fun <get-url>(): kotlin/String // dev.verifactu.qr/QrPayload.url.<get-url>|<get-url>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.qr/QrPayload.component1|component1(){}[0]
+    final fun copy(kotlin/String = ...): dev.verifactu.qr/QrPayload // dev.verifactu.qr/QrPayload.copy|copy(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.qr/QrPayload.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.qr/QrPayload.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.qr/QrPayload.toString|toString(){}[0]
+}
+
+final class dev.verifactu.qr/QrPayloadInput { // dev.verifactu.qr/QrPayloadInput|null[0]
+    constructor <init>(dev.verifactu.core/InvoiceIdentifier, dev.verifactu.core/FiscalAmount, dev.verifactu.qr/QrEnvironment) // dev.verifactu.qr/QrPayloadInput.<init>|<init>(dev.verifactu.core.InvoiceIdentifier;dev.verifactu.core.FiscalAmount;dev.verifactu.qr.QrEnvironment){}[0]
+
+    final val environment // dev.verifactu.qr/QrPayloadInput.environment|{}environment[0]
+        final fun <get-environment>(): dev.verifactu.qr/QrEnvironment // dev.verifactu.qr/QrPayloadInput.environment.<get-environment>|<get-environment>(){}[0]
+    final val invoice // dev.verifactu.qr/QrPayloadInput.invoice|{}invoice[0]
+        final fun <get-invoice>(): dev.verifactu.core/InvoiceIdentifier // dev.verifactu.qr/QrPayloadInput.invoice.<get-invoice>|<get-invoice>(){}[0]
+    final val totalAmount // dev.verifactu.qr/QrPayloadInput.totalAmount|{}totalAmount[0]
+        final fun <get-totalAmount>(): dev.verifactu.core/FiscalAmount // dev.verifactu.qr/QrPayloadInput.totalAmount.<get-totalAmount>|<get-totalAmount>(){}[0]
+
+    final fun component1(): dev.verifactu.core/InvoiceIdentifier // dev.verifactu.qr/QrPayloadInput.component1|component1(){}[0]
+    final fun component2(): dev.verifactu.core/FiscalAmount // dev.verifactu.qr/QrPayloadInput.component2|component2(){}[0]
+    final fun component3(): dev.verifactu.qr/QrEnvironment // dev.verifactu.qr/QrPayloadInput.component3|component3(){}[0]
+    final fun copy(dev.verifactu.core/InvoiceIdentifier = ..., dev.verifactu.core/FiscalAmount = ..., dev.verifactu.qr/QrEnvironment = ...): dev.verifactu.qr/QrPayloadInput // dev.verifactu.qr/QrPayloadInput.copy|copy(dev.verifactu.core.InvoiceIdentifier;dev.verifactu.core.FiscalAmount;dev.verifactu.qr.QrEnvironment){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.qr/QrPayloadInput.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.qr/QrPayloadInput.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.qr/QrPayloadInput.toString|toString(){}[0]
+}
+
+final object dev.verifactu.qr/QrPayloadBuilder { // dev.verifactu.qr/QrPayloadBuilder|null[0]
+    final fun build(dev.verifactu.qr/QrPayloadInput): dev.verifactu.qr/QrPayloadResult // dev.verifactu.qr/QrPayloadBuilder.build|build(dev.verifactu.qr.QrPayloadInput){}[0]
+}

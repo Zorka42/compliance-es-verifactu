@@ -65,4 +65,4 @@ jobs:
         with:
           cache-provider: basic
       - name: Compile and test Apple targets
-        run: ./gradlew compileKotlinMetadata compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test
+        run: ./gradlew compileKotlinMetadata compileKotlinIosArm64 iosSimulatorArm64Test macosArm64Test apiCheck

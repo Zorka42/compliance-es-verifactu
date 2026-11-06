@@ -158,7 +158,7 @@ public sealed interface SoapFaultParseResult {
  * inspectable; missing identities and duplicate critical fields invalidate the complete response.
  * Unknown extension fields are ignored. This is not full XSD validation or batch reconciliation.
  *
- * Defensive limits are 8 Mi characters, 64 nested elements, and 100,000 elements per document.
+ * Defensive limits are 8 Mi UTF-16 code units, 64 nested elements, and 100,000 elements per document.
  * DTDs and entity declarations are rejected. Keep the original XML separately for explicit diagnostics.
  * String input must have valid Unicode and either no encoding declaration or a UTF-8 declaration.
  */
@@ -319,7 +319,7 @@ private class AeatXmlFields {
         namespace: String,
         name: String,
     ): List<AeatXmlElement> {
-        if (parent.text.any { !it.isWhitespace() }) valid = false
+        if (parent.text.any { it !in XML_WHITESPACE }) valid = false
         val candidates = parent.children.filter { it.name == name }
         if (candidates.any { it.namespace != namespace }) valid = false
         return candidates.filter { it.namespace == namespace }
@@ -363,7 +363,7 @@ private class AeatXmlFields {
         if (document.namespace != soapNamespace || document.name != "Envelope") return null
         val body = child(document, soapNamespace, "Body", required = true) ?: return null
         child(document, soapNamespace, "Header")
-        if (body.children.size != 1 || body.text.any { !it.isWhitespace() }) valid = false
+        if (body.children.size != 1 || body.text.any { it !in XML_WHITESPACE }) valid = false
         if (document.children.any { it.namespace != soapNamespace || it.name !in listOf("Header", "Body") }) valid = false
         return child(body, namespace, name, required = true).takeIf { valid }
     }
@@ -372,6 +372,9 @@ private class AeatXmlFields {
 internal const val AEAT_XML_MAX_CHARACTERS: Int = 8 * 1024 * 1024
 internal const val AEAT_XML_MAX_DEPTH: Int = 64
 internal const val AEAT_XML_MAX_ELEMENTS: Int = 100_000
+
+// XML 1.0 (Fifth Edition), §2.3 production [3] S; Unicode whitespace is a wider set.
+private const val XML_WHITESPACE: String = " \t\r\n"
 
 internal class AeatXmlElement(
     val namespace: String,

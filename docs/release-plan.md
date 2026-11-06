@@ -2,6 +2,8 @@
 
 Assessment: 2026-09-11. This is a pre-release open-source Kotlin/Java library, not a complete SIF or an externally verified compliance claim. The authoritative backlog is [Zorka Accounting – Tasks](https://app.notion.com/p/3bd4f302230980d3bb72ffbd0068aa8b), project `Verifactu`. Current local evidence is recorded in [implementation status](implementation-status.md).
 
+Follow-up, 2026-11-06: [ZA-120 research](compliance/source-gaps-2026-11-06.md) rechecked the unchanged source contracts, archived additional BOE/AEAT evidence and prepared exact clarification questions; its fiscal gaps remain open. ZA-121 adds the [shared XML regression corpus](xml-regression-corpus.md), fixes structural XML whitespace handling and introduces the [API compatibility policy](api-compatibility.md) with Native ABI baselines. These changes do not authorize AEAT access or complete ZA-120 by inference.
+
 ## Implemented foundations and next work
 
 ZA-113–115 now implement the decimal checks, fiscal identifier formats and explicit receipt-date context described below. ZA-116 adds real SQLite persistence in an optional local app integration profile. ZA-117 rehearses local candidate publication and Java consumption. These changes require external verification before `Done`; none establishes AEAT acceptance or a Central release.

@@ -326,19 +326,21 @@ class TaxConditionalValidationTest {
             )
         }
         // PDF 15.3 documents the earlier interval; properties 1170 specifies a subsequent 0.26 rule.
-        listOf("0", "0.26").forEach { surcharge ->
-            val report =
-                RegistroAltaValidator.validate(
-                    draft(
-                        zero.copy(equivalenceSurchargeRate = surcharge),
-                    ).copy(totalTax = amount("0"), totalAmount = amount("100")).withOperationDate("01-10-2024"),
-                )
-            val issue = report.issues.single()
-            assertTrue(report.isValid)
-            assertEquals("VF-TAX-ZERO-RATE-UNRESOLVED", issue.code)
-            assertEquals(ValidationSeverity.WARNING, issue.severity)
-            assertEquals(null, issue.aeatCode)
-            assertTrue(assertNotNull(issue.source).section.contains("1170"))
+        listOf("01-10-2024", "31-12-2024", "01-01-2025", "10-09-2026").forEach { date ->
+            listOf("0", "0.26").forEach { surcharge ->
+                val report =
+                    RegistroAltaValidator.validate(
+                        draft(
+                            zero.copy(equivalenceSurchargeRate = surcharge),
+                        ).copy(totalTax = amount("0"), totalAmount = amount("100")).withOperationDate(date),
+                    )
+                val issue = report.issues.single()
+                assertTrue(report.isValid)
+                assertEquals("VF-TAX-ZERO-RATE-UNRESOLVED", issue.code)
+                assertEquals(ValidationSeverity.WARNING, issue.severity)
+                assertEquals(null, issue.aeatCode)
+                assertTrue(assertNotNull(issue.source).section.contains("1170"))
+            }
         }
     }
 

@@ -1,0 +1,937 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, macosArm64, macosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.zorka42:verifactu-core>
+final enum class dev.verifactu.core/CouponIndicator : kotlin/Enum<dev.verifactu.core/CouponIndicator> { // dev.verifactu.core/CouponIndicator|null[0]
+    enum entry NO // dev.verifactu.core/CouponIndicator.NO|null[0]
+    enum entry YES // dev.verifactu.core/CouponIndicator.YES|null[0]
+
+    final val entries // dev.verifactu.core/CouponIndicator.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/CouponIndicator> // dev.verifactu.core/CouponIndicator.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/CouponIndicator.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/CouponIndicator.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/CouponIndicator // dev.verifactu.core/CouponIndicator.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/CouponIndicator> // dev.verifactu.core/CouponIndicator.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/Exemption : kotlin/Enum<dev.verifactu.core/Exemption> { // dev.verifactu.core/Exemption|null[0]
+    enum entry E1 // dev.verifactu.core/Exemption.E1|null[0]
+    enum entry E2 // dev.verifactu.core/Exemption.E2|null[0]
+    enum entry E3 // dev.verifactu.core/Exemption.E3|null[0]
+    enum entry E4 // dev.verifactu.core/Exemption.E4|null[0]
+    enum entry E5 // dev.verifactu.core/Exemption.E5|null[0]
+    enum entry E6 // dev.verifactu.core/Exemption.E6|null[0]
+    enum entry E7 // dev.verifactu.core/Exemption.E7|null[0]
+    enum entry E8 // dev.verifactu.core/Exemption.E8|null[0]
+
+    final val entries // dev.verifactu.core/Exemption.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/Exemption> // dev.verifactu.core/Exemption.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/Exemption.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/Exemption.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/Exemption // dev.verifactu.core/Exemption.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/Exemption> // dev.verifactu.core/Exemption.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/InvoiceGeneratedBy : kotlin/Enum<dev.verifactu.core/InvoiceGeneratedBy> { // dev.verifactu.core/InvoiceGeneratedBy|null[0]
+    enum entry RECIPIENT // dev.verifactu.core/InvoiceGeneratedBy.RECIPIENT|null[0]
+    enum entry THIRD_PARTY // dev.verifactu.core/InvoiceGeneratedBy.THIRD_PARTY|null[0]
+
+    final val entries // dev.verifactu.core/InvoiceGeneratedBy.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/InvoiceGeneratedBy> // dev.verifactu.core/InvoiceGeneratedBy.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/InvoiceGeneratedBy.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/InvoiceGeneratedBy.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/InvoiceGeneratedBy // dev.verifactu.core/InvoiceGeneratedBy.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/InvoiceGeneratedBy> // dev.verifactu.core/InvoiceGeneratedBy.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/InvoiceType : kotlin/Enum<dev.verifactu.core/InvoiceType> { // dev.verifactu.core/InvoiceType|null[0]
+    enum entry F1 // dev.verifactu.core/InvoiceType.F1|null[0]
+    enum entry F2 // dev.verifactu.core/InvoiceType.F2|null[0]
+    enum entry F3 // dev.verifactu.core/InvoiceType.F3|null[0]
+    enum entry R1 // dev.verifactu.core/InvoiceType.R1|null[0]
+    enum entry R2 // dev.verifactu.core/InvoiceType.R2|null[0]
+    enum entry R3 // dev.verifactu.core/InvoiceType.R3|null[0]
+    enum entry R4 // dev.verifactu.core/InvoiceType.R4|null[0]
+    enum entry R5 // dev.verifactu.core/InvoiceType.R5|null[0]
+
+    final val entries // dev.verifactu.core/InvoiceType.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/InvoiceType> // dev.verifactu.core/InvoiceType.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/InvoiceType // dev.verifactu.core/InvoiceType.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/InvoiceType> // dev.verifactu.core/InvoiceType.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/MacroDataIndicator : kotlin/Enum<dev.verifactu.core/MacroDataIndicator> { // dev.verifactu.core/MacroDataIndicator|null[0]
+    enum entry NO // dev.verifactu.core/MacroDataIndicator.NO|null[0]
+    enum entry YES // dev.verifactu.core/MacroDataIndicator.YES|null[0]
+
+    final val entries // dev.verifactu.core/MacroDataIndicator.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/MacroDataIndicator> // dev.verifactu.core/MacroDataIndicator.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/MacroDataIndicator.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/MacroDataIndicator.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/MacroDataIndicator // dev.verifactu.core/MacroDataIndicator.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/MacroDataIndicator> // dev.verifactu.core/MacroDataIndicator.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/OtherPartyIdentifierType : kotlin/Enum<dev.verifactu.core/OtherPartyIdentifierType> { // dev.verifactu.core/OtherPartyIdentifierType|null[0]
+    enum entry NOT_REGISTERED // dev.verifactu.core/OtherPartyIdentifierType.NOT_REGISTERED|null[0]
+    enum entry OTHER_PROOF // dev.verifactu.core/OtherPartyIdentifierType.OTHER_PROOF|null[0]
+    enum entry PASSPORT // dev.verifactu.core/OtherPartyIdentifierType.PASSPORT|null[0]
+    enum entry RESIDENCE_CERTIFICATE // dev.verifactu.core/OtherPartyIdentifierType.RESIDENCE_CERTIFICATE|null[0]
+    enum entry RESIDENCE_COUNTRY_IDENTIFIER // dev.verifactu.core/OtherPartyIdentifierType.RESIDENCE_COUNTRY_IDENTIFIER|null[0]
+    enum entry VAT_IDENTIFIER // dev.verifactu.core/OtherPartyIdentifierType.VAT_IDENTIFIER|null[0]
+
+    final val entries // dev.verifactu.core/OtherPartyIdentifierType.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/OtherPartyIdentifierType> // dev.verifactu.core/OtherPartyIdentifierType.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/OtherPartyIdentifierType.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/OtherPartyIdentifierType.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/OtherPartyIdentifierType // dev.verifactu.core/OtherPartyIdentifierType.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/OtherPartyIdentifierType> // dev.verifactu.core/OtherPartyIdentifierType.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/Qualification : kotlin/Enum<dev.verifactu.core/Qualification> { // dev.verifactu.core/Qualification|null[0]
+    enum entry NOT_SUBJECT // dev.verifactu.core/Qualification.NOT_SUBJECT|null[0]
+    enum entry NOT_SUBJECT_LOCATION_RULES // dev.verifactu.core/Qualification.NOT_SUBJECT_LOCATION_RULES|null[0]
+    enum entry SUBJECT_NOT_EXEMPT // dev.verifactu.core/Qualification.SUBJECT_NOT_EXEMPT|null[0]
+    enum entry SUBJECT_REVERSE_CHARGE // dev.verifactu.core/Qualification.SUBJECT_REVERSE_CHARGE|null[0]
+
+    final val entries // dev.verifactu.core/Qualification.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/Qualification> // dev.verifactu.core/Qualification.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/Qualification.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/Qualification.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/Qualification // dev.verifactu.core/Qualification.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/Qualification> // dev.verifactu.core/Qualification.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/RecipientIdentificationExemption : kotlin/Enum<dev.verifactu.core/RecipientIdentificationExemption> { // dev.verifactu.core/RecipientIdentificationExemption|null[0]
+    enum entry NO // dev.verifactu.core/RecipientIdentificationExemption.NO|null[0]
+    enum entry YES // dev.verifactu.core/RecipientIdentificationExemption.YES|null[0]
+
+    final val entries // dev.verifactu.core/RecipientIdentificationExemption.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/RecipientIdentificationExemption> // dev.verifactu.core/RecipientIdentificationExemption.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/RecipientIdentificationExemption.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/RecipientIdentificationExemption.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/RecipientIdentificationExemption // dev.verifactu.core/RecipientIdentificationExemption.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/RecipientIdentificationExemption> // dev.verifactu.core/RecipientIdentificationExemption.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/RecordVersion : kotlin/Enum<dev.verifactu.core/RecordVersion> { // dev.verifactu.core/RecordVersion|null[0]
+    enum entry V1_0 // dev.verifactu.core/RecordVersion.V1_0|null[0]
+
+    final val entries // dev.verifactu.core/RecordVersion.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/RecordVersion> // dev.verifactu.core/RecordVersion.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/RecordVersion.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/RecordVersion.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/RecordVersion // dev.verifactu.core/RecordVersion.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/RecordVersion> // dev.verifactu.core/RecordVersion.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/RectificationType : kotlin/Enum<dev.verifactu.core/RectificationType> { // dev.verifactu.core/RectificationType|null[0]
+    enum entry BY_DIFFERENCE // dev.verifactu.core/RectificationType.BY_DIFFERENCE|null[0]
+    enum entry REPLACEMENT // dev.verifactu.core/RectificationType.REPLACEMENT|null[0]
+
+    final val entries // dev.verifactu.core/RectificationType.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/RectificationType> // dev.verifactu.core/RectificationType.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/RectificationType.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/RectificationType.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/RectificationType // dev.verifactu.core/RectificationType.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/RectificationType> // dev.verifactu.core/RectificationType.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/RegistrationPreviousRejection : kotlin/Enum<dev.verifactu.core/RegistrationPreviousRejection> { // dev.verifactu.core/RegistrationPreviousRejection|null[0]
+    enum entry NO // dev.verifactu.core/RegistrationPreviousRejection.NO|null[0]
+    enum entry NOT_PRESENT_AT_AEAT // dev.verifactu.core/RegistrationPreviousRejection.NOT_PRESENT_AT_AEAT|null[0]
+    enum entry YES // dev.verifactu.core/RegistrationPreviousRejection.YES|null[0]
+
+    final val entries // dev.verifactu.core/RegistrationPreviousRejection.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/RegistrationPreviousRejection> // dev.verifactu.core/RegistrationPreviousRejection.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/RegistrationPreviousRejection.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/RegistrationPreviousRejection.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/RegistrationPreviousRejection // dev.verifactu.core/RegistrationPreviousRejection.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/RegistrationPreviousRejection> // dev.verifactu.core/RegistrationPreviousRejection.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/SimplifiedInvoiceQualification : kotlin/Enum<dev.verifactu.core/SimplifiedInvoiceQualification> { // dev.verifactu.core/SimplifiedInvoiceQualification|null[0]
+    enum entry NO // dev.verifactu.core/SimplifiedInvoiceQualification.NO|null[0]
+    enum entry YES // dev.verifactu.core/SimplifiedInvoiceQualification.YES|null[0]
+
+    final val entries // dev.verifactu.core/SimplifiedInvoiceQualification.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/SimplifiedInvoiceQualification> // dev.verifactu.core/SimplifiedInvoiceQualification.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/SimplifiedInvoiceQualification.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/SimplifiedInvoiceQualification.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/SimplifiedInvoiceQualification // dev.verifactu.core/SimplifiedInvoiceQualification.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/SimplifiedInvoiceQualification> // dev.verifactu.core/SimplifiedInvoiceQualification.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/Subsanation : kotlin/Enum<dev.verifactu.core/Subsanation> { // dev.verifactu.core/Subsanation|null[0]
+    enum entry NO // dev.verifactu.core/Subsanation.NO|null[0]
+    enum entry YES // dev.verifactu.core/Subsanation.YES|null[0]
+
+    final val entries // dev.verifactu.core/Subsanation.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/Subsanation> // dev.verifactu.core/Subsanation.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/Subsanation.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/Subsanation.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/Subsanation // dev.verifactu.core/Subsanation.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/Subsanation> // dev.verifactu.core/Subsanation.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/TaxType : kotlin/Enum<dev.verifactu.core/TaxType> { // dev.verifactu.core/TaxType|null[0]
+    enum entry IGIC // dev.verifactu.core/TaxType.IGIC|null[0]
+    enum entry IPSI // dev.verifactu.core/TaxType.IPSI|null[0]
+    enum entry IVA // dev.verifactu.core/TaxType.IVA|null[0]
+    enum entry OTHER // dev.verifactu.core/TaxType.OTHER|null[0]
+
+    final val entries // dev.verifactu.core/TaxType.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/TaxType> // dev.verifactu.core/TaxType.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val xmlValue // dev.verifactu.core/TaxType.xmlValue|{}xmlValue[0]
+        final fun <get-xmlValue>(): kotlin/String // dev.verifactu.core/TaxType.xmlValue.<get-xmlValue>|<get-xmlValue>(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/TaxType // dev.verifactu.core/TaxType.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/TaxType> // dev.verifactu.core/TaxType.values|values#static(){}[0]
+}
+
+final enum class dev.verifactu.core/ValidationSeverity : kotlin/Enum<dev.verifactu.core/ValidationSeverity> { // dev.verifactu.core/ValidationSeverity|null[0]
+    enum entry ASSUMPTION // dev.verifactu.core/ValidationSeverity.ASSUMPTION|null[0]
+    enum entry ERROR // dev.verifactu.core/ValidationSeverity.ERROR|null[0]
+    enum entry WARNING // dev.verifactu.core/ValidationSeverity.WARNING|null[0]
+
+    final val entries // dev.verifactu.core/ValidationSeverity.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<dev.verifactu.core/ValidationSeverity> // dev.verifactu.core/ValidationSeverity.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): dev.verifactu.core/ValidationSeverity // dev.verifactu.core/ValidationSeverity.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<dev.verifactu.core/ValidationSeverity> // dev.verifactu.core/ValidationSeverity.values|values#static(){}[0]
+}
+
+abstract fun interface <#A: kotlin/Any?> dev.verifactu.core/Validator { // dev.verifactu.core/Validator|null[0]
+    abstract fun validate(#A): dev.verifactu.core/ValidationReport // dev.verifactu.core/Validator.validate|validate(1:0){}[0]
+}
+
+sealed interface <#A: out kotlin/Any?> dev.verifactu.core/RecordCreationResult { // dev.verifactu.core/RecordCreationResult|null[0]
+    final class <#A1: kotlin/Any?> Created : dev.verifactu.core/RecordCreationResult<#A1> { // dev.verifactu.core/RecordCreationResult.Created|null[0]
+        constructor <init>(#A1, dev.verifactu.core/ChainState.PreviousRecord, dev.verifactu.core/ValidationReport = ...) // dev.verifactu.core/RecordCreationResult.Created.<init>|<init>(1:0;dev.verifactu.core.ChainState.PreviousRecord;dev.verifactu.core.ValidationReport){}[0]
+
+        final val nextChainState // dev.verifactu.core/RecordCreationResult.Created.nextChainState|{}nextChainState[0]
+            final fun <get-nextChainState>(): dev.verifactu.core/ChainState.PreviousRecord // dev.verifactu.core/RecordCreationResult.Created.nextChainState.<get-nextChainState>|<get-nextChainState>(){}[0]
+        final val record // dev.verifactu.core/RecordCreationResult.Created.record|{}record[0]
+            final fun <get-record>(): #A1 // dev.verifactu.core/RecordCreationResult.Created.record.<get-record>|<get-record>(){}[0]
+        final val report // dev.verifactu.core/RecordCreationResult.Created.report|{}report[0]
+            final fun <get-report>(): dev.verifactu.core/ValidationReport // dev.verifactu.core/RecordCreationResult.Created.report.<get-report>|<get-report>(){}[0]
+
+        final fun component1(): #A1 // dev.verifactu.core/RecordCreationResult.Created.component1|component1(){}[0]
+        final fun component2(): dev.verifactu.core/ChainState.PreviousRecord // dev.verifactu.core/RecordCreationResult.Created.component2|component2(){}[0]
+        final fun component3(): dev.verifactu.core/ValidationReport // dev.verifactu.core/RecordCreationResult.Created.component3|component3(){}[0]
+        final fun copy(#A1 = ..., dev.verifactu.core/ChainState.PreviousRecord = ..., dev.verifactu.core/ValidationReport = ...): dev.verifactu.core/RecordCreationResult.Created<#A1> // dev.verifactu.core/RecordCreationResult.Created.copy|copy(1:0;dev.verifactu.core.ChainState.PreviousRecord;dev.verifactu.core.ValidationReport){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/RecordCreationResult.Created.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.core/RecordCreationResult.Created.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.core/RecordCreationResult.Created.toString|toString(){}[0]
+    }
+
+    final class Invalid : dev.verifactu.core/RecordCreationResult<kotlin/Nothing> { // dev.verifactu.core/RecordCreationResult.Invalid|null[0]
+        constructor <init>(dev.verifactu.core/ValidationReport) // dev.verifactu.core/RecordCreationResult.Invalid.<init>|<init>(dev.verifactu.core.ValidationReport){}[0]
+
+        final val report // dev.verifactu.core/RecordCreationResult.Invalid.report|{}report[0]
+            final fun <get-report>(): dev.verifactu.core/ValidationReport // dev.verifactu.core/RecordCreationResult.Invalid.report.<get-report>|<get-report>(){}[0]
+
+        final fun component1(): dev.verifactu.core/ValidationReport // dev.verifactu.core/RecordCreationResult.Invalid.component1|component1(){}[0]
+        final fun copy(dev.verifactu.core/ValidationReport = ...): dev.verifactu.core/RecordCreationResult.Invalid // dev.verifactu.core/RecordCreationResult.Invalid.copy|copy(dev.verifactu.core.ValidationReport){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/RecordCreationResult.Invalid.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.core/RecordCreationResult.Invalid.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.core/RecordCreationResult.Invalid.toString|toString(){}[0]
+    }
+}
+
+sealed interface <#A: out kotlin/Any?> dev.verifactu.core/ValueResult { // dev.verifactu.core/ValueResult|null[0]
+    final class <#A1: kotlin/Any?> Valid : dev.verifactu.core/ValueResult<#A1> { // dev.verifactu.core/ValueResult.Valid|null[0]
+        constructor <init>(#A1) // dev.verifactu.core/ValueResult.Valid.<init>|<init>(1:0){}[0]
+
+        final val value // dev.verifactu.core/ValueResult.Valid.value|{}value[0]
+            final fun <get-value>(): #A1 // dev.verifactu.core/ValueResult.Valid.value.<get-value>|<get-value>(){}[0]
+
+        final fun component1(): #A1 // dev.verifactu.core/ValueResult.Valid.component1|component1(){}[0]
+        final fun copy(#A1 = ...): dev.verifactu.core/ValueResult.Valid<#A1> // dev.verifactu.core/ValueResult.Valid.copy|copy(1:0){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/ValueResult.Valid.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.core/ValueResult.Valid.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.core/ValueResult.Valid.toString|toString(){}[0]
+    }
+
+    final class Invalid : dev.verifactu.core/ValueResult<kotlin/Nothing> { // dev.verifactu.core/ValueResult.Invalid|null[0]
+        constructor <init>(dev.verifactu.core/ValueError) // dev.verifactu.core/ValueResult.Invalid.<init>|<init>(dev.verifactu.core.ValueError){}[0]
+
+        final val error // dev.verifactu.core/ValueResult.Invalid.error|{}error[0]
+            final fun <get-error>(): dev.verifactu.core/ValueError // dev.verifactu.core/ValueResult.Invalid.error.<get-error>|<get-error>(){}[0]
+
+        final fun component1(): dev.verifactu.core/ValueError // dev.verifactu.core/ValueResult.Invalid.component1|component1(){}[0]
+        final fun copy(dev.verifactu.core/ValueError = ...): dev.verifactu.core/ValueResult.Invalid // dev.verifactu.core/ValueResult.Invalid.copy|copy(dev.verifactu.core.ValueError){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/ValueResult.Invalid.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.core/ValueResult.Invalid.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.core/ValueResult.Invalid.toString|toString(){}[0]
+    }
+}
+
+sealed interface dev.verifactu.core/ChainState { // dev.verifactu.core/ChainState|null[0]
+    final class PreviousRecord : dev.verifactu.core/ChainState { // dev.verifactu.core/ChainState.PreviousRecord|null[0]
+        constructor <init>(dev.verifactu.core/InvoiceIdentifier, kotlin/String) // dev.verifactu.core/ChainState.PreviousRecord.<init>|<init>(dev.verifactu.core.InvoiceIdentifier;kotlin.String){}[0]
+
+        final val hash // dev.verifactu.core/ChainState.PreviousRecord.hash|{}hash[0]
+            final fun <get-hash>(): kotlin/String // dev.verifactu.core/ChainState.PreviousRecord.hash.<get-hash>|<get-hash>(){}[0]
+        final val invoice // dev.verifactu.core/ChainState.PreviousRecord.invoice|{}invoice[0]
+            final fun <get-invoice>(): dev.verifactu.core/InvoiceIdentifier // dev.verifactu.core/ChainState.PreviousRecord.invoice.<get-invoice>|<get-invoice>(){}[0]
+
+        final fun component1(): dev.verifactu.core/InvoiceIdentifier // dev.verifactu.core/ChainState.PreviousRecord.component1|component1(){}[0]
+        final fun component2(): kotlin/String // dev.verifactu.core/ChainState.PreviousRecord.component2|component2(){}[0]
+        final fun copy(dev.verifactu.core/InvoiceIdentifier = ..., kotlin/String = ...): dev.verifactu.core/ChainState.PreviousRecord // dev.verifactu.core/ChainState.PreviousRecord.copy|copy(dev.verifactu.core.InvoiceIdentifier;kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/ChainState.PreviousRecord.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.core/ChainState.PreviousRecord.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.core/ChainState.PreviousRecord.toString|toString(){}[0]
+    }
+
+    final object FirstRecord : dev.verifactu.core/ChainState { // dev.verifactu.core/ChainState.FirstRecord|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/ChainState.FirstRecord.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.core/ChainState.FirstRecord.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.core/ChainState.FirstRecord.toString|toString(){}[0]
+    }
+}
+
+sealed interface dev.verifactu.core/FiscalPartyIdentifier { // dev.verifactu.core/FiscalPartyIdentifier|null[0]
+    final class Other : dev.verifactu.core/FiscalPartyIdentifier { // dev.verifactu.core/FiscalPartyIdentifier.Other|null[0]
+        constructor <init>(kotlin/String?, dev.verifactu.core/OtherPartyIdentifierType, kotlin/String) // dev.verifactu.core/FiscalPartyIdentifier.Other.<init>|<init>(kotlin.String?;dev.verifactu.core.OtherPartyIdentifierType;kotlin.String){}[0]
+
+        final val countryCode // dev.verifactu.core/FiscalPartyIdentifier.Other.countryCode|{}countryCode[0]
+            final fun <get-countryCode>(): kotlin/String? // dev.verifactu.core/FiscalPartyIdentifier.Other.countryCode.<get-countryCode>|<get-countryCode>(){}[0]
+        final val type // dev.verifactu.core/FiscalPartyIdentifier.Other.type|{}type[0]
+            final fun <get-type>(): dev.verifactu.core/OtherPartyIdentifierType // dev.verifactu.core/FiscalPartyIdentifier.Other.type.<get-type>|<get-type>(){}[0]
+        final val value // dev.verifactu.core/FiscalPartyIdentifier.Other.value|{}value[0]
+            final fun <get-value>(): kotlin/String // dev.verifactu.core/FiscalPartyIdentifier.Other.value.<get-value>|<get-value>(){}[0]
+
+        final fun component1(): kotlin/String? // dev.verifactu.core/FiscalPartyIdentifier.Other.component1|component1(){}[0]
+        final fun component2(): dev.verifactu.core/OtherPartyIdentifierType // dev.verifactu.core/FiscalPartyIdentifier.Other.component2|component2(){}[0]
+        final fun component3(): kotlin/String // dev.verifactu.core/FiscalPartyIdentifier.Other.component3|component3(){}[0]
+        final fun copy(kotlin/String? = ..., dev.verifactu.core/OtherPartyIdentifierType = ..., kotlin/String = ...): dev.verifactu.core/FiscalPartyIdentifier.Other // dev.verifactu.core/FiscalPartyIdentifier.Other.copy|copy(kotlin.String?;dev.verifactu.core.OtherPartyIdentifierType;kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/FiscalPartyIdentifier.Other.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.core/FiscalPartyIdentifier.Other.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.core/FiscalPartyIdentifier.Other.toString|toString(){}[0]
+    }
+
+    final class SpanishNif : dev.verifactu.core/FiscalPartyIdentifier { // dev.verifactu.core/FiscalPartyIdentifier.SpanishNif|null[0]
+        constructor <init>(dev.verifactu.core/TaxIdentifier) // dev.verifactu.core/FiscalPartyIdentifier.SpanishNif.<init>|<init>(dev.verifactu.core.TaxIdentifier){}[0]
+
+        final val value // dev.verifactu.core/FiscalPartyIdentifier.SpanishNif.value|{}value[0]
+            final fun <get-value>(): dev.verifactu.core/TaxIdentifier // dev.verifactu.core/FiscalPartyIdentifier.SpanishNif.value.<get-value>|<get-value>(){}[0]
+
+        final fun component1(): dev.verifactu.core/TaxIdentifier // dev.verifactu.core/FiscalPartyIdentifier.SpanishNif.component1|component1(){}[0]
+        final fun copy(dev.verifactu.core/TaxIdentifier = ...): dev.verifactu.core/FiscalPartyIdentifier.SpanishNif // dev.verifactu.core/FiscalPartyIdentifier.SpanishNif.copy|copy(dev.verifactu.core.TaxIdentifier){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/FiscalPartyIdentifier.SpanishNif.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.core/FiscalPartyIdentifier.SpanishNif.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.core/FiscalPartyIdentifier.SpanishNif.toString|toString(){}[0]
+    }
+}
+
+sealed interface dev.verifactu.core/TaxOperation { // dev.verifactu.core/TaxOperation|null[0]
+    final class Exempt : dev.verifactu.core/TaxOperation { // dev.verifactu.core/TaxOperation.Exempt|null[0]
+        constructor <init>(dev.verifactu.core/Exemption) // dev.verifactu.core/TaxOperation.Exempt.<init>|<init>(dev.verifactu.core.Exemption){}[0]
+
+        final val value // dev.verifactu.core/TaxOperation.Exempt.value|{}value[0]
+            final fun <get-value>(): dev.verifactu.core/Exemption // dev.verifactu.core/TaxOperation.Exempt.value.<get-value>|<get-value>(){}[0]
+
+        final fun component1(): dev.verifactu.core/Exemption // dev.verifactu.core/TaxOperation.Exempt.component1|component1(){}[0]
+        final fun copy(dev.verifactu.core/Exemption = ...): dev.verifactu.core/TaxOperation.Exempt // dev.verifactu.core/TaxOperation.Exempt.copy|copy(dev.verifactu.core.Exemption){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/TaxOperation.Exempt.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.core/TaxOperation.Exempt.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.core/TaxOperation.Exempt.toString|toString(){}[0]
+    }
+
+    final class Qualified : dev.verifactu.core/TaxOperation { // dev.verifactu.core/TaxOperation.Qualified|null[0]
+        constructor <init>(dev.verifactu.core/Qualification) // dev.verifactu.core/TaxOperation.Qualified.<init>|<init>(dev.verifactu.core.Qualification){}[0]
+
+        final val value // dev.verifactu.core/TaxOperation.Qualified.value|{}value[0]
+            final fun <get-value>(): dev.verifactu.core/Qualification // dev.verifactu.core/TaxOperation.Qualified.value.<get-value>|<get-value>(){}[0]
+
+        final fun component1(): dev.verifactu.core/Qualification // dev.verifactu.core/TaxOperation.Qualified.component1|component1(){}[0]
+        final fun copy(dev.verifactu.core/Qualification = ...): dev.verifactu.core/TaxOperation.Qualified // dev.verifactu.core/TaxOperation.Qualified.copy|copy(dev.verifactu.core.Qualification){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/TaxOperation.Qualified.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // dev.verifactu.core/TaxOperation.Qualified.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // dev.verifactu.core/TaxOperation.Qualified.toString|toString(){}[0]
+    }
+}
+
+final class dev.verifactu.core/CancellationHashInput { // dev.verifactu.core/CancellationHashInput|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String, kotlin/String?, kotlin/String) // dev.verifactu.core/CancellationHashInput.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.String?;kotlin.String){}[0]
+
+    final val cancelledInvoiceNumber // dev.verifactu.core/CancellationHashInput.cancelledInvoiceNumber|{}cancelledInvoiceNumber[0]
+        final fun <get-cancelledInvoiceNumber>(): kotlin/String // dev.verifactu.core/CancellationHashInput.cancelledInvoiceNumber.<get-cancelledInvoiceNumber>|<get-cancelledInvoiceNumber>(){}[0]
+    final val cancelledIssueDate // dev.verifactu.core/CancellationHashInput.cancelledIssueDate|{}cancelledIssueDate[0]
+        final fun <get-cancelledIssueDate>(): kotlin/String // dev.verifactu.core/CancellationHashInput.cancelledIssueDate.<get-cancelledIssueDate>|<get-cancelledIssueDate>(){}[0]
+    final val cancelledIssuerId // dev.verifactu.core/CancellationHashInput.cancelledIssuerId|{}cancelledIssuerId[0]
+        final fun <get-cancelledIssuerId>(): kotlin/String // dev.verifactu.core/CancellationHashInput.cancelledIssuerId.<get-cancelledIssuerId>|<get-cancelledIssuerId>(){}[0]
+    final val generatedAt // dev.verifactu.core/CancellationHashInput.generatedAt|{}generatedAt[0]
+        final fun <get-generatedAt>(): kotlin/String // dev.verifactu.core/CancellationHashInput.generatedAt.<get-generatedAt>|<get-generatedAt>(){}[0]
+    final val previousHash // dev.verifactu.core/CancellationHashInput.previousHash|{}previousHash[0]
+        final fun <get-previousHash>(): kotlin/String? // dev.verifactu.core/CancellationHashInput.previousHash.<get-previousHash>|<get-previousHash>(){}[0]
+
+    final fun canonicalString(): kotlin/String // dev.verifactu.core/CancellationHashInput.canonicalString|canonicalString(){}[0]
+    final fun component1(): kotlin/String // dev.verifactu.core/CancellationHashInput.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.verifactu.core/CancellationHashInput.component2|component2(){}[0]
+    final fun component3(): kotlin/String // dev.verifactu.core/CancellationHashInput.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // dev.verifactu.core/CancellationHashInput.component4|component4(){}[0]
+    final fun component5(): kotlin/String // dev.verifactu.core/CancellationHashInput.component5|component5(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/String = ...): dev.verifactu.core/CancellationHashInput // dev.verifactu.core/CancellationHashInput.copy|copy(kotlin.String;kotlin.String;kotlin.String;kotlin.String?;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/CancellationHashInput.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/CancellationHashInput.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/CancellationHashInput.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/ComplianceSourceReference { // dev.verifactu.core/ComplianceSourceReference|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String) // dev.verifactu.core/ComplianceSourceReference.<init>|<init>(kotlin.String;kotlin.String;kotlin.String){}[0]
+
+    final val document // dev.verifactu.core/ComplianceSourceReference.document|{}document[0]
+        final fun <get-document>(): kotlin/String // dev.verifactu.core/ComplianceSourceReference.document.<get-document>|<get-document>(){}[0]
+    final val section // dev.verifactu.core/ComplianceSourceReference.section|{}section[0]
+        final fun <get-section>(): kotlin/String // dev.verifactu.core/ComplianceSourceReference.section.<get-section>|<get-section>(){}[0]
+    final val version // dev.verifactu.core/ComplianceSourceReference.version|{}version[0]
+        final fun <get-version>(): kotlin/String // dev.verifactu.core/ComplianceSourceReference.version.<get-version>|<get-version>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.core/ComplianceSourceReference.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.verifactu.core/ComplianceSourceReference.component2|component2(){}[0]
+    final fun component3(): kotlin/String // dev.verifactu.core/ComplianceSourceReference.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ...): dev.verifactu.core/ComplianceSourceReference // dev.verifactu.core/ComplianceSourceReference.copy|copy(kotlin.String;kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/ComplianceSourceReference.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/ComplianceSourceReference.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/ComplianceSourceReference.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/FiscalAmount { // dev.verifactu.core/FiscalAmount|null[0]
+    final val value // dev.verifactu.core/FiscalAmount.value|{}value[0]
+        final fun <get-value>(): kotlin/String // dev.verifactu.core/FiscalAmount.value.<get-value>|<get-value>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.core/FiscalAmount.component1|component1(){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/FiscalAmount.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/FiscalAmount.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/FiscalAmount.toString|toString(){}[0]
+
+    final object Companion { // dev.verifactu.core/FiscalAmount.Companion|null[0]
+        final fun parse(kotlin/String): dev.verifactu.core/ValueResult<dev.verifactu.core/FiscalAmount> // dev.verifactu.core/FiscalAmount.Companion.parse|parse(kotlin.String){}[0]
+    }
+}
+
+final class dev.verifactu.core/FiscalParty { // dev.verifactu.core/FiscalParty|null[0]
+    constructor <init>(kotlin/String, dev.verifactu.core/FiscalPartyIdentifier) // dev.verifactu.core/FiscalParty.<init>|<init>(kotlin.String;dev.verifactu.core.FiscalPartyIdentifier){}[0]
+
+    final val identifier // dev.verifactu.core/FiscalParty.identifier|{}identifier[0]
+        final fun <get-identifier>(): dev.verifactu.core/FiscalPartyIdentifier // dev.verifactu.core/FiscalParty.identifier.<get-identifier>|<get-identifier>(){}[0]
+    final val name // dev.verifactu.core/FiscalParty.name|{}name[0]
+        final fun <get-name>(): kotlin/String // dev.verifactu.core/FiscalParty.name.<get-name>|<get-name>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.core/FiscalParty.component1|component1(){}[0]
+    final fun component2(): dev.verifactu.core/FiscalPartyIdentifier // dev.verifactu.core/FiscalParty.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., dev.verifactu.core/FiscalPartyIdentifier = ...): dev.verifactu.core/FiscalParty // dev.verifactu.core/FiscalParty.copy|copy(kotlin.String;dev.verifactu.core.FiscalPartyIdentifier){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/FiscalParty.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/FiscalParty.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/FiscalParty.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/InvoiceIdentifier { // dev.verifactu.core/InvoiceIdentifier|null[0]
+    constructor <init>(dev.verifactu.core/TaxIdentifier, dev.verifactu.core/InvoiceNumber, dev.verifactu.core/InvoiceIssueDate) // dev.verifactu.core/InvoiceIdentifier.<init>|<init>(dev.verifactu.core.TaxIdentifier;dev.verifactu.core.InvoiceNumber;dev.verifactu.core.InvoiceIssueDate){}[0]
+
+    final val issueDate // dev.verifactu.core/InvoiceIdentifier.issueDate|{}issueDate[0]
+        final fun <get-issueDate>(): dev.verifactu.core/InvoiceIssueDate // dev.verifactu.core/InvoiceIdentifier.issueDate.<get-issueDate>|<get-issueDate>(){}[0]
+    final val issuer // dev.verifactu.core/InvoiceIdentifier.issuer|{}issuer[0]
+        final fun <get-issuer>(): dev.verifactu.core/TaxIdentifier // dev.verifactu.core/InvoiceIdentifier.issuer.<get-issuer>|<get-issuer>(){}[0]
+    final val number // dev.verifactu.core/InvoiceIdentifier.number|{}number[0]
+        final fun <get-number>(): dev.verifactu.core/InvoiceNumber // dev.verifactu.core/InvoiceIdentifier.number.<get-number>|<get-number>(){}[0]
+
+    final fun component1(): dev.verifactu.core/TaxIdentifier // dev.verifactu.core/InvoiceIdentifier.component1|component1(){}[0]
+    final fun component2(): dev.verifactu.core/InvoiceNumber // dev.verifactu.core/InvoiceIdentifier.component2|component2(){}[0]
+    final fun component3(): dev.verifactu.core/InvoiceIssueDate // dev.verifactu.core/InvoiceIdentifier.component3|component3(){}[0]
+    final fun copy(dev.verifactu.core/TaxIdentifier = ..., dev.verifactu.core/InvoiceNumber = ..., dev.verifactu.core/InvoiceIssueDate = ...): dev.verifactu.core/InvoiceIdentifier // dev.verifactu.core/InvoiceIdentifier.copy|copy(dev.verifactu.core.TaxIdentifier;dev.verifactu.core.InvoiceNumber;dev.verifactu.core.InvoiceIssueDate){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/InvoiceIdentifier.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/InvoiceIdentifier.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/InvoiceIdentifier.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/InvoiceIssueDate { // dev.verifactu.core/InvoiceIssueDate|null[0]
+    final val value // dev.verifactu.core/InvoiceIssueDate.value|{}value[0]
+        final fun <get-value>(): kotlin/String // dev.verifactu.core/InvoiceIssueDate.value.<get-value>|<get-value>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.core/InvoiceIssueDate.component1|component1(){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/InvoiceIssueDate.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/InvoiceIssueDate.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/InvoiceIssueDate.toString|toString(){}[0]
+
+    final object Companion { // dev.verifactu.core/InvoiceIssueDate.Companion|null[0]
+        final fun parse(kotlin/String): dev.verifactu.core/ValueResult<dev.verifactu.core/InvoiceIssueDate> // dev.verifactu.core/InvoiceIssueDate.Companion.parse|parse(kotlin.String){}[0]
+    }
+}
+
+final class dev.verifactu.core/InvoiceNumber { // dev.verifactu.core/InvoiceNumber|null[0]
+    final val value // dev.verifactu.core/InvoiceNumber.value|{}value[0]
+        final fun <get-value>(): kotlin/String // dev.verifactu.core/InvoiceNumber.value.<get-value>|<get-value>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.core/InvoiceNumber.component1|component1(){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/InvoiceNumber.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/InvoiceNumber.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/InvoiceNumber.toString|toString(){}[0]
+
+    final object Companion { // dev.verifactu.core/InvoiceNumber.Companion|null[0]
+        final fun parse(kotlin/String): dev.verifactu.core/ValueResult<dev.verifactu.core/InvoiceNumber> // dev.verifactu.core/InvoiceNumber.Companion.parse|parse(kotlin.String){}[0]
+    }
+}
+
+final class dev.verifactu.core/InvoiceRectification { // dev.verifactu.core/InvoiceRectification|null[0]
+    constructor <init>(dev.verifactu.core/RectificationType, kotlin.collections/List<dev.verifactu.core/InvoiceIdentifier> = ..., dev.verifactu.core/RectificationAmounts? = ...) // dev.verifactu.core/InvoiceRectification.<init>|<init>(dev.verifactu.core.RectificationType;kotlin.collections.List<dev.verifactu.core.InvoiceIdentifier>;dev.verifactu.core.RectificationAmounts?){}[0]
+
+    final val rectifiedInvoices // dev.verifactu.core/InvoiceRectification.rectifiedInvoices|{}rectifiedInvoices[0]
+        final fun <get-rectifiedInvoices>(): kotlin.collections/List<dev.verifactu.core/InvoiceIdentifier> // dev.verifactu.core/InvoiceRectification.rectifiedInvoices.<get-rectifiedInvoices>|<get-rectifiedInvoices>(){}[0]
+    final val replacedAmounts // dev.verifactu.core/InvoiceRectification.replacedAmounts|{}replacedAmounts[0]
+        final fun <get-replacedAmounts>(): dev.verifactu.core/RectificationAmounts? // dev.verifactu.core/InvoiceRectification.replacedAmounts.<get-replacedAmounts>|<get-replacedAmounts>(){}[0]
+    final val type // dev.verifactu.core/InvoiceRectification.type|{}type[0]
+        final fun <get-type>(): dev.verifactu.core/RectificationType // dev.verifactu.core/InvoiceRectification.type.<get-type>|<get-type>(){}[0]
+
+    final fun component1(): dev.verifactu.core/RectificationType // dev.verifactu.core/InvoiceRectification.component1|component1(){}[0]
+    final fun component2(): kotlin.collections/List<dev.verifactu.core/InvoiceIdentifier> // dev.verifactu.core/InvoiceRectification.component2|component2(){}[0]
+    final fun component3(): dev.verifactu.core/RectificationAmounts? // dev.verifactu.core/InvoiceRectification.component3|component3(){}[0]
+    final fun copy(dev.verifactu.core/RectificationType = ..., kotlin.collections/List<dev.verifactu.core/InvoiceIdentifier> = ..., dev.verifactu.core/RectificationAmounts? = ...): dev.verifactu.core/InvoiceRectification // dev.verifactu.core/InvoiceRectification.copy|copy(dev.verifactu.core.RectificationType;kotlin.collections.List<dev.verifactu.core.InvoiceIdentifier>;dev.verifactu.core.RectificationAmounts?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/InvoiceRectification.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/InvoiceRectification.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/InvoiceRectification.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/RecordGenerationTimestamp { // dev.verifactu.core/RecordGenerationTimestamp|null[0]
+    final val value // dev.verifactu.core/RecordGenerationTimestamp.value|{}value[0]
+        final fun <get-value>(): kotlin/String // dev.verifactu.core/RecordGenerationTimestamp.value.<get-value>|<get-value>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.core/RecordGenerationTimestamp.component1|component1(){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/RecordGenerationTimestamp.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/RecordGenerationTimestamp.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/RecordGenerationTimestamp.toString|toString(){}[0]
+
+    final object Companion { // dev.verifactu.core/RecordGenerationTimestamp.Companion|null[0]
+        final fun parse(kotlin/String): dev.verifactu.core/ValueResult<dev.verifactu.core/RecordGenerationTimestamp> // dev.verifactu.core/RecordGenerationTimestamp.Companion.parse|parse(kotlin.String){}[0]
+    }
+}
+
+final class dev.verifactu.core/RectificationAmounts { // dev.verifactu.core/RectificationAmounts|null[0]
+    constructor <init>(dev.verifactu.core/FiscalAmount, dev.verifactu.core/FiscalAmount, dev.verifactu.core/FiscalAmount? = ...) // dev.verifactu.core/RectificationAmounts.<init>|<init>(dev.verifactu.core.FiscalAmount;dev.verifactu.core.FiscalAmount;dev.verifactu.core.FiscalAmount?){}[0]
+
+    final val chargedTax // dev.verifactu.core/RectificationAmounts.chargedTax|{}chargedTax[0]
+        final fun <get-chargedTax>(): dev.verifactu.core/FiscalAmount // dev.verifactu.core/RectificationAmounts.chargedTax.<get-chargedTax>|<get-chargedTax>(){}[0]
+    final val equivalenceSurcharge // dev.verifactu.core/RectificationAmounts.equivalenceSurcharge|{}equivalenceSurcharge[0]
+        final fun <get-equivalenceSurcharge>(): dev.verifactu.core/FiscalAmount? // dev.verifactu.core/RectificationAmounts.equivalenceSurcharge.<get-equivalenceSurcharge>|<get-equivalenceSurcharge>(){}[0]
+    final val taxableBase // dev.verifactu.core/RectificationAmounts.taxableBase|{}taxableBase[0]
+        final fun <get-taxableBase>(): dev.verifactu.core/FiscalAmount // dev.verifactu.core/RectificationAmounts.taxableBase.<get-taxableBase>|<get-taxableBase>(){}[0]
+
+    final fun component1(): dev.verifactu.core/FiscalAmount // dev.verifactu.core/RectificationAmounts.component1|component1(){}[0]
+    final fun component2(): dev.verifactu.core/FiscalAmount // dev.verifactu.core/RectificationAmounts.component2|component2(){}[0]
+    final fun component3(): dev.verifactu.core/FiscalAmount? // dev.verifactu.core/RectificationAmounts.component3|component3(){}[0]
+    final fun copy(dev.verifactu.core/FiscalAmount = ..., dev.verifactu.core/FiscalAmount = ..., dev.verifactu.core/FiscalAmount? = ...): dev.verifactu.core/RectificationAmounts // dev.verifactu.core/RectificationAmounts.copy|copy(dev.verifactu.core.FiscalAmount;dev.verifactu.core.FiscalAmount;dev.verifactu.core.FiscalAmount?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/RectificationAmounts.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/RectificationAmounts.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/RectificationAmounts.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/RegistrationConditionalData { // dev.verifactu.core/RegistrationConditionalData|null[0]
+    constructor <init>(kotlin/String? = ..., dev.verifactu.core/Subsanation? = ..., dev.verifactu.core/RegistrationPreviousRejection? = ..., dev.verifactu.core/InvoiceRectification? = ..., kotlin.collections/List<dev.verifactu.core/InvoiceIdentifier> = ..., dev.verifactu.core/InvoiceIssueDate? = ..., dev.verifactu.core/SimplifiedInvoiceQualification? = ..., dev.verifactu.core/RecipientIdentificationExemption? = ..., dev.verifactu.core/MacroDataIndicator? = ..., dev.verifactu.core/InvoiceGeneratedBy? = ..., dev.verifactu.core/FiscalParty? = ..., kotlin.collections/List<dev.verifactu.core/FiscalParty> = ..., dev.verifactu.core/CouponIndicator? = ..., kotlin/String? = ..., kotlin/String? = ...) // dev.verifactu.core/RegistrationConditionalData.<init>|<init>(kotlin.String?;dev.verifactu.core.Subsanation?;dev.verifactu.core.RegistrationPreviousRejection?;dev.verifactu.core.InvoiceRectification?;kotlin.collections.List<dev.verifactu.core.InvoiceIdentifier>;dev.verifactu.core.InvoiceIssueDate?;dev.verifactu.core.SimplifiedInvoiceQualification?;dev.verifactu.core.RecipientIdentificationExemption?;dev.verifactu.core.MacroDataIndicator?;dev.verifactu.core.InvoiceGeneratedBy?;dev.verifactu.core.FiscalParty?;kotlin.collections.List<dev.verifactu.core.FiscalParty>;dev.verifactu.core.CouponIndicator?;kotlin.String?;kotlin.String?){}[0]
+
+    final val coupon // dev.verifactu.core/RegistrationConditionalData.coupon|{}coupon[0]
+        final fun <get-coupon>(): dev.verifactu.core/CouponIndicator? // dev.verifactu.core/RegistrationConditionalData.coupon.<get-coupon>|<get-coupon>(){}[0]
+    final val externalReference // dev.verifactu.core/RegistrationConditionalData.externalReference|{}externalReference[0]
+        final fun <get-externalReference>(): kotlin/String? // dev.verifactu.core/RegistrationConditionalData.externalReference.<get-externalReference>|<get-externalReference>(){}[0]
+    final val generatedBy // dev.verifactu.core/RegistrationConditionalData.generatedBy|{}generatedBy[0]
+        final fun <get-generatedBy>(): dev.verifactu.core/InvoiceGeneratedBy? // dev.verifactu.core/RegistrationConditionalData.generatedBy.<get-generatedBy>|<get-generatedBy>(){}[0]
+    final val macroData // dev.verifactu.core/RegistrationConditionalData.macroData|{}macroData[0]
+        final fun <get-macroData>(): dev.verifactu.core/MacroDataIndicator? // dev.verifactu.core/RegistrationConditionalData.macroData.<get-macroData>|<get-macroData>(){}[0]
+    final val operationDate // dev.verifactu.core/RegistrationConditionalData.operationDate|{}operationDate[0]
+        final fun <get-operationDate>(): dev.verifactu.core/InvoiceIssueDate? // dev.verifactu.core/RegistrationConditionalData.operationDate.<get-operationDate>|<get-operationDate>(){}[0]
+    final val previousRejection // dev.verifactu.core/RegistrationConditionalData.previousRejection|{}previousRejection[0]
+        final fun <get-previousRejection>(): dev.verifactu.core/RegistrationPreviousRejection? // dev.verifactu.core/RegistrationConditionalData.previousRejection.<get-previousRejection>|<get-previousRejection>(){}[0]
+    final val recipientIdentificationExemption // dev.verifactu.core/RegistrationConditionalData.recipientIdentificationExemption|{}recipientIdentificationExemption[0]
+        final fun <get-recipientIdentificationExemption>(): dev.verifactu.core/RecipientIdentificationExemption? // dev.verifactu.core/RegistrationConditionalData.recipientIdentificationExemption.<get-recipientIdentificationExemption>|<get-recipientIdentificationExemption>(){}[0]
+    final val recipients // dev.verifactu.core/RegistrationConditionalData.recipients|{}recipients[0]
+        final fun <get-recipients>(): kotlin.collections/List<dev.verifactu.core/FiscalParty> // dev.verifactu.core/RegistrationConditionalData.recipients.<get-recipients>|<get-recipients>(){}[0]
+    final val rectification // dev.verifactu.core/RegistrationConditionalData.rectification|{}rectification[0]
+        final fun <get-rectification>(): dev.verifactu.core/InvoiceRectification? // dev.verifactu.core/RegistrationConditionalData.rectification.<get-rectification>|<get-rectification>(){}[0]
+    final val replacedInvoices // dev.verifactu.core/RegistrationConditionalData.replacedInvoices|{}replacedInvoices[0]
+        final fun <get-replacedInvoices>(): kotlin.collections/List<dev.verifactu.core/InvoiceIdentifier> // dev.verifactu.core/RegistrationConditionalData.replacedInvoices.<get-replacedInvoices>|<get-replacedInvoices>(){}[0]
+    final val simplifiedInvoiceQualification // dev.verifactu.core/RegistrationConditionalData.simplifiedInvoiceQualification|{}simplifiedInvoiceQualification[0]
+        final fun <get-simplifiedInvoiceQualification>(): dev.verifactu.core/SimplifiedInvoiceQualification? // dev.verifactu.core/RegistrationConditionalData.simplifiedInvoiceQualification.<get-simplifiedInvoiceQualification>|<get-simplifiedInvoiceQualification>(){}[0]
+    final val subsanation // dev.verifactu.core/RegistrationConditionalData.subsanation|{}subsanation[0]
+        final fun <get-subsanation>(): dev.verifactu.core/Subsanation? // dev.verifactu.core/RegistrationConditionalData.subsanation.<get-subsanation>|<get-subsanation>(){}[0]
+    final val systemAgreementIdentifier // dev.verifactu.core/RegistrationConditionalData.systemAgreementIdentifier|{}systemAgreementIdentifier[0]
+        final fun <get-systemAgreementIdentifier>(): kotlin/String? // dev.verifactu.core/RegistrationConditionalData.systemAgreementIdentifier.<get-systemAgreementIdentifier>|<get-systemAgreementIdentifier>(){}[0]
+    final val taxationAgreementRegistrationNumber // dev.verifactu.core/RegistrationConditionalData.taxationAgreementRegistrationNumber|{}taxationAgreementRegistrationNumber[0]
+        final fun <get-taxationAgreementRegistrationNumber>(): kotlin/String? // dev.verifactu.core/RegistrationConditionalData.taxationAgreementRegistrationNumber.<get-taxationAgreementRegistrationNumber>|<get-taxationAgreementRegistrationNumber>(){}[0]
+    final val thirdParty // dev.verifactu.core/RegistrationConditionalData.thirdParty|{}thirdParty[0]
+        final fun <get-thirdParty>(): dev.verifactu.core/FiscalParty? // dev.verifactu.core/RegistrationConditionalData.thirdParty.<get-thirdParty>|<get-thirdParty>(){}[0]
+
+    final fun component1(): kotlin/String? // dev.verifactu.core/RegistrationConditionalData.component1|component1(){}[0]
+    final fun component10(): dev.verifactu.core/InvoiceGeneratedBy? // dev.verifactu.core/RegistrationConditionalData.component10|component10(){}[0]
+    final fun component11(): dev.verifactu.core/FiscalParty? // dev.verifactu.core/RegistrationConditionalData.component11|component11(){}[0]
+    final fun component12(): kotlin.collections/List<dev.verifactu.core/FiscalParty> // dev.verifactu.core/RegistrationConditionalData.component12|component12(){}[0]
+    final fun component13(): dev.verifactu.core/CouponIndicator? // dev.verifactu.core/RegistrationConditionalData.component13|component13(){}[0]
+    final fun component14(): kotlin/String? // dev.verifactu.core/RegistrationConditionalData.component14|component14(){}[0]
+    final fun component15(): kotlin/String? // dev.verifactu.core/RegistrationConditionalData.component15|component15(){}[0]
+    final fun component2(): dev.verifactu.core/Subsanation? // dev.verifactu.core/RegistrationConditionalData.component2|component2(){}[0]
+    final fun component3(): dev.verifactu.core/RegistrationPreviousRejection? // dev.verifactu.core/RegistrationConditionalData.component3|component3(){}[0]
+    final fun component4(): dev.verifactu.core/InvoiceRectification? // dev.verifactu.core/RegistrationConditionalData.component4|component4(){}[0]
+    final fun component5(): kotlin.collections/List<dev.verifactu.core/InvoiceIdentifier> // dev.verifactu.core/RegistrationConditionalData.component5|component5(){}[0]
+    final fun component6(): dev.verifactu.core/InvoiceIssueDate? // dev.verifactu.core/RegistrationConditionalData.component6|component6(){}[0]
+    final fun component7(): dev.verifactu.core/SimplifiedInvoiceQualification? // dev.verifactu.core/RegistrationConditionalData.component7|component7(){}[0]
+    final fun component8(): dev.verifactu.core/RecipientIdentificationExemption? // dev.verifactu.core/RegistrationConditionalData.component8|component8(){}[0]
+    final fun component9(): dev.verifactu.core/MacroDataIndicator? // dev.verifactu.core/RegistrationConditionalData.component9|component9(){}[0]
+    final fun copy(kotlin/String? = ..., dev.verifactu.core/Subsanation? = ..., dev.verifactu.core/RegistrationPreviousRejection? = ..., dev.verifactu.core/InvoiceRectification? = ..., kotlin.collections/List<dev.verifactu.core/InvoiceIdentifier> = ..., dev.verifactu.core/InvoiceIssueDate? = ..., dev.verifactu.core/SimplifiedInvoiceQualification? = ..., dev.verifactu.core/RecipientIdentificationExemption? = ..., dev.verifactu.core/MacroDataIndicator? = ..., dev.verifactu.core/InvoiceGeneratedBy? = ..., dev.verifactu.core/FiscalParty? = ..., kotlin.collections/List<dev.verifactu.core/FiscalParty> = ..., dev.verifactu.core/CouponIndicator? = ..., kotlin/String? = ..., kotlin/String? = ...): dev.verifactu.core/RegistrationConditionalData // dev.verifactu.core/RegistrationConditionalData.copy|copy(kotlin.String?;dev.verifactu.core.Subsanation?;dev.verifactu.core.RegistrationPreviousRejection?;dev.verifactu.core.InvoiceRectification?;kotlin.collections.List<dev.verifactu.core.InvoiceIdentifier>;dev.verifactu.core.InvoiceIssueDate?;dev.verifactu.core.SimplifiedInvoiceQualification?;dev.verifactu.core.RecipientIdentificationExemption?;dev.verifactu.core.MacroDataIndicator?;dev.verifactu.core.InvoiceGeneratedBy?;dev.verifactu.core.FiscalParty?;kotlin.collections.List<dev.verifactu.core.FiscalParty>;dev.verifactu.core.CouponIndicator?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/RegistrationConditionalData.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/RegistrationConditionalData.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/RegistrationConditionalData.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/RegistrationHashInput { // dev.verifactu.core/RegistrationHashInput|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/String?, kotlin/String, kotlin/String?, kotlin/String) // dev.verifactu.core/RegistrationHashInput.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String?;kotlin.String;kotlin.String?;kotlin.String){}[0]
+
+    final val generatedAt // dev.verifactu.core/RegistrationHashInput.generatedAt|{}generatedAt[0]
+        final fun <get-generatedAt>(): kotlin/String // dev.verifactu.core/RegistrationHashInput.generatedAt.<get-generatedAt>|<get-generatedAt>(){}[0]
+    final val invoiceNumber // dev.verifactu.core/RegistrationHashInput.invoiceNumber|{}invoiceNumber[0]
+        final fun <get-invoiceNumber>(): kotlin/String // dev.verifactu.core/RegistrationHashInput.invoiceNumber.<get-invoiceNumber>|<get-invoiceNumber>(){}[0]
+    final val invoiceType // dev.verifactu.core/RegistrationHashInput.invoiceType|{}invoiceType[0]
+        final fun <get-invoiceType>(): kotlin/String // dev.verifactu.core/RegistrationHashInput.invoiceType.<get-invoiceType>|<get-invoiceType>(){}[0]
+    final val issueDate // dev.verifactu.core/RegistrationHashInput.issueDate|{}issueDate[0]
+        final fun <get-issueDate>(): kotlin/String // dev.verifactu.core/RegistrationHashInput.issueDate.<get-issueDate>|<get-issueDate>(){}[0]
+    final val issuerId // dev.verifactu.core/RegistrationHashInput.issuerId|{}issuerId[0]
+        final fun <get-issuerId>(): kotlin/String // dev.verifactu.core/RegistrationHashInput.issuerId.<get-issuerId>|<get-issuerId>(){}[0]
+    final val previousHash // dev.verifactu.core/RegistrationHashInput.previousHash|{}previousHash[0]
+        final fun <get-previousHash>(): kotlin/String? // dev.verifactu.core/RegistrationHashInput.previousHash.<get-previousHash>|<get-previousHash>(){}[0]
+    final val totalAmount // dev.verifactu.core/RegistrationHashInput.totalAmount|{}totalAmount[0]
+        final fun <get-totalAmount>(): kotlin/String // dev.verifactu.core/RegistrationHashInput.totalAmount.<get-totalAmount>|<get-totalAmount>(){}[0]
+    final val totalTax // dev.verifactu.core/RegistrationHashInput.totalTax|{}totalTax[0]
+        final fun <get-totalTax>(): kotlin/String? // dev.verifactu.core/RegistrationHashInput.totalTax.<get-totalTax>|<get-totalTax>(){}[0]
+
+    final fun canonicalString(): kotlin/String // dev.verifactu.core/RegistrationHashInput.canonicalString|canonicalString(){}[0]
+    final fun component1(): kotlin/String // dev.verifactu.core/RegistrationHashInput.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.verifactu.core/RegistrationHashInput.component2|component2(){}[0]
+    final fun component3(): kotlin/String // dev.verifactu.core/RegistrationHashInput.component3|component3(){}[0]
+    final fun component4(): kotlin/String // dev.verifactu.core/RegistrationHashInput.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // dev.verifactu.core/RegistrationHashInput.component5|component5(){}[0]
+    final fun component6(): kotlin/String // dev.verifactu.core/RegistrationHashInput.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // dev.verifactu.core/RegistrationHashInput.component7|component7(){}[0]
+    final fun component8(): kotlin/String // dev.verifactu.core/RegistrationHashInput.component8|component8(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/String = ...): dev.verifactu.core/RegistrationHashInput // dev.verifactu.core/RegistrationHashInput.copy|copy(kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.String?;kotlin.String;kotlin.String?;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/RegistrationHashInput.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/RegistrationHashInput.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/RegistrationHashInput.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/RegistroAlta { // dev.verifactu.core/RegistroAlta|null[0]
+    constructor <init>(dev.verifactu.core/RegistroAltaDraft, kotlin/String) // dev.verifactu.core/RegistroAlta.<init>|<init>(dev.verifactu.core.RegistroAltaDraft;kotlin.String){}[0]
+
+    final val draft // dev.verifactu.core/RegistroAlta.draft|{}draft[0]
+        final fun <get-draft>(): dev.verifactu.core/RegistroAltaDraft // dev.verifactu.core/RegistroAlta.draft.<get-draft>|<get-draft>(){}[0]
+    final val hash // dev.verifactu.core/RegistroAlta.hash|{}hash[0]
+        final fun <get-hash>(): kotlin/String // dev.verifactu.core/RegistroAlta.hash.<get-hash>|<get-hash>(){}[0]
+
+    final fun component1(): dev.verifactu.core/RegistroAltaDraft // dev.verifactu.core/RegistroAlta.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.verifactu.core/RegistroAlta.component2|component2(){}[0]
+    final fun copy(dev.verifactu.core/RegistroAltaDraft = ..., kotlin/String = ...): dev.verifactu.core/RegistroAlta // dev.verifactu.core/RegistroAlta.copy|copy(dev.verifactu.core.RegistroAltaDraft;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/RegistroAlta.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/RegistroAlta.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/RegistroAlta.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/RegistroAltaDraft { // dev.verifactu.core/RegistroAltaDraft|null[0]
+    constructor <init>(dev.verifactu.core/RecordVersion, dev.verifactu.core/InvoiceIdentifier, kotlin/String, dev.verifactu.core/InvoiceType, dev.verifactu.core/FiscalAmount, dev.verifactu.core/FiscalAmount, kotlin/String, dev.verifactu.core/TaxBreakdown, dev.verifactu.core/ChainState, dev.verifactu.core/SistemaInformatico, dev.verifactu.core/RecordGenerationTimestamp, dev.verifactu.core/RegistrationConditionalData = ...) // dev.verifactu.core/RegistroAltaDraft.<init>|<init>(dev.verifactu.core.RecordVersion;dev.verifactu.core.InvoiceIdentifier;kotlin.String;dev.verifactu.core.InvoiceType;dev.verifactu.core.FiscalAmount;dev.verifactu.core.FiscalAmount;kotlin.String;dev.verifactu.core.TaxBreakdown;dev.verifactu.core.ChainState;dev.verifactu.core.SistemaInformatico;dev.verifactu.core.RecordGenerationTimestamp;dev.verifactu.core.RegistrationConditionalData){}[0]
+
+    final val chainState // dev.verifactu.core/RegistroAltaDraft.chainState|{}chainState[0]
+        final fun <get-chainState>(): dev.verifactu.core/ChainState // dev.verifactu.core/RegistroAltaDraft.chainState.<get-chainState>|<get-chainState>(){}[0]
+    final val conditionalData // dev.verifactu.core/RegistroAltaDraft.conditionalData|{}conditionalData[0]
+        final fun <get-conditionalData>(): dev.verifactu.core/RegistrationConditionalData // dev.verifactu.core/RegistroAltaDraft.conditionalData.<get-conditionalData>|<get-conditionalData>(){}[0]
+    final val generatedAt // dev.verifactu.core/RegistroAltaDraft.generatedAt|{}generatedAt[0]
+        final fun <get-generatedAt>(): dev.verifactu.core/RecordGenerationTimestamp // dev.verifactu.core/RegistroAltaDraft.generatedAt.<get-generatedAt>|<get-generatedAt>(){}[0]
+    final val invoice // dev.verifactu.core/RegistroAltaDraft.invoice|{}invoice[0]
+        final fun <get-invoice>(): dev.verifactu.core/InvoiceIdentifier // dev.verifactu.core/RegistroAltaDraft.invoice.<get-invoice>|<get-invoice>(){}[0]
+    final val invoiceType // dev.verifactu.core/RegistroAltaDraft.invoiceType|{}invoiceType[0]
+        final fun <get-invoiceType>(): dev.verifactu.core/InvoiceType // dev.verifactu.core/RegistroAltaDraft.invoiceType.<get-invoiceType>|<get-invoiceType>(){}[0]
+    final val issuerName // dev.verifactu.core/RegistroAltaDraft.issuerName|{}issuerName[0]
+        final fun <get-issuerName>(): kotlin/String // dev.verifactu.core/RegistroAltaDraft.issuerName.<get-issuerName>|<get-issuerName>(){}[0]
+    final val operationDescription // dev.verifactu.core/RegistroAltaDraft.operationDescription|{}operationDescription[0]
+        final fun <get-operationDescription>(): kotlin/String // dev.verifactu.core/RegistroAltaDraft.operationDescription.<get-operationDescription>|<get-operationDescription>(){}[0]
+    final val system // dev.verifactu.core/RegistroAltaDraft.system|{}system[0]
+        final fun <get-system>(): dev.verifactu.core/SistemaInformatico // dev.verifactu.core/RegistroAltaDraft.system.<get-system>|<get-system>(){}[0]
+    final val taxBreakdown // dev.verifactu.core/RegistroAltaDraft.taxBreakdown|{}taxBreakdown[0]
+        final fun <get-taxBreakdown>(): dev.verifactu.core/TaxBreakdown // dev.verifactu.core/RegistroAltaDraft.taxBreakdown.<get-taxBreakdown>|<get-taxBreakdown>(){}[0]
+    final val totalAmount // dev.verifactu.core/RegistroAltaDraft.totalAmount|{}totalAmount[0]
+        final fun <get-totalAmount>(): dev.verifactu.core/FiscalAmount // dev.verifactu.core/RegistroAltaDraft.totalAmount.<get-totalAmount>|<get-totalAmount>(){}[0]
+    final val totalTax // dev.verifactu.core/RegistroAltaDraft.totalTax|{}totalTax[0]
+        final fun <get-totalTax>(): dev.verifactu.core/FiscalAmount // dev.verifactu.core/RegistroAltaDraft.totalTax.<get-totalTax>|<get-totalTax>(){}[0]
+    final val version // dev.verifactu.core/RegistroAltaDraft.version|{}version[0]
+        final fun <get-version>(): dev.verifactu.core/RecordVersion // dev.verifactu.core/RegistroAltaDraft.version.<get-version>|<get-version>(){}[0]
+
+    final fun component1(): dev.verifactu.core/RecordVersion // dev.verifactu.core/RegistroAltaDraft.component1|component1(){}[0]
+    final fun component10(): dev.verifactu.core/SistemaInformatico // dev.verifactu.core/RegistroAltaDraft.component10|component10(){}[0]
+    final fun component11(): dev.verifactu.core/RecordGenerationTimestamp // dev.verifactu.core/RegistroAltaDraft.component11|component11(){}[0]
+    final fun component12(): dev.verifactu.core/RegistrationConditionalData // dev.verifactu.core/RegistroAltaDraft.component12|component12(){}[0]
+    final fun component2(): dev.verifactu.core/InvoiceIdentifier // dev.verifactu.core/RegistroAltaDraft.component2|component2(){}[0]
+    final fun component3(): kotlin/String // dev.verifactu.core/RegistroAltaDraft.component3|component3(){}[0]
+    final fun component4(): dev.verifactu.core/InvoiceType // dev.verifactu.core/RegistroAltaDraft.component4|component4(){}[0]
+    final fun component5(): dev.verifactu.core/FiscalAmount // dev.verifactu.core/RegistroAltaDraft.component5|component5(){}[0]
+    final fun component6(): dev.verifactu.core/FiscalAmount // dev.verifactu.core/RegistroAltaDraft.component6|component6(){}[0]
+    final fun component7(): kotlin/String // dev.verifactu.core/RegistroAltaDraft.component7|component7(){}[0]
+    final fun component8(): dev.verifactu.core/TaxBreakdown // dev.verifactu.core/RegistroAltaDraft.component8|component8(){}[0]
+    final fun component9(): dev.verifactu.core/ChainState // dev.verifactu.core/RegistroAltaDraft.component9|component9(){}[0]
+    final fun copy(dev.verifactu.core/RecordVersion = ..., dev.verifactu.core/InvoiceIdentifier = ..., kotlin/String = ..., dev.verifactu.core/InvoiceType = ..., dev.verifactu.core/FiscalAmount = ..., dev.verifactu.core/FiscalAmount = ..., kotlin/String = ..., dev.verifactu.core/TaxBreakdown = ..., dev.verifactu.core/ChainState = ..., dev.verifactu.core/SistemaInformatico = ..., dev.verifactu.core/RecordGenerationTimestamp = ..., dev.verifactu.core/RegistrationConditionalData = ...): dev.verifactu.core/RegistroAltaDraft // dev.verifactu.core/RegistroAltaDraft.copy|copy(dev.verifactu.core.RecordVersion;dev.verifactu.core.InvoiceIdentifier;kotlin.String;dev.verifactu.core.InvoiceType;dev.verifactu.core.FiscalAmount;dev.verifactu.core.FiscalAmount;kotlin.String;dev.verifactu.core.TaxBreakdown;dev.verifactu.core.ChainState;dev.verifactu.core.SistemaInformatico;dev.verifactu.core.RecordGenerationTimestamp;dev.verifactu.core.RegistrationConditionalData){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/RegistroAltaDraft.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/RegistroAltaDraft.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/RegistroAltaDraft.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/RegistroAnulacion { // dev.verifactu.core/RegistroAnulacion|null[0]
+    constructor <init>(dev.verifactu.core/RegistroAnulacionDraft, kotlin/String) // dev.verifactu.core/RegistroAnulacion.<init>|<init>(dev.verifactu.core.RegistroAnulacionDraft;kotlin.String){}[0]
+
+    final val draft // dev.verifactu.core/RegistroAnulacion.draft|{}draft[0]
+        final fun <get-draft>(): dev.verifactu.core/RegistroAnulacionDraft // dev.verifactu.core/RegistroAnulacion.draft.<get-draft>|<get-draft>(){}[0]
+    final val hash // dev.verifactu.core/RegistroAnulacion.hash|{}hash[0]
+        final fun <get-hash>(): kotlin/String // dev.verifactu.core/RegistroAnulacion.hash.<get-hash>|<get-hash>(){}[0]
+
+    final fun component1(): dev.verifactu.core/RegistroAnulacionDraft // dev.verifactu.core/RegistroAnulacion.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.verifactu.core/RegistroAnulacion.component2|component2(){}[0]
+    final fun copy(dev.verifactu.core/RegistroAnulacionDraft = ..., kotlin/String = ...): dev.verifactu.core/RegistroAnulacion // dev.verifactu.core/RegistroAnulacion.copy|copy(dev.verifactu.core.RegistroAnulacionDraft;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/RegistroAnulacion.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/RegistroAnulacion.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/RegistroAnulacion.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/RegistroAnulacionDraft { // dev.verifactu.core/RegistroAnulacionDraft|null[0]
+    constructor <init>(dev.verifactu.core/InvoiceIdentifier, dev.verifactu.core/ChainState, dev.verifactu.core/SistemaInformatico, dev.verifactu.core/RecordGenerationTimestamp) // dev.verifactu.core/RegistroAnulacionDraft.<init>|<init>(dev.verifactu.core.InvoiceIdentifier;dev.verifactu.core.ChainState;dev.verifactu.core.SistemaInformatico;dev.verifactu.core.RecordGenerationTimestamp){}[0]
+
+    final val cancelledInvoice // dev.verifactu.core/RegistroAnulacionDraft.cancelledInvoice|{}cancelledInvoice[0]
+        final fun <get-cancelledInvoice>(): dev.verifactu.core/InvoiceIdentifier // dev.verifactu.core/RegistroAnulacionDraft.cancelledInvoice.<get-cancelledInvoice>|<get-cancelledInvoice>(){}[0]
+    final val chainState // dev.verifactu.core/RegistroAnulacionDraft.chainState|{}chainState[0]
+        final fun <get-chainState>(): dev.verifactu.core/ChainState // dev.verifactu.core/RegistroAnulacionDraft.chainState.<get-chainState>|<get-chainState>(){}[0]
+    final val generatedAt // dev.verifactu.core/RegistroAnulacionDraft.generatedAt|{}generatedAt[0]
+        final fun <get-generatedAt>(): dev.verifactu.core/RecordGenerationTimestamp // dev.verifactu.core/RegistroAnulacionDraft.generatedAt.<get-generatedAt>|<get-generatedAt>(){}[0]
+    final val system // dev.verifactu.core/RegistroAnulacionDraft.system|{}system[0]
+        final fun <get-system>(): dev.verifactu.core/SistemaInformatico // dev.verifactu.core/RegistroAnulacionDraft.system.<get-system>|<get-system>(){}[0]
+
+    final fun component1(): dev.verifactu.core/InvoiceIdentifier // dev.verifactu.core/RegistroAnulacionDraft.component1|component1(){}[0]
+    final fun component2(): dev.verifactu.core/ChainState // dev.verifactu.core/RegistroAnulacionDraft.component2|component2(){}[0]
+    final fun component3(): dev.verifactu.core/SistemaInformatico // dev.verifactu.core/RegistroAnulacionDraft.component3|component3(){}[0]
+    final fun component4(): dev.verifactu.core/RecordGenerationTimestamp // dev.verifactu.core/RegistroAnulacionDraft.component4|component4(){}[0]
+    final fun copy(dev.verifactu.core/InvoiceIdentifier = ..., dev.verifactu.core/ChainState = ..., dev.verifactu.core/SistemaInformatico = ..., dev.verifactu.core/RecordGenerationTimestamp = ...): dev.verifactu.core/RegistroAnulacionDraft // dev.verifactu.core/RegistroAnulacionDraft.copy|copy(dev.verifactu.core.InvoiceIdentifier;dev.verifactu.core.ChainState;dev.verifactu.core.SistemaInformatico;dev.verifactu.core.RecordGenerationTimestamp){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/RegistroAnulacionDraft.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/RegistroAnulacionDraft.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/RegistroAnulacionDraft.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/SistemaInformatico { // dev.verifactu.core/SistemaInformatico|null[0]
+    constructor <init>(kotlin/String, dev.verifactu.core/TaxIdentifier, kotlin/String, kotlin/String, kotlin/String, kotlin/String, kotlin/Boolean, kotlin/Boolean, kotlin/Boolean) // dev.verifactu.core/SistemaInformatico.<init>|<init>(kotlin.String;dev.verifactu.core.TaxIdentifier;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean){}[0]
+
+    final val hasMultipleTaxpayers // dev.verifactu.core/SistemaInformatico.hasMultipleTaxpayers|{}hasMultipleTaxpayers[0]
+        final fun <get-hasMultipleTaxpayers>(): kotlin/Boolean // dev.verifactu.core/SistemaInformatico.hasMultipleTaxpayers.<get-hasMultipleTaxpayers>|<get-hasMultipleTaxpayers>(){}[0]
+    final val installationNumber // dev.verifactu.core/SistemaInformatico.installationNumber|{}installationNumber[0]
+        final fun <get-installationNumber>(): kotlin/String // dev.verifactu.core/SistemaInformatico.installationNumber.<get-installationNumber>|<get-installationNumber>(){}[0]
+    final val producerName // dev.verifactu.core/SistemaInformatico.producerName|{}producerName[0]
+        final fun <get-producerName>(): kotlin/String // dev.verifactu.core/SistemaInformatico.producerName.<get-producerName>|<get-producerName>(){}[0]
+    final val producerTaxIdentifier // dev.verifactu.core/SistemaInformatico.producerTaxIdentifier|{}producerTaxIdentifier[0]
+        final fun <get-producerTaxIdentifier>(): dev.verifactu.core/TaxIdentifier // dev.verifactu.core/SistemaInformatico.producerTaxIdentifier.<get-producerTaxIdentifier>|<get-producerTaxIdentifier>(){}[0]
+    final val supportsMultipleTaxpayers // dev.verifactu.core/SistemaInformatico.supportsMultipleTaxpayers|{}supportsMultipleTaxpayers[0]
+        final fun <get-supportsMultipleTaxpayers>(): kotlin/Boolean // dev.verifactu.core/SistemaInformatico.supportsMultipleTaxpayers.<get-supportsMultipleTaxpayers>|<get-supportsMultipleTaxpayers>(){}[0]
+    final val systemIdentifier // dev.verifactu.core/SistemaInformatico.systemIdentifier|{}systemIdentifier[0]
+        final fun <get-systemIdentifier>(): kotlin/String // dev.verifactu.core/SistemaInformatico.systemIdentifier.<get-systemIdentifier>|<get-systemIdentifier>(){}[0]
+    final val systemName // dev.verifactu.core/SistemaInformatico.systemName|{}systemName[0]
+        final fun <get-systemName>(): kotlin/String // dev.verifactu.core/SistemaInformatico.systemName.<get-systemName>|<get-systemName>(){}[0]
+    final val veriFactuOnly // dev.verifactu.core/SistemaInformatico.veriFactuOnly|{}veriFactuOnly[0]
+        final fun <get-veriFactuOnly>(): kotlin/Boolean // dev.verifactu.core/SistemaInformatico.veriFactuOnly.<get-veriFactuOnly>|<get-veriFactuOnly>(){}[0]
+    final val version // dev.verifactu.core/SistemaInformatico.version|{}version[0]
+        final fun <get-version>(): kotlin/String // dev.verifactu.core/SistemaInformatico.version.<get-version>|<get-version>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.core/SistemaInformatico.component1|component1(){}[0]
+    final fun component2(): dev.verifactu.core/TaxIdentifier // dev.verifactu.core/SistemaInformatico.component2|component2(){}[0]
+    final fun component3(): kotlin/String // dev.verifactu.core/SistemaInformatico.component3|component3(){}[0]
+    final fun component4(): kotlin/String // dev.verifactu.core/SistemaInformatico.component4|component4(){}[0]
+    final fun component5(): kotlin/String // dev.verifactu.core/SistemaInformatico.component5|component5(){}[0]
+    final fun component6(): kotlin/String // dev.verifactu.core/SistemaInformatico.component6|component6(){}[0]
+    final fun component7(): kotlin/Boolean // dev.verifactu.core/SistemaInformatico.component7|component7(){}[0]
+    final fun component8(): kotlin/Boolean // dev.verifactu.core/SistemaInformatico.component8|component8(){}[0]
+    final fun component9(): kotlin/Boolean // dev.verifactu.core/SistemaInformatico.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., dev.verifactu.core/TaxIdentifier = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ...): dev.verifactu.core/SistemaInformatico // dev.verifactu.core/SistemaInformatico.copy|copy(kotlin.String;dev.verifactu.core.TaxIdentifier;kotlin.String;kotlin.String;kotlin.String;kotlin.String;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/SistemaInformatico.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/SistemaInformatico.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/SistemaInformatico.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/TaxBreakdown { // dev.verifactu.core/TaxBreakdown|null[0]
+    constructor <init>(kotlin.collections/List<dev.verifactu.core/TaxBreakdownDetail>) // dev.verifactu.core/TaxBreakdown.<init>|<init>(kotlin.collections.List<dev.verifactu.core.TaxBreakdownDetail>){}[0]
+
+    final val details // dev.verifactu.core/TaxBreakdown.details|{}details[0]
+        final fun <get-details>(): kotlin.collections/List<dev.verifactu.core/TaxBreakdownDetail> // dev.verifactu.core/TaxBreakdown.details.<get-details>|<get-details>(){}[0]
+
+    final fun component1(): kotlin.collections/List<dev.verifactu.core/TaxBreakdownDetail> // dev.verifactu.core/TaxBreakdown.component1|component1(){}[0]
+    final fun copy(kotlin.collections/List<dev.verifactu.core/TaxBreakdownDetail> = ...): dev.verifactu.core/TaxBreakdown // dev.verifactu.core/TaxBreakdown.copy|copy(kotlin.collections.List<dev.verifactu.core.TaxBreakdownDetail>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/TaxBreakdown.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/TaxBreakdown.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/TaxBreakdown.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/TaxBreakdownDetail { // dev.verifactu.core/TaxBreakdownDetail|null[0]
+    constructor <init>(dev.verifactu.core/TaxOperation, dev.verifactu.core/FiscalAmount, dev.verifactu.core/TaxType? = ..., kotlin/String? = ..., kotlin/String? = ..., dev.verifactu.core/FiscalAmount? = ..., dev.verifactu.core/FiscalAmount? = ..., kotlin/String? = ..., dev.verifactu.core/FiscalAmount? = ...) // dev.verifactu.core/TaxBreakdownDetail.<init>|<init>(dev.verifactu.core.TaxOperation;dev.verifactu.core.FiscalAmount;dev.verifactu.core.TaxType?;kotlin.String?;kotlin.String?;dev.verifactu.core.FiscalAmount?;dev.verifactu.core.FiscalAmount?;kotlin.String?;dev.verifactu.core.FiscalAmount?){}[0]
+
+    final val chargedTax // dev.verifactu.core/TaxBreakdownDetail.chargedTax|{}chargedTax[0]
+        final fun <get-chargedTax>(): dev.verifactu.core/FiscalAmount? // dev.verifactu.core/TaxBreakdownDetail.chargedTax.<get-chargedTax>|<get-chargedTax>(){}[0]
+    final val costBase // dev.verifactu.core/TaxBreakdownDetail.costBase|{}costBase[0]
+        final fun <get-costBase>(): dev.verifactu.core/FiscalAmount? // dev.verifactu.core/TaxBreakdownDetail.costBase.<get-costBase>|<get-costBase>(){}[0]
+    final val equivalenceSurcharge // dev.verifactu.core/TaxBreakdownDetail.equivalenceSurcharge|{}equivalenceSurcharge[0]
+        final fun <get-equivalenceSurcharge>(): dev.verifactu.core/FiscalAmount? // dev.verifactu.core/TaxBreakdownDetail.equivalenceSurcharge.<get-equivalenceSurcharge>|<get-equivalenceSurcharge>(){}[0]
+    final val equivalenceSurchargeRate // dev.verifactu.core/TaxBreakdownDetail.equivalenceSurchargeRate|{}equivalenceSurchargeRate[0]
+        final fun <get-equivalenceSurchargeRate>(): kotlin/String? // dev.verifactu.core/TaxBreakdownDetail.equivalenceSurchargeRate.<get-equivalenceSurchargeRate>|<get-equivalenceSurchargeRate>(){}[0]
+    final val operation // dev.verifactu.core/TaxBreakdownDetail.operation|{}operation[0]
+        final fun <get-operation>(): dev.verifactu.core/TaxOperation // dev.verifactu.core/TaxBreakdownDetail.operation.<get-operation>|<get-operation>(){}[0]
+    final val regimeCode // dev.verifactu.core/TaxBreakdownDetail.regimeCode|{}regimeCode[0]
+        final fun <get-regimeCode>(): kotlin/String? // dev.verifactu.core/TaxBreakdownDetail.regimeCode.<get-regimeCode>|<get-regimeCode>(){}[0]
+    final val tax // dev.verifactu.core/TaxBreakdownDetail.tax|{}tax[0]
+        final fun <get-tax>(): dev.verifactu.core/TaxType? // dev.verifactu.core/TaxBreakdownDetail.tax.<get-tax>|<get-tax>(){}[0]
+    final val taxRate // dev.verifactu.core/TaxBreakdownDetail.taxRate|{}taxRate[0]
+        final fun <get-taxRate>(): kotlin/String? // dev.verifactu.core/TaxBreakdownDetail.taxRate.<get-taxRate>|<get-taxRate>(){}[0]
+    final val taxableBase // dev.verifactu.core/TaxBreakdownDetail.taxableBase|{}taxableBase[0]
+        final fun <get-taxableBase>(): dev.verifactu.core/FiscalAmount // dev.verifactu.core/TaxBreakdownDetail.taxableBase.<get-taxableBase>|<get-taxableBase>(){}[0]
+
+    final fun component1(): dev.verifactu.core/TaxOperation // dev.verifactu.core/TaxBreakdownDetail.component1|component1(){}[0]
+    final fun component2(): dev.verifactu.core/FiscalAmount // dev.verifactu.core/TaxBreakdownDetail.component2|component2(){}[0]
+    final fun component3(): dev.verifactu.core/TaxType? // dev.verifactu.core/TaxBreakdownDetail.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // dev.verifactu.core/TaxBreakdownDetail.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // dev.verifactu.core/TaxBreakdownDetail.component5|component5(){}[0]
+    final fun component6(): dev.verifactu.core/FiscalAmount? // dev.verifactu.core/TaxBreakdownDetail.component6|component6(){}[0]
+    final fun component7(): dev.verifactu.core/FiscalAmount? // dev.verifactu.core/TaxBreakdownDetail.component7|component7(){}[0]
+    final fun component8(): kotlin/String? // dev.verifactu.core/TaxBreakdownDetail.component8|component8(){}[0]
+    final fun component9(): dev.verifactu.core/FiscalAmount? // dev.verifactu.core/TaxBreakdownDetail.component9|component9(){}[0]
+    final fun copy(dev.verifactu.core/TaxOperation = ..., dev.verifactu.core/FiscalAmount = ..., dev.verifactu.core/TaxType? = ..., kotlin/String? = ..., kotlin/String? = ..., dev.verifactu.core/FiscalAmount? = ..., dev.verifactu.core/FiscalAmount? = ..., kotlin/String? = ..., dev.verifactu.core/FiscalAmount? = ...): dev.verifactu.core/TaxBreakdownDetail // dev.verifactu.core/TaxBreakdownDetail.copy|copy(dev.verifactu.core.TaxOperation;dev.verifactu.core.FiscalAmount;dev.verifactu.core.TaxType?;kotlin.String?;kotlin.String?;dev.verifactu.core.FiscalAmount?;dev.verifactu.core.FiscalAmount?;kotlin.String?;dev.verifactu.core.FiscalAmount?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/TaxBreakdownDetail.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/TaxBreakdownDetail.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/TaxBreakdownDetail.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/TaxIdentifier { // dev.verifactu.core/TaxIdentifier|null[0]
+    final val value // dev.verifactu.core/TaxIdentifier.value|{}value[0]
+        final fun <get-value>(): kotlin/String // dev.verifactu.core/TaxIdentifier.value.<get-value>|<get-value>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.core/TaxIdentifier.component1|component1(){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/TaxIdentifier.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/TaxIdentifier.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/TaxIdentifier.toString|toString(){}[0]
+
+    final object Companion { // dev.verifactu.core/TaxIdentifier.Companion|null[0]
+        final fun parse(kotlin/String): dev.verifactu.core/ValueResult<dev.verifactu.core/TaxIdentifier> // dev.verifactu.core/TaxIdentifier.Companion.parse|parse(kotlin.String){}[0]
+    }
+}
+
+final class dev.verifactu.core/ValidationContext { // dev.verifactu.core/ValidationContext|null[0]
+    constructor <init>(dev.verifactu.core/InvoiceIssueDate? = ...) // dev.verifactu.core/ValidationContext.<init>|<init>(dev.verifactu.core.InvoiceIssueDate?){}[0]
+
+    final val aeatReceiptDate // dev.verifactu.core/ValidationContext.aeatReceiptDate|{}aeatReceiptDate[0]
+        final fun <get-aeatReceiptDate>(): dev.verifactu.core/InvoiceIssueDate? // dev.verifactu.core/ValidationContext.aeatReceiptDate.<get-aeatReceiptDate>|<get-aeatReceiptDate>(){}[0]
+
+    final fun component1(): dev.verifactu.core/InvoiceIssueDate? // dev.verifactu.core/ValidationContext.component1|component1(){}[0]
+    final fun copy(dev.verifactu.core/InvoiceIssueDate? = ...): dev.verifactu.core/ValidationContext // dev.verifactu.core/ValidationContext.copy|copy(dev.verifactu.core.InvoiceIssueDate?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/ValidationContext.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/ValidationContext.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/ValidationContext.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/ValidationIssue { // dev.verifactu.core/ValidationIssue|null[0]
+    constructor <init>(kotlin/String, kotlin/String, dev.verifactu.core/ValidationSeverity, kotlin/String, kotlin/String? = ..., dev.verifactu.core/ComplianceSourceReference? = ...) // dev.verifactu.core/ValidationIssue.<init>|<init>(kotlin.String;kotlin.String;dev.verifactu.core.ValidationSeverity;kotlin.String;kotlin.String?;dev.verifactu.core.ComplianceSourceReference?){}[0]
+
+    final val aeatCode // dev.verifactu.core/ValidationIssue.aeatCode|{}aeatCode[0]
+        final fun <get-aeatCode>(): kotlin/String? // dev.verifactu.core/ValidationIssue.aeatCode.<get-aeatCode>|<get-aeatCode>(){}[0]
+    final val code // dev.verifactu.core/ValidationIssue.code|{}code[0]
+        final fun <get-code>(): kotlin/String // dev.verifactu.core/ValidationIssue.code.<get-code>|<get-code>(){}[0]
+    final val fieldPath // dev.verifactu.core/ValidationIssue.fieldPath|{}fieldPath[0]
+        final fun <get-fieldPath>(): kotlin/String // dev.verifactu.core/ValidationIssue.fieldPath.<get-fieldPath>|<get-fieldPath>(){}[0]
+    final val message // dev.verifactu.core/ValidationIssue.message|{}message[0]
+        final fun <get-message>(): kotlin/String // dev.verifactu.core/ValidationIssue.message.<get-message>|<get-message>(){}[0]
+    final val severity // dev.verifactu.core/ValidationIssue.severity|{}severity[0]
+        final fun <get-severity>(): dev.verifactu.core/ValidationSeverity // dev.verifactu.core/ValidationIssue.severity.<get-severity>|<get-severity>(){}[0]
+    final val source // dev.verifactu.core/ValidationIssue.source|{}source[0]
+        final fun <get-source>(): dev.verifactu.core/ComplianceSourceReference? // dev.verifactu.core/ValidationIssue.source.<get-source>|<get-source>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.core/ValidationIssue.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.verifactu.core/ValidationIssue.component2|component2(){}[0]
+    final fun component3(): dev.verifactu.core/ValidationSeverity // dev.verifactu.core/ValidationIssue.component3|component3(){}[0]
+    final fun component4(): kotlin/String // dev.verifactu.core/ValidationIssue.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // dev.verifactu.core/ValidationIssue.component5|component5(){}[0]
+    final fun component6(): dev.verifactu.core/ComplianceSourceReference? // dev.verifactu.core/ValidationIssue.component6|component6(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., dev.verifactu.core/ValidationSeverity = ..., kotlin/String = ..., kotlin/String? = ..., dev.verifactu.core/ComplianceSourceReference? = ...): dev.verifactu.core/ValidationIssue // dev.verifactu.core/ValidationIssue.copy|copy(kotlin.String;kotlin.String;dev.verifactu.core.ValidationSeverity;kotlin.String;kotlin.String?;dev.verifactu.core.ComplianceSourceReference?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/ValidationIssue.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/ValidationIssue.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/ValidationIssue.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/ValidationReport { // dev.verifactu.core/ValidationReport|null[0]
+    constructor <init>(kotlin.collections/List<dev.verifactu.core/ValidationIssue>) // dev.verifactu.core/ValidationReport.<init>|<init>(kotlin.collections.List<dev.verifactu.core.ValidationIssue>){}[0]
+
+    final val isValid // dev.verifactu.core/ValidationReport.isValid|{}isValid[0]
+        final fun <get-isValid>(): kotlin/Boolean // dev.verifactu.core/ValidationReport.isValid.<get-isValid>|<get-isValid>(){}[0]
+    final val issues // dev.verifactu.core/ValidationReport.issues|{}issues[0]
+        final fun <get-issues>(): kotlin.collections/List<dev.verifactu.core/ValidationIssue> // dev.verifactu.core/ValidationReport.issues.<get-issues>|<get-issues>(){}[0]
+
+    final fun component1(): kotlin.collections/List<dev.verifactu.core/ValidationIssue> // dev.verifactu.core/ValidationReport.component1|component1(){}[0]
+    final fun copy(kotlin.collections/List<dev.verifactu.core/ValidationIssue> = ...): dev.verifactu.core/ValidationReport // dev.verifactu.core/ValidationReport.copy|copy(kotlin.collections.List<dev.verifactu.core.ValidationIssue>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/ValidationReport.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/ValidationReport.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/ValidationReport.toString|toString(){}[0]
+}
+
+final class dev.verifactu.core/ValueError { // dev.verifactu.core/ValueError|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String) // dev.verifactu.core/ValueError.<init>|<init>(kotlin.String;kotlin.String;kotlin.String){}[0]
+
+    final val code // dev.verifactu.core/ValueError.code|{}code[0]
+        final fun <get-code>(): kotlin/String // dev.verifactu.core/ValueError.code.<get-code>|<get-code>(){}[0]
+    final val fieldPath // dev.verifactu.core/ValueError.fieldPath|{}fieldPath[0]
+        final fun <get-fieldPath>(): kotlin/String // dev.verifactu.core/ValueError.fieldPath.<get-fieldPath>|<get-fieldPath>(){}[0]
+    final val message // dev.verifactu.core/ValueError.message|{}message[0]
+        final fun <get-message>(): kotlin/String // dev.verifactu.core/ValueError.message.<get-message>|<get-message>(){}[0]
+
+    final fun component1(): kotlin/String // dev.verifactu.core/ValueError.component1|component1(){}[0]
+    final fun component2(): kotlin/String // dev.verifactu.core/ValueError.component2|component2(){}[0]
+    final fun component3(): kotlin/String // dev.verifactu.core/ValueError.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ...): dev.verifactu.core/ValueError // dev.verifactu.core/ValueError.copy|copy(kotlin.String;kotlin.String;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/ValueError.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // dev.verifactu.core/ValueError.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // dev.verifactu.core/ValueError.toString|toString(){}[0]
+}
+
+final object dev.verifactu.core/FiscalIdentifierValidator { // dev.verifactu.core/FiscalIdentifierValidator|null[0]
+    final fun validateInvoiceNumber(dev.verifactu.core/InvoiceNumber): dev.verifactu.core/ValidationReport // dev.verifactu.core/FiscalIdentifierValidator.validateInvoiceNumber|validateInvoiceNumber(dev.verifactu.core.InvoiceNumber){}[0]
+    final fun validatePartyIdentifier(dev.verifactu.core/FiscalPartyIdentifier, dev.verifactu.core/InvoiceIssueDate): dev.verifactu.core/ValidationReport // dev.verifactu.core/FiscalIdentifierValidator.validatePartyIdentifier|validatePartyIdentifier(dev.verifactu.core.FiscalPartyIdentifier;dev.verifactu.core.InvoiceIssueDate){}[0]
+    final fun validateTaxIdentifier(dev.verifactu.core/TaxIdentifier): dev.verifactu.core/ValidationReport // dev.verifactu.core/FiscalIdentifierValidator.validateTaxIdentifier|validateTaxIdentifier(dev.verifactu.core.TaxIdentifier){}[0]
+}
+
+final object dev.verifactu.core/FiscalRecordFactory { // dev.verifactu.core/FiscalRecordFactory|null[0]
+    final fun createCancellation(dev.verifactu.core/RegistroAnulacionDraft): dev.verifactu.core/RecordCreationResult<dev.verifactu.core/RegistroAnulacion> // dev.verifactu.core/FiscalRecordFactory.createCancellation|createCancellation(dev.verifactu.core.RegistroAnulacionDraft){}[0]
+    final fun createRegistration(dev.verifactu.core/RegistroAltaDraft, dev.verifactu.core/ValidationContext = ...): dev.verifactu.core/RecordCreationResult<dev.verifactu.core/RegistroAlta> // dev.verifactu.core/FiscalRecordFactory.createRegistration|createRegistration(dev.verifactu.core.RegistroAltaDraft;dev.verifactu.core.ValidationContext){}[0]
+}
+
+final object dev.verifactu.core/RecordHashCalculator { // dev.verifactu.core/RecordHashCalculator|null[0]
+    final fun sha256(kotlin/String): kotlin/String // dev.verifactu.core/RecordHashCalculator.sha256|sha256(kotlin.String){}[0]
+}
+
+final object dev.verifactu.core/RegistroAltaValidator : dev.verifactu.core/Validator<dev.verifactu.core/RegistroAltaDraft> { // dev.verifactu.core/RegistroAltaValidator|null[0]
+    final fun validate(dev.verifactu.core/RegistroAltaDraft): dev.verifactu.core/ValidationReport // dev.verifactu.core/RegistroAltaValidator.validate|validate(dev.verifactu.core.RegistroAltaDraft){}[0]
+    final fun validate(dev.verifactu.core/RegistroAltaDraft, dev.verifactu.core/ValidationContext): dev.verifactu.core/ValidationReport // dev.verifactu.core/RegistroAltaValidator.validate|validate(dev.verifactu.core.RegistroAltaDraft;dev.verifactu.core.ValidationContext){}[0]
+}
+
+final object dev.verifactu.core/RegistroAnulacionValidator : dev.verifactu.core/Validator<dev.verifactu.core/RegistroAnulacionDraft> { // dev.verifactu.core/RegistroAnulacionValidator|null[0]
+    final fun validate(dev.verifactu.core/RegistroAnulacionDraft): dev.verifactu.core/ValidationReport // dev.verifactu.core/RegistroAnulacionValidator.validate|validate(dev.verifactu.core.RegistroAnulacionDraft){}[0]
+}
+
+final fun dev.verifactu.core/xmlSchemaCharacterCount(kotlin/String): kotlin/Int // dev.verifactu.core/xmlSchemaCharacterCount|xmlSchemaCharacterCount(kotlin.String){}[0]
