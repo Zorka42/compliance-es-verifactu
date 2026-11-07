@@ -68,7 +68,7 @@ class FiscalSubmissionWarningTest {
                 registration.record.draft.invoice,
                 registration.nextChainState,
                 registration.record.draft.system,
-                value(RecordGenerationTimestamp.parse("2024-01-01T12:01:00+01:00")),
+                value(RecordGenerationTimestamp.parse("2024-10-28T12:01:00+01:00")),
             )
         val createdCancellation =
             assertIs<RecordCreationResult.Created<*>>(FiscalRecordFactory.createCancellation(cancellationDraft))
@@ -175,7 +175,7 @@ class FiscalSubmissionWarningTest {
         val issuer = value(TaxIdentifier.parse("89890001K"))
         return RegistroAltaDraft(
             RecordVersion.V1_0,
-            InvoiceIdentifier(issuer, value(InvoiceNumber.parse("WARNING-001")), value(InvoiceIssueDate.parse("01-01-2024"))),
+            InvoiceIdentifier(issuer, value(InvoiceNumber.parse("WARNING-001")), value(InvoiceIssueDate.parse("28-10-2024"))),
             "Synthetic issuer",
             InvoiceType.F2,
             value(FiscalAmount.parse("21.00")),
@@ -194,7 +194,7 @@ class FiscalSubmissionWarningTest {
             ),
             ChainState.FirstRecord,
             SistemaInformatico("Synthetic producer", issuer, "Warning example", "VF", "1.0", "synthetic-1", true, false, false),
-            value(RecordGenerationTimestamp.parse("2024-01-01T12:00:00+01:00")),
+            value(RecordGenerationTimestamp.parse("2024-10-28T12:00:00+01:00")),
         )
     }
 

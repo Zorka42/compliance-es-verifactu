@@ -3,6 +3,8 @@ package dev.verifactu.tools.sandbox
 import dev.verifactu.core.ChainState
 import dev.verifactu.xml.SubmissionRecord
 import java.nio.file.Path
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 internal data class SandboxBundle(
     val values: Map<String, String>,
@@ -24,9 +26,15 @@ internal fun loadBundle(directory: Path): SandboxBundle {
     return SandboxBundle(fields, plan, digest)
 }
 
-internal fun prepareBundle(request: BundlePreparation): SandboxBundle {
+internal fun prepareBundle(
+    request: BundlePreparation,
+    clock: () -> OffsetDateTime = ::matrixNow,
+): SandboxBundle {
     val previous = request.previousPath?.let { loadBundle(it) }
     val fields = if (request.scenario == "duplicate") duplicateFields(request, previous) else freshFields(request, previous)
+    if (request.scenario == "cancellation-missing") {
+        fields["generated.at"] = clock().withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+    }
     val plan = buildPlan(fields)
     val digest = requestDigest(plan.soap)
     if (request.scenario == "duplicate") sandboxRequire(digest == previous!!.sha256, "Duplicate must retain the original request bytes.")
@@ -95,6 +103,9 @@ private fun appendPrevious(
             "Cancellation/subsanation must follow the matching single registration bundle.",
         )
     }
+    if (fields["scenario"] == "cancellation-missing") {
+        sandboxRequire(invoice(fields) != previous.plan.next.invoice, "The absent cancellation target must differ from the chain tail.")
+    }
     fields.putAll(chainFields(previous.plan.next))
 }
 
@@ -117,6 +128,7 @@ internal fun scenarioExpectation(scenario: String): String =
     when (scenario) {
         "warning-first" -> "accepted with errors, code 2007 (intentional first-record misuse; prior acceptance required)"
         "rejection-date" -> "rejected, code 1152 (intentional invoice date before 28-10-2024)"
+        "cancellation-missing" -> "rejected, code 3002 (ordinary cancellation of an absent TEST invoice; verify absence first)"
         "duplicate" -> "duplicate, code 3000 (prior acceptance required)"
         else -> "clean matched acceptance; actual AEAT result must be reviewed"
     }

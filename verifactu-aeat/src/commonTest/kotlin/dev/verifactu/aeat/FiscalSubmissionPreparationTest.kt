@@ -33,6 +33,37 @@ import kotlin.test.assertTrue
 
 class FiscalSubmissionPreparationTest {
     @Test
+    fun cutoffErrorsPropagateThroughPreparationAndBatchRevalidation() {
+        val base = registrationDraft()
+        val before = base.copy(invoice = base.invoice.copy(issueDate = value(InvoiceIssueDate.parse("27-10-2024"))))
+        val invalid =
+            assertIs<RegistrationPreparationResult.Invalid>(FiscalSubmissionPreparation.prepareRegistration(before, QrEnvironment.TEST))
+        assertTrue(invalid.report.issues.any { it.code == "VF-DATE-1152" && it.fieldPath == "invoice.issueDate" })
+        val valid =
+            assertIs<RegistrationPreparationResult.Prepared>(FiscalSubmissionPreparation.prepareRegistration(base, QrEnvironment.TEST))
+        for (date in listOf("28-10-2024", "29-10-2024")) {
+            val draft = base.copy(invoice = base.invoice.copy(issueDate = value(InvoiceIssueDate.parse(date))))
+            val prepared =
+                assertIs<RegistrationPreparationResult.Prepared>(FiscalSubmissionPreparation.prepareRegistration(draft, QrEnvironment.TEST))
+            assertIs<SubmissionBatchBuildResult.Created>(
+                FiscalSubmissionPreparation.prepareBatch(
+                    SubmissionHeader(base.issuerName, base.invoice.issuer),
+                    listOf(SubmissionRecord.Registration(prepared.record)),
+                ),
+            )
+        }
+        val unchecked = valid.record.copy(draft = before)
+        val batch =
+            assertIs<SubmissionBatchBuildResult.Invalid>(
+                FiscalSubmissionPreparation.prepareBatch(
+                    SubmissionHeader(base.issuerName, base.invoice.issuer),
+                    listOf(SubmissionRecord.Registration(unchecked)),
+                ),
+            )
+        assertTrue(batch.report.issues.any { it.code == "VF-DATE-1152" && it.fieldPath == "records[0].draft.invoice.issueDate" })
+    }
+
+    @Test
     fun receiptDateContextSurvivesFactoryFacadeAndBatchRevalidation() {
         val original = registrationDraft()
         val draft =
@@ -94,14 +125,14 @@ class FiscalSubmissionPreparationTest {
                 FiscalSubmissionPreparation.prepareRegistration(registrationDraft(), QrEnvironment.TEST),
             )
 
-        assertEquals("0A64AC627B8C784028B15E9954B1ADA48BDA3CD4F5365C883E6B10111B669CD9", prepared.record.hash)
+        assertEquals("53B51A2A3F48B20F7FCE837C59CBD7D85860428A038F237F165554F63012D372", prepared.record.hash)
         assertEquals(prepared.record.hash, prepared.nextChainState.hash)
         assertEquals(prepared.record.draft.invoice, prepared.nextChainState.invoice)
         assertContains(prepared.recordXml, "<NumSerieFactura>PREPARE-001</NumSerieFactura>")
         assertContains(prepared.recordXml, "<Huella>${prepared.record.hash}</Huella>")
         assertContains(prepared.recordXml, "<PrimerRegistro>S</PrimerRegistro>")
         assertEquals(
-            "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR?nif=89890001K&numserie=PREPARE-001&fecha=01-01-2024&importe=121.00",
+            "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR?nif=89890001K&numserie=PREPARE-001&fecha=28-10-2024&importe=121.00",
             prepared.qr.url,
         )
         assertContains(prepared.batchXml, "<NombreRazon>Synthetic issuer</NombreRazon>")
@@ -139,7 +170,7 @@ class FiscalSubmissionPreparationTest {
                 ),
             )
 
-        assertEquals("4997404528016711F5BEDADDB0269009D3AF11230AE01AB21BDE6BDD0963B0B6", cancellation.record.hash)
+        assertEquals("0DE88CDCCD9B4C16DE248659188ADB78E21ABC66D9189CE6D2747514FFE9DA2A", cancellation.record.hash)
         assertEquals(registration.nextChainState, cancellation.record.draft.chainState)
         assertEquals(cancellation.record.hash, cancellation.nextChainState.hash)
         assertEquals(registration.record.draft.invoice, cancellation.nextChainState.invoice)
@@ -285,7 +316,7 @@ class FiscalSubmissionPreparationTest {
         val issuer = value(TaxIdentifier.parse("89890001K"))
         return RegistroAltaDraft(
             version = RecordVersion.V1_0,
-            invoice = InvoiceIdentifier(issuer, value(InvoiceNumber.parse("PREPARE-001")), value(InvoiceIssueDate.parse("01-01-2024"))),
+            invoice = InvoiceIdentifier(issuer, value(InvoiceNumber.parse("PREPARE-001")), value(InvoiceIssueDate.parse("28-10-2024"))),
             issuerName = "Synthetic issuer",
             invoiceType = InvoiceType.F2,
             totalTax = value(FiscalAmount.parse("21.00")),
@@ -317,7 +348,7 @@ class FiscalSubmissionPreparationTest {
                     false,
                     false,
                 ),
-            generatedAt = value(RecordGenerationTimestamp.parse("2024-01-01T12:00:00+01:00")),
+            generatedAt = value(RecordGenerationTimestamp.parse("2024-10-28T12:00:00+01:00")),
         )
     }
 
@@ -326,7 +357,7 @@ class FiscalSubmissionPreparationTest {
             registration.record.draft.invoice,
             registration.nextChainState,
             registration.record.draft.system,
-            value(RecordGenerationTimestamp.parse("2024-01-01T12:01:00+01:00")),
+            value(RecordGenerationTimestamp.parse("2024-10-28T12:01:00+01:00")),
         )
 
     private fun withoutDeclaration(xml: String): String = xml.removePrefix("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")

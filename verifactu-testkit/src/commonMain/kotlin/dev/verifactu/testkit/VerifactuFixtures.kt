@@ -45,7 +45,7 @@ public object VerifactuFixtures {
         InvoiceIdentifier(
             fixtureValue(TaxIdentifier.parse("89890001K")),
             fixtureValue(InvoiceNumber.parse(number)),
-            fixtureValue(InvoiceIssueDate.parse("01-01-2024")),
+            fixtureValue(InvoiceIssueDate.parse("28-10-2024")),
         )
 
     /** Returns synthetic SIF metadata; no credential material is involved. */
@@ -83,7 +83,7 @@ public object VerifactuFixtures {
                 ),
             chainState = chainState,
             system = system(),
-            generatedAt = fixtureValue(RecordGenerationTimestamp.parse("2024-01-01T12:00:00+01:00")),
+            generatedAt = fixtureValue(RecordGenerationTimestamp.parse("2024-10-28T12:00:00+01:00")),
         )
 
     /** Creates a locally validated registration and the chain head to persist with it. */
@@ -107,7 +107,7 @@ public object VerifactuFixtures {
             invoice(),
             chainState,
             system(),
-            fixtureValue(RecordGenerationTimestamp.parse("2024-01-01T12:01:00+01:00")),
+            fixtureValue(RecordGenerationTimestamp.parse("2024-10-28T12:01:00+01:00")),
         )
 
     /** Creates a locally validated cancellation and its next chain head. */

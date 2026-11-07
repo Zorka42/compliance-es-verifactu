@@ -284,7 +284,7 @@ public object RegistroAltaValidator : Validator<RegistroAltaDraft> {
                 systemIssues(value.system) + requiredTextIssue("issuerName", value.issuerName, 120) +
                     requiredTextIssue("operationDescription", value.operationDescription, 500) +
                     taxBreakdownIssues(value) + registrationConditionalIssues(value) + fiscalArithmeticIssues(value) +
-                    chainIssues(value.chainState) + registrationIdentifierIssues(value),
+                    chainIssues(value.chainState) + registrationIdentifierIssues(value) + registrationDateIssues(value),
             ),
             context,
         )

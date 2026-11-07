@@ -7,6 +7,41 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class MatrixEvidenceTest {
+    @Test fun acceptedPreCutoffRecordCannotPassTheRejectionCase() =
+        withWorkspace { root ->
+            val session = testMatrix(root)
+            for ((index, case) in MATRIX_CASES.take(6).withIndex()) {
+                val now = MATRIX_TIME.plusSeconds(index * 61L)
+                prepareMatrixCase(session, case, now)
+                if (case.id != "rejection") {
+                    assertEquals(0, matrixTestSend(session, case, now).exitCode)
+                    continue
+                }
+                val bundle = loadBundle(session.bundle(case))
+                assertEquals("27-10-2024", bundle.values["invoice.date"])
+                val result = matrixTestSend(session, case, now) { simulatedResponse(it, "accepted") }
+                assertEquals(3, result.exitCode)
+                assertTrue("Result: ACCEPTED" in result.output)
+                assertTrue("Correlation: MATCHED" in result.output)
+                assertTrue("Expected case verification: REVIEW" in result.output)
+                assertEquals(MatrixState.REVIEW, observeMatrixCase(session, case).state)
+            }
+            val report = matrixReport(session)
+            assertEquals(3, report.exitCode)
+            assertTrue("case.cancellation.state=PASS" in report.output)
+            assertTrue("case.rejection.state=REVIEW" in report.output)
+            val blocked =
+                assertFailsWith<SandboxInputException> {
+                    sendMatrixCase(
+                        mapOf("run" to session.root.toString(), "case" to "pagination-01"),
+                        { _, _ -> error("No transport or identity access") },
+                        { MATRIX_TIME.plusHours(1) },
+                    )
+                }
+            assertTrue("Uncertain or unexpected evidence" in blocked.message.orEmpty())
+            assertTrue(matrixAttempts(session, session.case("pagination-01")).isEmpty())
+        }
+
     @Test fun incompleteUncorrelatedAndUnexpectedReceiptsCannotPass() =
         withWorkspace { root ->
             val session = testMatrix(root)

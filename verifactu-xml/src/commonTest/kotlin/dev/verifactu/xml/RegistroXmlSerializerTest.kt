@@ -405,7 +405,7 @@ class RegistroXmlSerializerTest {
                     cancelledInvoice = InvoiceIdentifier(taxId(), invoiceNumber("CANCEL-1"), issueDate()),
                     chainState = ChainState.FirstRecord,
                     system = SistemaInformatico("Producer", taxId(), "VeriFactu", "VF", "1.0", "install-1", true, false, false),
-                    generatedAt = timestamp("2024-01-01T10:00:01+01:00"),
+                    generatedAt = timestamp("2024-10-28T10:00:01+01:00"),
                 ),
             )
         return (result as RecordCreationResult.Created<RegistroAnulacion>).record
@@ -415,9 +415,9 @@ class RegistroXmlSerializerTest {
 
     private fun invoiceNumber(value: String = "TEST-1"): InvoiceNumber = (InvoiceNumber.parse(value) as ValueResult.Valid).value
 
-    private fun issueDate(): InvoiceIssueDate = (InvoiceIssueDate.parse("01-01-2024") as ValueResult.Valid).value
+    private fun issueDate(): InvoiceIssueDate = (InvoiceIssueDate.parse("28-10-2024") as ValueResult.Valid).value
 
-    private fun timestamp(value: String = "2024-01-01T10:00:00+01:00"): RecordGenerationTimestamp =
+    private fun timestamp(value: String = "2024-10-28T10:00:00+01:00"): RecordGenerationTimestamp =
         (RecordGenerationTimestamp.parse(value) as ValueResult.Valid).value
 
     private fun amount(value: String): FiscalAmount = (FiscalAmount.parse(value) as ValueResult.Valid).value

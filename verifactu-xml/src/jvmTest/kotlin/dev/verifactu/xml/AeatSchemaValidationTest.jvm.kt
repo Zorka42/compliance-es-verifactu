@@ -61,7 +61,7 @@ class AeatSchemaValidationTest {
 
     @Test
     fun preservesTheHashedInvoiceIdentityAfterXmlParsing() {
-        val record = registration("INV\r\n\t<&>\"'1", "2024-01-01T10:00:00+01:00", "Issuer\rName")
+        val record = registration("INV\r\n\t<&>\"'1", "2024-10-28T10:00:00+01:00", "Issuer\rName")
         val xml = RegistroXmlSerializer.serialize(record)
         schema().newValidator().validate(StreamSource(StringReader(xml)))
         val parsed = documents().newDocumentBuilder().parse(InputSource(StringReader(xml)))
@@ -117,7 +117,7 @@ class AeatSchemaValidationTest {
         val countsCodePoints = accepts(probe.newValidator(), "<value>$supplementary</value>")
         val profile = if (countsCodePoints) "CODE_POINTS" else "UTF16_UNITS"
         println("XSD provider=${factory.javaClass.name}; lengthProfile=$profile")
-        val record = registration("INV-1", "2024-01-01T10:00:00+01:00", supplementary.repeat(120))
+        val record = registration("INV-1", "2024-10-28T10:00:00+01:00", supplementary.repeat(120))
         val xml = RegistroXmlSerializer.serialize(record)
         val parsed = documents().newDocumentBuilder().parse(InputSource(StringReader(xml)))
 
@@ -131,7 +131,7 @@ class AeatSchemaValidationTest {
 
     @Test
     fun validatesConditionalInvoiceTypesInTheCanonicalSchemaSequence() {
-        val base = registration("INV-1", "2024-01-01T10:00:00+01:00", "Issuer").draft
+        val base = registration("INV-1", "2024-10-28T10:00:00+01:00", "Issuer").draft
         val amount = (FiscalAmount.parse("0.00") as ValueResult.Valid).value
         InvoiceType.entries.forEach { invoiceType ->
             val rectifying = invoiceType.name.startsWith("R")
@@ -187,14 +187,14 @@ class AeatSchemaValidationTest {
         listOf("0000-01-01T00:00:00+00:00", "1900-02-29T00:00:00+00:00", "2024-02-29T24:00:01+00:00", "2024-02-29T00:00:00+14:01")
             .forEach { timestamp ->
                 assertIs<ValueResult.Invalid>(RecordGenerationTimestamp.parse(timestamp))
-                val xml = REGISTRO_ALTA_V1_GOLDEN_XML.replace("2024-01-01T10:00:00+01:00", timestamp)
+                val xml = REGISTRO_ALTA_V1_GOLDEN_XML.replace("2024-10-28T10:00:00+01:00", timestamp)
                 assertFailsWith<SAXException> { validator.validate(StreamSource(StringReader(xml))) }
             }
     }
 
     @Test
     fun validatesThePreparedBatchAndSoapBodyAgainstTheCanonicalBatchSchema() {
-        val registration = registration("INV-1", "2024-01-01T10:00:00+01:00", "Issuer")
+        val registration = registration("INV-1", "2024-10-28T10:00:00+01:00", "Issuer")
         val cancellation =
             assertIs<RecordCreationResult.Created<RegistroAnulacion>>(
                 FiscalRecordFactory.createCancellation(
@@ -202,7 +202,7 @@ class AeatSchemaValidationTest {
                         cancelledInvoice = registration.draft.invoice,
                         chainState = ChainState.PreviousRecord(registration.draft.invoice, registration.hash),
                         system = registration.draft.system,
-                        generatedAt = (RecordGenerationTimestamp.parse("2024-01-01T10:00:01+01:00") as ValueResult.Valid).value,
+                        generatedAt = (RecordGenerationTimestamp.parse("2024-10-28T10:00:01+01:00") as ValueResult.Valid).value,
                     ),
                 ),
             ).record
@@ -238,7 +238,7 @@ class AeatSchemaValidationTest {
                     InvoiceIdentifier(
                         taxId,
                         (InvoiceNumber.parse(number) as ValueResult.Valid).value,
-                        (InvoiceIssueDate.parse("01-01-2024") as ValueResult.Valid).value,
+                        (InvoiceIssueDate.parse("28-10-2024") as ValueResult.Valid).value,
                     ),
                 issuerName = issuerName,
                 invoiceType = InvoiceType.F2,

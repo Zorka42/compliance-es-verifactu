@@ -10,6 +10,8 @@ This project follows Semantic Versioning.
 
 ### Added
 
+- Separate host CLI `cancellation-missing` negative scenario, with an explicit absent target, actual chain tail and expected 3002 response verification.
+
 - Standalone Java 11+ sandbox CLI with deterministic request bundles, XML/digest review, offline response scenarios, saved-response inspection and an explicit TEST-only delivery command; local disposable mTLS and CI launcher checks.
 - Exact fiscal arithmetic checks for charged tax, simplified-invoice limits and total-consistency warnings, with archived-source boundary fixtures.
 - Explicit receipt-date context shared by record validation, creation and batch/submission preparation; existing Java overloads remain available.
@@ -38,6 +40,8 @@ This project follows Semantic Versioning.
 - README, integration docs, and KDoc now describe implemented APIs and their current validation/parser limitations.
 
 ### Fixed
+
+- Reject new registrations issued before 28-10-2024 with structured `VF-DATE-1152` / AEAT 1152. Historical parsing, references, cancellation dates and original official hash vectors remain supported.
 
 - Replaced regex response extraction with bounded platform XML readers; reject unsafe XML and preserve every identifiable response line.
 - Validate timestamp calendar/offsets, exact Unicode field lengths, XML characters and schema regime codes; snapshot factory inputs and preserve CR in XML.

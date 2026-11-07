@@ -80,7 +80,7 @@ internal fun runOfflineExample(): OfflineExampleResult {
                         draft.invoice,
                         persistedHead,
                         draft.system,
-                        value(RecordGenerationTimestamp.parse("2024-01-01T12:01:00+01:00")),
+                        value(RecordGenerationTimestamp.parse("2024-10-28T12:01:00+01:00")),
                     ),
                     SubmissionHeader(draft.issuerName, draft.invoice.issuer),
                 )
@@ -223,7 +223,7 @@ internal fun exampleRegistrationDraft(): RegistroAltaDraft {
     val issuer = value(TaxIdentifier.parse("89890001K"))
     return RegistroAltaDraft(
         version = RecordVersion.V1_0,
-        invoice = InvoiceIdentifier(issuer, value(InvoiceNumber.parse("SAMPLE-001")), value(InvoiceIssueDate.parse("01-01-2024"))),
+        invoice = InvoiceIdentifier(issuer, value(InvoiceNumber.parse("SAMPLE-001")), value(InvoiceIssueDate.parse("28-10-2024"))),
         issuerName = "Example issuer",
         invoiceType = InvoiceType.F2,
         totalTax = value(FiscalAmount.parse("21.00")),
@@ -244,7 +244,7 @@ internal fun exampleRegistrationDraft(): RegistroAltaDraft {
             ),
         chainState = ChainState.FirstRecord,
         system = SistemaInformatico("Example producer", issuer, "VeriFactu sample", "VF", "0.1", "sample-1", true, false, false),
-        generatedAt = value(RecordGenerationTimestamp.parse("2024-01-01T12:00:00+01:00")),
+        generatedAt = value(RecordGenerationTimestamp.parse("2024-10-28T12:00:00+01:00")),
     )
 }
 

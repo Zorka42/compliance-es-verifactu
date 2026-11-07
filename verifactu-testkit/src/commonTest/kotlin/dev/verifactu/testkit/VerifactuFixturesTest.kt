@@ -34,7 +34,7 @@ class VerifactuFixturesTest {
         assertTrue(VerifactuFixtures.registrationXml().contains("<Huella>${first.record.hash}</Huella>"))
         assertTrue(VerifactuFixtures.cancellationXml().contains("<RegistroAnulacion"))
         assertEquals(
-            "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR?nif=89890001K&numserie=SAMPLE-001&fecha=01-01-2024&importe=121.00",
+            "https://prewww2.aeat.es/wlpl/TIKE-CONT/ValidarQR?nif=89890001K&numserie=SAMPLE-001&fecha=28-10-2024&importe=121.00",
             VerifactuFixtures.qrPayload().url,
         )
     }
