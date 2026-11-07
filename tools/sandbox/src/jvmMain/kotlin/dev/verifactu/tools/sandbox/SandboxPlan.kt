@@ -8,6 +8,8 @@ import dev.verifactu.aeat.FiscalSubmissionPreparation
 import dev.verifactu.aeat.RegistrationPreparationResult
 import dev.verifactu.core.ChainState
 import dev.verifactu.core.FiscalAmount
+import dev.verifactu.core.FiscalParty
+import dev.verifactu.core.FiscalPartyIdentifier
 import dev.verifactu.core.InvoiceIdentifier
 import dev.verifactu.core.InvoiceIssueDate
 import dev.verifactu.core.InvoiceNumber
@@ -15,9 +17,11 @@ import dev.verifactu.core.InvoiceType
 import dev.verifactu.core.Qualification
 import dev.verifactu.core.RecordGenerationTimestamp
 import dev.verifactu.core.RecordVersion
+import dev.verifactu.core.RegistrationConditionalData
 import dev.verifactu.core.RegistroAltaDraft
 import dev.verifactu.core.RegistroAnulacionDraft
 import dev.verifactu.core.SistemaInformatico
+import dev.verifactu.core.Subsanation
 import dev.verifactu.core.TaxBreakdown
 import dev.verifactu.core.TaxBreakdownDetail
 import dev.verifactu.core.TaxIdentifier
@@ -44,6 +48,9 @@ internal val INPUT_KEYS: Set<String> =
         "system.installation",
     )
 internal val PREVIOUS_KEYS: Set<String> = setOf("previous.issuer", "previous.number", "previous.date", "previous.hash")
+internal val OPTIONAL_INPUT_KEYS: Set<String> = setOf("recipient.nif", "recipient.name", "batch.count", "batch.start")
+internal val PREPARATION_SCENARIOS: Set<String> =
+    setOf("registration", "cancellation", "duplicate", "warning-first", "rejection-date", "subsanation", "pagination")
 internal val METADATA_KEYS: Set<String> = setOf("format", "scenario", "mode", "certificate.route", "request.sha256")
 
 internal data class SandboxPlan(
@@ -53,6 +60,7 @@ internal data class SandboxPlan(
     val soap: String,
     val report: ValidationReport,
     val qr: String? = null,
+    val records: List<SubmissionRecord> = listOf(record),
 ) {
     override fun toString(): String = "SandboxPlan(redacted)"
 }
@@ -92,14 +100,22 @@ internal fun system(values: Map<String, String>): SistemaInformatico =
     )
 
 internal fun buildPlan(values: Map<String, String>): SandboxPlan {
-    sandboxRequire(values.keys.all { it in INPUT_KEYS + PREVIOUS_KEYS + METADATA_KEYS }, "Unsupported configuration field.")
+    sandboxRequire(
+        values.keys.all {
+            it in INPUT_KEYS + OPTIONAL_INPUT_KEYS + PREVIOUS_KEYS + METADATA_KEYS
+        },
+        "Unsupported configuration field.",
+    )
     INPUT_KEYS.forEach { required(values, it) }
     sandboxRequire(values["mode"] in listOf("offline", "aeat-test"), "Mode must be offline or aeat-test.")
     endpoint(values)
     val scenario = values["scenario"]
-    sandboxRequire(scenario in listOf("registration", "cancellation", "duplicate"), "Unsupported sandbox scenario.")
+    sandboxRequire(scenario in PREPARATION_SCENARIOS, "Unsupported sandbox scenario.")
+    if (scenario == "pagination") return buildPaginationPlan(values)
+    sandboxRequire(values.keys.none { it.startsWith("batch.") }, "Batch inputs require the pagination scenario.")
+    if (scenario == "subsanation") sandboxRequire(values.keys.containsAll(PREVIOUS_KEYS), "Subsanation requires a matching prior bundle.")
     val previous =
-        if (values.keys.any { it in PREVIOUS_KEYS }) {
+        if (scenario != "warning-first" && values.keys.any { it in PREVIOUS_KEYS }) {
             ChainState.PreviousRecord(invoice(values, "previous"), required(values, "previous.hash"))
         } else {
             ChainState.FirstRecord
@@ -125,31 +141,17 @@ internal fun buildPlan(values: Map<String, String>): SandboxPlan {
             prepared.report,
         )
     }
-    val draft =
-        RegistroAltaDraft(
-            RecordVersion.V1_0,
-            identity,
-            required(values, "issuer.name"),
-            InvoiceType.F2,
-            value(FiscalAmount.parse("21.00")),
-            value(FiscalAmount.parse("121.00")),
-            "Sandbox synthetic operation",
-            TaxBreakdown(
-                listOf(
-                    TaxBreakdownDetail(
-                        TaxOperation.Qualified(Qualification.SUBJECT_NOT_EXEMPT),
-                        value(FiscalAmount.parse("100.00")),
-                        tax = TaxType.IVA,
-                        regimeCode = "01",
-                        taxRate = "21",
-                        chargedTax = value(FiscalAmount.parse("21.00")),
-                    ),
-                ),
-            ),
-            previous,
-            metadata,
-            timestamp,
-        )
+    if (scenario ==
+        "warning-first"
+    ) {
+        sandboxRequire(values.keys.containsAll(PREVIOUS_KEYS), "Warning requires a prior bundle for the same SIF.")
+    }
+    if (scenario ==
+        "rejection-date"
+    ) {
+        sandboxRequire(identity.issueDate.value == "27-10-2024", "Rejection scenario requires the explicit pre-cutoff date 27-10-2024.")
+    }
+    val draft = registrationDraft(values, identity, previous, metadata, timestamp)
     val prepared = FiscalSubmissionPreparation.prepareRegistration(draft, QrEnvironment.TEST)
     if (prepared is RegistrationPreparationResult.Invalid) invalidPlan(prepared.report)
     prepared as RegistrationPreparationResult.Prepared
@@ -164,6 +166,56 @@ internal fun buildPlan(values: Map<String, String>): SandboxPlan {
     )
 }
 
+internal fun registrationDraft(
+    values: Map<String, String>,
+    identity: InvoiceIdentifier,
+    previous: ChainState,
+    metadata: SistemaInformatico,
+    timestamp: RecordGenerationTimestamp,
+): RegistroAltaDraft {
+    val recipient = values.keys.any { it.startsWith("recipient.") }
+    val conditional =
+        RegistrationConditionalData(
+            subsanation = if (values["scenario"] == "subsanation") Subsanation.YES else null,
+            recipients =
+                if (recipient) {
+                    listOf(
+                        FiscalParty(
+                            required(values, "recipient.name"),
+                            FiscalPartyIdentifier.SpanishNif(value(TaxIdentifier.parse(required(values, "recipient.nif")))),
+                        ),
+                    )
+                } else {
+                    emptyList()
+                },
+        )
+    return RegistroAltaDraft(
+        RecordVersion.V1_0,
+        identity,
+        required(values, "issuer.name"),
+        if (recipient) InvoiceType.F1 else InvoiceType.F2,
+        value(FiscalAmount.parse("21.00")),
+        value(FiscalAmount.parse("121.00")),
+        "Sandbox synthetic operation",
+        TaxBreakdown(
+            listOf(
+                TaxBreakdownDetail(
+                    TaxOperation.Qualified(Qualification.SUBJECT_NOT_EXEMPT),
+                    value(FiscalAmount.parse("100.00")),
+                    tax = TaxType.IVA,
+                    regimeCode = "01",
+                    taxRate = "21",
+                    chargedTax = value(FiscalAmount.parse("21.00")),
+                ),
+            ),
+        ),
+        previous,
+        metadata,
+        timestamp,
+        conditional,
+    )
+}
+
 internal fun endpoint(values: Map<String, String>) =
     AeatEndpointConfiguration.defaultSubmissionEndpoint(
         AeatEnvironment.TEST,
@@ -174,7 +226,7 @@ internal fun endpoint(values: Map<String, String>) =
         },
     )
 
-private fun invalidPlan(report: ValidationReport): Nothing =
+internal fun invalidPlan(report: ValidationReport): Nothing =
     throw SandboxInputException(
         "Local fiscal validation failed: " + report.issues.joinToString(", ") { "${it.code} (${it.fieldPath})" },
     )

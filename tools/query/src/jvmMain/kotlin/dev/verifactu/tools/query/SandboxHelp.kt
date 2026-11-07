@@ -6,12 +6,15 @@ internal fun sandboxActionHelp(command: List<String>): String {
         when (command.last()) {
             "scenarios" -> "scenarios"
             "prepare" ->
-                "prepare --scenario registration|cancellation --config FILE --out NEW_DIRECTORY\n" +
+                "prepare --scenario NAME --config FILE --out NEW_DIRECTORY\n" +
                     "    [--previous BUNDLE] [--mode offline|aeat-test] [--certificate-route standard|seal]\n" +
-                    "  verifactu sandbox prepare --scenario duplicate --previous BUNDLE --out NEW_DIRECTORY"
+                    "  verifactu sandbox prepare --scenario duplicate --previous BUNDLE --out NEW_DIRECTORY\n" +
+                    "  NAME: registration, cancellation, warning-first, rejection-date, subsanation, pagination"
             "show" -> "show --bundle DIRECTORY"
             "inspect" -> "inspect --bundle DIRECTORY --input RESPONSE_XML [--details]"
-            "send" -> "send --bundle DIRECTORY --out NEW_ATTEMPT --confirm-sha256 REVIEWED_SHA256 [--issuer NAME]"
+            "send" ->
+                "send --bundle DIRECTORY --out NEW_ATTEMPT --confirm-sha256 REVIEWED_SHA256\n" +
+                    "    [--confirm-records COUNT] [--issuer NAME]"
             else -> throw QueryInputException("Unknown command. Run 'verifactu --help'.")
         }
     val behavior =

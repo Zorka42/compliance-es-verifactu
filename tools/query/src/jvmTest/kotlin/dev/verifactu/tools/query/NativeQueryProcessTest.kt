@@ -17,12 +17,13 @@ class NativeQueryProcessTest {
             val receipt =
                 executeNativeQuery(
                     helper(root, "kind=XML_RESPONSE\ndelivery=RESPONSE_RECEIVED\nhttp.status=200\nidentity.sha256=$IDENTITY"),
-                    call.copy(issuer = "AC FNMT Usuarios", submissionSha256 = call.sha256),
+                    call.copy(issuer = "AC FNMT Usuarios", submissionSha256 = call.sha256, submissionRecordCount = 1000),
                 )
             assertEquals("XML_RESPONSE", receipt.kind)
             assertEquals("AC FNMT Usuarios", queryProperties(root.resolve("native.properties"))["selected.issuer"])
             assertEquals(TEST_QUERY_ENDPOINT, receipt.responseUrl)
             assertEquals(call.sha256, queryProperties(root.resolve("native.properties"))["selected.confirmation"])
+            assertEquals("1000", queryProperties(root.resolve("native.properties"))["selected.records"])
             assertEquals(200, receipt.httpStatus)
             assertEquals(IDENTITY, receipt.identity)
             assertFalse(receipt.toString().contains(IDENTITY))
@@ -174,12 +175,13 @@ class NativeQueryProcessTest {
                 --result) result="${'$'}value" ;;
                 --sha256) digest="${'$'}value" ;;
                 --issuer) issuer="${'$'}value" ;;
+                --confirm-record-count) records="${'$'}value" ;;
                 --confirm-submission-sha256) confirmation="${'$'}value" ;;
               esac
             done
             cat > "${'$'}result" <<EOF
             """.trimIndent() +
-                "\n$properties\nrequest.sha256=$selectedDigest\n$routes\nselected.issuer=${'$'}issuer\nselected.confirmation=${'$'}confirmation\nEOF\n",
+                "\n$properties\nrequest.sha256=$selectedDigest\n$routes\nselected.issuer=${'$'}issuer\nselected.confirmation=${'$'}confirmation\nselected.records=${'$'}records\nEOF\n",
         )
         return path
     }

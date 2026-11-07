@@ -10,7 +10,9 @@ internal val LEAF_COMMANDS: Set<List<String>> =
         listOf("sandbox", "show"),
         listOf("sandbox", "inspect"),
         listOf("sandbox", "send"),
-    )
+    ) + listOf("init", "prepare", "show", "send", "query", "report", "rehearse").map { listOf("sandbox", "matrix", it) }
+
+internal val MATRIX_ACTIONS: List<String> = listOf("init", "prepare", "show", "send", "query", "report", "rehearse")
 
 internal val DEMO_RESPONSES: List<String> =
     listOf(
@@ -25,6 +27,9 @@ internal val DEMO_RESPONSES: List<String> =
     )
 
 internal fun commandHelp(command: List<String>): String =
+    if (command.take(2) == listOf("sandbox", "matrix")) matrixHelp(command.drop(2)) else baseCommandHelp(command)
+
+private fun baseCommandHelp(command: List<String>): String =
     when (command) {
         emptyList<String>() ->
             """
@@ -35,6 +40,7 @@ internal fun commandHelp(command: List<String>): String =
 
             COMMANDS
               config init             Configure the taxpayer locally
+              sandbox matrix          Prepare and verify the ZA-111 TEST matrix
               sandbox scenarios       List available preparation/response scenarios
               sandbox prepare         Prepare a local request bundle
               sandbox show            Review XML, TEST endpoint and request digest
@@ -53,7 +59,7 @@ internal fun commandHelp(command: List<String>): String =
               verifactu <command> --help
               verifactu help sandbox invoices list
 
-            No command runs implicitly. Only explicit sandbox invoices list/send commands access Keychain and AEAT TEST.
+            No command runs implicitly. Only explicit TEST consultation or send commands access Keychain and AEAT.
             """.trimIndent()
         listOf("config") -> "USAGE\n  verifactu config <command>\n\nCOMMANDS\n  init   Configure the taxpayer locally"
         listOf("config", "init") ->
@@ -77,6 +83,7 @@ internal fun commandHelp(command: List<String>): String =
         ),
         ->
             "USAGE\n  verifactu sandbox <command>\n\nCOMMANDS\n" +
+                "  matrix     Prepare and verify the ZA-111 TEST matrix\n" +
                 "  scenarios  List scenarios\n  prepare    Prepare a local bundle\n  show       Review XML and digest\n" +
                 "  demo       Run offline scenarios\n  inspect    Inspect saved response XML\n" +
                 "  send       Send a reviewed TEST bundle (macOS Keychain)\n  invoices   Consult TEST records"

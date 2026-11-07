@@ -19,6 +19,15 @@ func submissionFixture(cancellation: Bool = false) -> String {
     """
 }
 
+func submissionBatchFixture(_ count: Int) -> Data {
+    let xml = submissionFixture()
+    let start = xml.range(of: "<lr:RegistroFactura>")!.lowerBound
+    let end = xml.range(of: "</lr:RegistroFactura>")!.upperBound
+    let entry = String(xml[start..<end])
+    let entries = (1...count).map { entry.replacingOccurrences(of: "TEST-ONLY-1", with: "TEST-ONLY-\($0)") }.joined()
+    return Data((String(xml[..<start]) + entries + String(xml[end...])).utf8)
+}
+
 final class SubmissionGuardTests: XCTestCase {
     func testAllowsOneMatchingRegistrationOrCancellationWithExplicitWriteIntent() throws {
         for cancellation in [false, true] {
@@ -50,6 +59,33 @@ final class SubmissionGuardTests: XCTestCase {
         }
     }
 
+    func testBatchesRequireExactCountUniqueIdentifiersAndRegistrationOnly() throws {
+        let xml = submissionFixture()
+        let start = xml.range(of: "<lr:RegistroFactura>")!.lowerBound
+        let end = xml.range(of: "</lr:RegistroFactura>")!.upperBound
+        let entry = String(xml[start..<end])
+        func batch(_ count: Int) -> Data {
+            let entries = (1...count).map { entry.replacingOccurrences(of: "TEST-ONLY-1", with: "TEST-ONLY-\($0)") }.joined()
+            return Data((String(xml[..<start]) + entries + String(xml[end...])).utf8)
+        }
+        for count in [2, 1000] {
+            let data = batch(count)
+            let reviewed = try ReviewedSubmission(data: data, expectedDigest: sha256Hex(data), expectedCount: count)
+            XCTAssertEqual(reviewed.data, data)
+            XCTAssertTrue(reviewed.description.contains("Records: \(count)"))
+            XCTAssertThrowsError(try ReviewedSubmission(data: data, expectedDigest: sha256Hex(data)))
+            XCTAssertThrowsError(try ReviewedQuery(data: data, expectedDigest: sha256Hex(data)))
+        }
+        let excessive = batch(1001)
+        XCTAssertThrowsError(try ReviewedSubmission(data: excessive, expectedDigest: sha256Hex(excessive), expectedCount: 1001))
+        let duplicate = Data((String(xml[..<start]) + entry + entry + String(xml[end...])).utf8)
+        XCTAssertThrowsError(try ReviewedSubmission(data: duplicate, expectedDigest: sha256Hex(duplicate), expectedCount: 2))
+        let mixed = Data(String(data: batch(2), encoding: .utf8)!.replacingOccurrences(of: "RegistroAlta", with: "RegistroAnulacion").utf8)
+        XCTAssertThrowsError(try ReviewedSubmission(data: mixed, expectedDigest: sha256Hex(mixed), expectedCount: 2))
+        let first = Data(xml.utf8)
+        XCTAssertThrowsError(try ReviewedSubmission(data: first, expectedDigest: sha256Hex(first), expectedCount: 0))
+    }
+
     func testMainRequiresSeparateDigestAndTestRouteBeforeSelectionAndCancellationSendsNothing() throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
@@ -63,7 +99,11 @@ final class SubmissionGuardTests: XCTestCase {
                          "--response", root.appendingPathComponent("response.xml").path,
                          "--result", root.appendingPathComponent("result.properties").path]
         XCTAssertThrowsError(try KeychainMain.run(arguments) { _, _, _ in XCTFail("Read path must reject writes"); throw QueryFailure.invalidInput })
+        XCTAssertThrowsError(try KeychainMain.run(arguments + ["--confirm-record-count", "1"]) { _, _, _ in XCTFail("Read mode cannot accept a batch confirmation"); throw QueryFailure.invalidInput })
         let confirmed = arguments + ["--confirm-submission-sha256", digest]
+        for count in ["0", "wrong", "2", "1001"] {
+            XCTAssertThrowsError(try KeychainMain.run(confirmed + ["--confirm-record-count", count]) { _, _, _ in XCTFail("Count must match before selection"); throw QueryFailure.invalidInput })
+        }
         XCTAssertThrowsError(try KeychainMain.run(confirmed + ["--identity-sha256", String(repeating: "a", count: 64)]) { _, _, _ in XCTFail("A write cannot bypass explicit selection"); throw QueryFailure.invalidInput })
         let production = confirmed.map { $0.replacingOccurrences(of: "prewww1.aeat.es", with: "www1.agenciatributaria.gob.es") }
         XCTAssertThrowsError(try KeychainMain.run(production) { _, _, _ in XCTFail("No production identity access"); throw QueryFailure.invalidInput })

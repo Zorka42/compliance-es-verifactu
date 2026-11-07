@@ -67,6 +67,7 @@ private fun runCli(
         if (command !in LEAF_COMMANDS || words.size > command.size) return CliResult(help)
     }
     val options = cliOptions(words.drop(command.size))
+    matrixAction(command)?.let { return matrixCli(it, options, settings, fetch) }
     return when (command) {
         listOf("config", "init") -> initializeTaxpayer(options, settings)
         listOf("sandbox", "invoices", "list") -> listInvoices(options, settings, fetch)
@@ -103,3 +104,6 @@ internal fun cliOptions(args: List<String>): Map<String, String> {
     }
     return result
 }
+
+private fun matrixAction(command: List<String>): String? =
+    if (command.size == 3 && command.take(2) == listOf("sandbox", "matrix")) command.last() else null

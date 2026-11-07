@@ -15,9 +15,11 @@ public fun main(args: Array<String>) {
     if (result.exitCode != 0) exitProcess(result.exitCode)
 }
 
-internal fun commandLineResult(args: List<String>): CommandResult =
+internal fun commandLineResult(args: List<String>): CommandResult = sandboxResult { runCommand(args) }
+
+internal fun sandboxResult(action: () -> CommandResult): CommandResult =
     try {
-        runCommand(args)
+        action()
     } catch (error: SandboxInputException) {
         CommandResult(error.message.orEmpty(), 2)
     } catch (_: java.nio.file.InvalidPathException) {
@@ -33,13 +35,14 @@ internal fun runCommand(
     environment: (String) -> String? = System::getenv,
     transportFactory: (Path, String, CharArray) -> AeatTransportAdapter = ::loadSandboxTransport,
 ): CommandResult {
+    if (args.firstOrNull() == "matrix") return runMatrixCommand(args.drop(1))
     if (args.isEmpty() || args == listOf("--help")) return CommandResult(USAGE)
     val options = parseOptions(args.drop(1))
     return when (args.first()) {
         "scenarios" -> {
             options.allow()
             CommandResult(
-                "Preparation: registration, cancellation, duplicate\nOffline responses: ${OFFLINE_SCENARIOS.joinToString(
+                "Preparation: ${PREPARATION_SCENARIOS.joinToString(", ")}\nOffline responses: ${OFFLINE_SCENARIOS.joinToString(
                     ", ",
                 )}\nTEST only; no request sent.",
             )
@@ -113,10 +116,12 @@ private fun sendCommand(
     environment: (String) -> String?,
     transportFactory: (Path, String, CharArray) -> AeatTransportAdapter,
 ): CommandResult {
-    options.allow("bundle", "out", "pkcs12", "alias", "password-env", "confirm-sha256")
+    options.allow("bundle", "out", "pkcs12", "alias", "password-env", "confirm-sha256", "confirm-records")
     val bundle = loadBundle(options.path("bundle"))
     sandboxRequire(bundle.values["mode"] == "aeat-test", "Offline bundles cannot be sent. Prepare explicit aeat-test inputs separately.")
     sandboxRequire(required(options, "confirm-sha256") == bundle.sha256, "Confirm the SHA-256 printed by show for this exact request.")
+    val records = options["confirm-records"]?.toIntOrNull() ?: if ("confirm-records" !in options) 1 else 0
+    sandboxRequire(records == bundle.plan.records.size, "Explicitly confirm the exact record count before a batch send.")
     val certificate = options.path("pkcs12")
     val alias = required(options, "alias")
     val passwordVariable = required(options, "password-env")
@@ -189,41 +194,14 @@ internal fun deliverSandboxBundle(
     }
 }
 
-private fun parseOptions(args: List<String>): Map<String, String> {
-    val options = linkedMapOf<String, String>()
-    var index = 0
-    while (index < args.size) {
-        val token = args[index++]
-        sandboxRequire(token.startsWith("--") && token.length > 2, "Expected a named command option.")
-        val key = token.removePrefix("--")
-        sandboxRequire(key !in options, "Repeated command option.")
-        val value =
-            if (key == "details") {
-                "true"
-            } else {
-                val next = args.getOrNull(index++) ?: throw SandboxInputException("A command option needs a value.")
-                sandboxRequire(!next.startsWith("--"), "A command option needs a value.")
-                next
-            }
-        options[key] = value
-    }
-    return options
-}
-
-private fun Map<String, String>.allow(vararg names: String) {
-    sandboxRequire(keys.all { it in names }, "Unsupported command option.")
-}
-
-private fun Map<String, String>.path(name: String): Path = Path.of(required(this, name))
-
 private const val USAGE =
     "VeriFactu sandbox CLI (TEST only).\n" +
-        "scenarios\n" +
-        "prepare --scenario registration|cancellation --config inputs.properties --out new-directory " +
+        "scenarios; matrix --help\n" +
+        "prepare --scenario NAME --config inputs.properties --out new-directory " +
         "[--previous bundle] [--mode offline|aeat-test] [--certificate-route standard|seal]\n" +
         "prepare --scenario duplicate --previous registration-bundle --out new-directory\n" +
         "show --bundle directory\ninspect --bundle directory --input response.xml [--details]\n" +
         "demo --bundle directory [--response accepted|warning|rejected|duplicate|flow-control|soap-fault|timeout|not-sent]\n" +
         "send --bundle directory --out new-attempt-directory --pkcs12 selected.p12 --alias selected-alias " +
-        "--password-env VARIABLE_NAME --confirm-sha256 REVIEWED_SHA256\n" +
+        "--password-env VARIABLE_NAME --confirm-sha256 REVIEWED_SHA256 [--confirm-records COUNT]\n" +
         "Exit: 0 local command/clean matched response; 2 local input error; 3 response needs review; 4 delivery failure/uncertainty."

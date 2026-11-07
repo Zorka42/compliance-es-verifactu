@@ -41,7 +41,7 @@ class SandboxWorkflowTest {
     fun keychainSendPersistsOneReviewedAttemptAndSafeNetworkEvidence() =
         workspace { root ->
             prepare(root, "aeat-test")
-            val options = sendOptions(root)
+            val options = sendOptions(root) + ("confirm-records" to "1")
             var calls = 0
             val result =
                 sendSandbox(options, { root.resolve("helper") }) { _, call ->
@@ -73,6 +73,11 @@ class SandboxWorkflowTest {
             root.resolve("bundle").toFile().deleteRecursively()
             prepare(root, "aeat-test")
             val options = sendOptions(root)
+            for (count in listOf("bad", "0", "1001")) {
+                val args =
+                    listOf("sandbox", "send") + (options + ("confirm-records" to count)).flatMap { (key, value) -> listOf("--$key", value) }
+                assertEquals(2, cliResult(args).exitCode)
+            }
             assertEquals(2, sendSandbox(options + ("confirm-sha256" to "0".repeat(64)), { error("No helper") }).exitCode)
             Files.writeString(root.resolve("bundle/request.xml"), "modified")
             assertEquals(2, sendSandbox(options, { error("No helper") }).exitCode)
