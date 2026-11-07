@@ -155,5 +155,6 @@ private const val USAGE =
         "prepare --direction issued|received --party-file party.properties --year YYYY --month MM " +
         "--out request.xml [--page-from response.xml]\n" +
         "inspect --input response.xml [--details]\n" +
-        "fetch --keychain --direction issued|received|both --party-file party.properties --year YYYY --month MM --out new-directory\n" +
+        "fetch --keychain --direction issued|received|both --party-file party.properties " +
+        "--year YYYY --month MM --out new-directory [--issuer NAME]\n" +
         "party.properties is UTF-8 with nif and name keys. Default inspection omits personal invoice details."

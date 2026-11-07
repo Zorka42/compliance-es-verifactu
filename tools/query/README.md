@@ -46,9 +46,14 @@ Defaults: both issued and received directions, current month in `Europe/Madrid`,
 ```sh
 ./verifactu sandbox invoices list
 ./verifactu sandbox invoices list --direction received --month 2026-11
+./verifactu sandbox invoices list --month 2026-11 --issuer "AC FNMT Usuarios"
 ./verifactu sandbox invoices list --month=2026-11 --format=tsv
 ./verifactu sandbox invoices list --help
 ```
+
+`--issuer NAME` narrows the native chooser to identities whose certificate issuer common name exactly matches `NAME` (case-sensitive). It reads the public certificate's issuer field, not its subject/owner name or a substring. The filter applies to both directions and every page in that run; there is no fallback to another issuer when none matches. It is a selection convenience, not an additional trust anchor or proof of taxpayer authorization. Other certificate providers remain available when the option is omitted. Renewed/expired copies with the same issuer may still appear; TLS trust and key authorization remain unchanged. Help/config/demo still access neither Keychain nor network.
+
+The current chooser is opened before the TLS exchange and initially enumerates all accessible identities. Browsers can also narrow candidates using the server's client-certificate request; Foundation exposes its accepted issuer names through [URLProtectionSpace.distinguishedNames](https://developer.apple.com/documentation/foundation/urlprotectionspace/distinguishednames). The explicit issuer option does not implement automatic server-driven filtering.
 
 Rows go to stdout; status, incompleteness and the evidence directory go to stderr. `--format tsv` provides a stable six-column header: `direction`, `issuer`, `invoice`, `issue_date`, `state`, `total`. Fiscal text is preserved with backslash/control-character escaping; totals remain exact strings, and absent amounts remain empty. Partial rows can be printed after failure, but the command returns a nonzero exit status.
 
@@ -85,4 +90,4 @@ Default inspection omits invoice identifiers; `--details` prints them explicitly
 
 JVM tests cover command discovery, flags/defaults, private taxpayer configuration, output streams, schema-backed query/response fixtures, correlation, pagination, safe XML, cancellation/failure evidence and the native-process receipt contract. Native Swift tests use real loopback mTLS with newly generated identities imported **to memory only** on macOS 15+, exact SOAP bytes, default trust rejection and bounded responses. They never enumerate real Keychain identities, open the actual identity picker or contact AEAT. The installed offline demo is also checked on Java 11.
 
-Actual system dialogs, taxpayer authorization, TEST interoperability and real issued/received history remain manual verification. No claim of a successful live AEAT read is made. See [query access and sources](../../docs/compliance/query-access.md) and [release stages](../../docs/release-plan.md).
+The owner reported a successful native selection and complete issued/received TEST consultation for 2026-11, returning zero records for each direction. This is external smoke-test evidence, not a verified nonempty/paginated result or production-history evidence. The new issuer filter still needs the owner's native UI verification. See [query access and sources](../../docs/compliance/query-access.md) and [release stages](../../docs/release-plan.md).

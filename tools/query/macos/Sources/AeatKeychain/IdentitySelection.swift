@@ -10,7 +10,7 @@ func identityDigest(_ identity: SecIdentity) throws -> String {
     return sha256Hex(SecCertificateCopyData(certificate) as Data)
 }
 
-func chooseIdentity(for query: ReviewedQuery, previousDigest: String?) throws -> SecIdentity {
+func chooseIdentity(for query: ReviewedQuery, previousDigest: String?, issuer: String?) throws -> SecIdentity {
     var found: CFTypeRef?
     let search: [String: Any] = [
         kSecClass as String: kSecClassIdentity,
@@ -18,9 +18,11 @@ func chooseIdentity(for query: ReviewedQuery, previousDigest: String?) throws ->
         kSecMatchLimit as String: kSecMatchLimitAll,
     ]
     let status = SecItemCopyMatching(search as CFDictionary, &found)
-    guard status == errSecSuccess, let identities = found as? [SecIdentity], !identities.isEmpty else {
+    guard status == errSecSuccess, let available = found as? [SecIdentity] else {
         throw QueryFailure.identityUnavailable
     }
+    let identities = filterIdentities(available, issuer: issuer)
+    guard !identities.isEmpty else { throw QueryFailure.identityUnavailable }
     if let previousDigest {
         let matches = identities.filter { (try? identityDigest($0)) == previousDigest }
         guard matches.count == 1, let identity = matches.first else { throw QueryFailure.identityUnavailable }

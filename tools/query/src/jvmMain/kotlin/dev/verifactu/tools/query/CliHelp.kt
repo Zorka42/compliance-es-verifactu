@@ -107,6 +107,7 @@ internal fun commandHelp(command: List<String>): String =
               --month YYYY-MM      Month to consult (default: current Madrid month)
               --direction VALUE    issued, received, or both (default: both)
               --format VALUE       table or tsv (default: table)
+              --issuer NAME        Show identities with this exact issuer common name
               --party-file FILE    Override the locally configured taxpayer
               --out NEW_DIRECTORY  Keep XML/list evidence here (default: private temporary directory)
               -h, --help           Show this help without certificate or network access
