@@ -10,7 +10,15 @@ let contractNamespace = "https://www2.agenciatributaria.gob.es/static_files/comm
 let queryNamespace = contractNamespace + "ConsultaLR.xsd"
 let commonNamespace = contractNamespace + "SuministroInformacion.xsd"
 
-struct ReviewedQuery {
+protocol ReviewedRequest {
+    var data: Data { get }
+    var sha256: String { get }
+    var description: String { get }
+    var buttonTitle: String { get }
+}
+
+struct ReviewedQuery: ReviewedRequest {
+    let buttonTitle = "Use for TEST consultation"
     let data: Data
     let sha256: String
     let description: String
@@ -59,17 +67,17 @@ func sha256Hex(_ data: Data) -> String {
     SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
 }
 
-private func elements(_ node: XMLElement) -> [XMLElement] {
+func elements(_ node: XMLElement) -> [XMLElement] {
     (node.children ?? []).compactMap { $0 as? XMLElement }
 }
 
-private func only(_ node: XMLElement, _ name: String, _ namespace: String) throws -> XMLElement {
+func only(_ node: XMLElement, _ name: String, _ namespace: String) throws -> XMLElement {
     let matches = node.elements(forLocalName: name, uri: namespace)
     guard matches.count == 1, let match = matches.first else { throw QueryFailure.invalidInput }
     return match
 }
 
-private func safeLabel(_ text: String) -> String {
+func safeLabel(_ text: String) -> String {
     String(text.unicodeScalars.filter {
         !CharacterSet.controlCharacters.contains($0) && !(0x202A...0x202E).contains($0.value) && !(0x2066...0x2069).contains($0.value)
     }.prefix(160))

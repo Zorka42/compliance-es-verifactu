@@ -31,6 +31,7 @@ class CliTest {
             val commands =
                 listOf(
                     listOf("sandbxo"),
+                    listOf("sandbox", "unknown"),
                     listOf("sandbox", "send"),
                     listOf("sandbox", "--other", "x"),
                     listOf("sandbox", "demo", "--response", "unknown"),

@@ -28,7 +28,7 @@ final class QueryTransport: NSObject, URLSessionDataDelegate {
         self.anchor = anchor
     }
 
-    func execute(_ query: ReviewedQuery) -> QueryReply {
+    func execute(_ query: any ReviewedRequest) -> QueryReply {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.urlCredentialStorage = nil
         configuration.httpCookieStorage = nil

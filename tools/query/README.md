@@ -1,6 +1,8 @@
 # VeriFactu CLI
 
-One entry point for offline sandbox scenarios and read-only AEAT TEST consultations. The CLI is a host tool, separate from the published library. Commands follow resource/action groups with contextual help, as in [gh](https://cli.github.com/manual/gh) and [gcloud](https://docs.cloud.google.com/sdk/gcloud/reference/topic/command-conventions).
+One entry point for offline sandbox scenarios, reviewed TEST submissions and read-only AEAT TEST consultations. The CLI is a host tool, separate from the published library. Commands follow resource/action groups with contextual help, as in [gh](https://cli.github.com/manual/gh) and [gcloud](https://docs.cloud.google.com/sdk/gcloud/reference/topic/command-conventions).
+
+Explicit, separately authorized TEST submissions are also available through the same launcher with native macOS certificate selection. Preparing, showing, simulating and inspecting a bundle remain local operations.
 
 ## Install locally
 
@@ -22,6 +24,38 @@ The repository launcher never builds or downloads anything implicitly. For use o
 ```
 
 No configuration, certificate, network or manual temporary directory is needed. The command prepares synthetic registration inputs automatically, runs all eight response scenarios (or one selected response), and removes the temporary synthetic bundle. These scenarios demonstrate parser behavior, not fiscal acceptance. For direct XML inspection and explicit submission harness commands, see the [advanced sandbox tool](../sandbox/README.md).
+
+## Review and execute a TEST scenario
+
+All steps have contextual `--help`. Configure the explicit fiscal inputs in a private file using the [documented input keys and scenario limits](../sandbox/README.md#explicit-inputs-and-scenario-limits). Taxpayer configuration for `invoices list` does not silently fill producer identity, invoice identity, chain or generation time. Agree on those values before preparing a sendable bundle. Checked-in synthetic inputs are for local tests only.
+
+With `vf_inputs` pointing to the agreed private config and `vf_run` to a private existing parent directory:
+
+```sh
+./verifactu sandbox scenarios
+./verifactu sandbox prepare --scenario registration --config "$vf_inputs" \
+  --mode aeat-test --out "$vf_run/registration"
+./verifactu sandbox show --bundle "$vf_run/registration"
+./verifactu sandbox demo --bundle "$vf_run/registration" --response accepted
+```
+
+Preparation defaults to `offline` when `--mode` is omitted; offline bundles cannot be sent. The demo is always local, even with an `aeat-test` bundle. Review the actual XML, endpoint and digest displayed by `show`. After separately authorizing this TEST write, set `reviewed_sha256` to the digest you reviewed, then execute:
+
+```sh
+./verifactu sandbox send --bundle "$vf_run/registration" \
+  --confirm-sha256 "$reviewed_sha256" --issuer "AC FNMT Usuarios" \
+  --out "$vf_run/registration-attempt"
+./verifactu sandbox inspect --bundle "$vf_run/registration" \
+  --input "$vf_run/registration-attempt/response.xml"
+./verifactu sandbox invoices list --month 2026-11 --direction issued \
+  --issuer "AC FNMT Usuarios" --out "$vf_run/consultation"
+```
+
+Only `send` in this sequence writes a record. It rebuilds/XSD-validates the bundle and checks the exact confirmed SHA-256 before the native helper can select an identity. The helper has a separate submission confirmation gate, accepts one `RegFactuSistemaFacturacion` registration/cancellation record, and refuses production/other URLs before Keychain access. The certificate chooser explicitly says `AEAT TEST WRITE`, registration/cancellation, invoice identity and digest. Normal system HTTPS trust and redirect refusal remain enabled. No private key is exported; no CLI password, PKCS#12 file or saved identity preference is required. The existing query path continues to reject registration XML.
+
+Each send uses a new `0700` attempt directory, exact request/start evidence before transport, native receipt/body under `native/`, a shareable `network.log`, interpreted `summary.txt`, `outcome.properties` and returned `response.xml` when XML was received. Files are `0600`. A single attempt performs no retries. Cancellation is NOT_SENT; uncertainty, malformed responses or inability to persist results cannot establish acceptance. Preserve evidence and reconcile before any repeat. Inspection is local and cannot prove delivery. Flow-control advice is displayed without sleeping or automatically continuing.
+
+The same `prepare` command supports `--scenario duplicate --previous REGISTRATION_BUNDLE` for exact bytes, and `--scenario cancellation --config CANCELLATION_CONFIG --previous REGISTRATION_BUNDLE` for the matching invoice with explicitly updated generation time. Review each new bundle/digest and use a new attempt directory for every authorized send. The narrow F2 scenario has no recipient; nonempty received queries, correction/subsanation and live pagination need separate data/scenarios. Warning/rejection/flow-control demo responses do not guarantee those outcomes from AEAT.
 
 ## List TEST invoices
 
@@ -59,7 +93,7 @@ Rows go to stdout; status, incompleteness and the evidence directory go to stder
 
 Evidence is retained in an automatically created private temporary directory. Use `--out NEW_DIRECTORY` to choose a location, or `--party-file FILE` to override the configured taxpayer for one command. New directories are `0700`, files `0600`; no existing file is overwritten. XML and invoice rows contain personal/fiscal data: keep them outside Git and shared terminal capture. Temporary evidence is not durable application storage; preserve it elsewhere if needed.
 
-Only this explicit listing command uses Keychain and network. It sends SOAP `ConsultaFactuSistemaFacturacion` over HTTPS POST to the fixed standard TEST endpoint `prewww1.aeat.es`. The operation is read-only; it is not HTTP GET. There is no production, endpoint override, registration, correction or cancellation option in this command. The native guard rejects other SOAP operations and non-TEST routes before identity access. Normal server trust remains enabled; redirects are refused. The same explicitly selected public-certificate fingerprint is required across pages and directions within a run; no selection persists between runs.
+The explicit listing command uses Keychain and network. It sends SOAP `ConsultaFactuSistemaFacturacion` over HTTPS POST to the fixed standard TEST endpoint `prewww1.aeat.es`. The operation is read-only; it is not HTTP GET. There is no production, endpoint override, registration, correction or cancellation option in this command. The native guard rejects other SOAP operations and non-TEST routes before identity access. Normal server trust remains enabled; redirects are refused. The same explicitly selected public-certificate fingerprint is required across pages and directions within a run; no selection persists between runs.
 
 Each page records exact `request.xml` and `started.properties` before transport; returned XML, native receipt and delivery metadata are retained. The tool validates responses against archived AEAT XSDs, correlates NIF/role/period, follows `ClavePaginacion`, and rejects repeated cursors. Limits are 100 pages total, 100,000 rows total, 64 MiB per response and a native 30-second resource timeout. Limits or a failed second direction produce `INCOMPLETE`, not a successful truncated list. No application retry occurs. Root `invoices.tsv`, `summary.txt` and `outcome.properties` distinguish complete from partial consultations. A started page without complete evidence must be investigated; do not infer that the request was never sent.
 

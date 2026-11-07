@@ -20,6 +20,7 @@ kotlin {
             resources.srcDir(rootProject.file("schemas-aeat"))
         }
         jvmTest.dependencies {
+            implementation(project(":verifactu-testkit"))
             implementation(kotlin("test"))
         }
     }
