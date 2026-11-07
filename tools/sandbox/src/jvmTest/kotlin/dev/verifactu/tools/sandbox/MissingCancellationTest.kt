@@ -43,6 +43,44 @@ class MissingCancellationTest {
             assertEquals(3, summarizeTransport(bundle, rejected.copy(statusCode = 500)).exitCode)
         }
 
+    @Test fun commandPrintsAReviewableConfirmationWithoutCreatingAnAttempt() =
+        withWorkspace { root ->
+            fixtureBundle(root, "aeat-test")
+            val config = configFile(root, TEST_INPUTS + ("invoice.number" to "ABSENT-001"), "absent.properties")
+            val output = root.resolve("missing 'quoted'")
+            val prepared =
+                SandboxWorkflow.execute(
+                    listOf(
+                        "prepare",
+                        "--scenario",
+                        "cancellation-missing",
+                        "--config",
+                        config.toString(),
+                        "--previous",
+                        root.resolve("bundle").toString(),
+                        "--mode",
+                        "aeat-test",
+                        "--out",
+                        output.toString(),
+                    ),
+                )
+            assertEquals(0, prepared.exitCode)
+            val bundle = loadBundle(output)
+            assertTrue("code 3002" in prepared.output)
+            assertTrue("'--confirm-sha256' '${bundle.sha256}'" in prepared.output)
+            assertTrue("'--confirm-records' '1'" in prepared.output)
+            assertTrue("'\"'\"'" in prepared.output)
+            assertTrue("No request was sent" in prepared.output)
+            assertTrue(
+                !java.nio.file.Files
+                    .exists(root.resolve("missing 'quoted'-attempt-001")),
+            )
+            val shown = SandboxWorkflow.execute(listOf("show", "--bundle", output.toString()))
+            assertEquals(0, shown.exitCode)
+            assertTrue(bundle.sha256 in shown.output)
+            assertTrue(bundle.plan.soap in shown.output)
+        }
+
     @Test fun requiresADistinctTargetAndMatchingPreviousMetadata() =
         withWorkspace { root ->
             fixtureBundle(root)
