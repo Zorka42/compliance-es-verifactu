@@ -63,6 +63,26 @@ Only this explicit listing command uses Keychain and network. It sends SOAP `Con
 
 Each page records exact `request.xml` and `started.properties` before transport; returned XML, native receipt and delivery metadata are retained. The tool validates responses against archived AEAT XSDs, correlates NIF/role/period, follows `ClavePaginacion`, and rejects repeated cursors. Limits are 100 pages total, 100,000 rows total, 64 MiB per response and a native 30-second resource timeout. Limits or a failed second direction produce `INCOMPLETE`, not a successful truncated list. No application retry occurs. Root `invoices.tsv`, `summary.txt` and `outcome.properties` distinguish complete from partial consultations. A started page without complete evidence must be investigated; do not infer that the request was never sent.
 
+### Share network evidence
+
+`network.log` contains the intended URL/domain, read-only SOAP operation, HTTP method, redirect/trust policies and each page's response URL, HTTP status and delivery classification. The response URL comes from the native `HTTPURLResponse.url`, independently of the intended URL; the parent rejects a missing response URL for an HTTP response or any different URL. An unavailable response URL does not prove that no request was sent. Each page also retains its own report if later persistence fails. Reports omit XML, invoice rows, taxpayer identity and certificate fingerprints.
+
+```sh
+umask 077
+vf_run="$(mktemp -d "${TMPDIR:-/tmp}/verifactu-network.XXXXXX")"
+if ./verifactu sandbox invoices list --month 2026-11 --issuer "AC FNMT Usuarios" \
+  --out "$vf_run/consultation" >"$vf_run/invoices.txt" 2>"$vf_run/cli.log"; then
+  vf_status=0
+else
+  vf_status=$?
+fi
+printf 'CLI exit code: %s\n' "$vf_status"
+cat "$vf_run/consultation/network.log" "$vf_run/consultation/outcome.properties"
+printf 'Private evidence: %s\n' "$vf_run"
+```
+
+Share only the printed network report and outcome for routing review. Other evidence files can contain personal/fiscal data. `tls.server.trust.policy=SYSTEM_DEFAULT` describes the configured policy, not a separate certificate audit. The report supports verification of the public TEST endpoint under normal HTTPS trust; it cannot independently establish AEAT's internal database isolation. The official [WSDL TEST ports](../../schemas-aeat/SistemaFacturacion.wsdl) provide the endpoint classification.
+
 | Exit | Meaning |
 | --- | --- |
 | 0 | All requested consultations completed, or the local/demo command completed |

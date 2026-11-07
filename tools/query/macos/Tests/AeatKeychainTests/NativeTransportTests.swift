@@ -23,6 +23,8 @@ final class NativeTransportTests: XCTestCase {
         let receipt = try String(contentsOf: result, encoding: .utf8)
         XCTAssertTrue(receipt.contains("kind=SELECTION_CANCELLED"))
         XCTAssertTrue(receipt.contains("delivery=NOT_SENT"))
+        XCTAssertTrue(receipt.contains("request.url=https://prewww1.aeat.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/VerifactuSOAP"))
+        XCTAssertTrue(receipt.contains("response.url=unavailable"))
         XCTAssertFalse(FileManager.default.fileExists(atPath: response.path))
         XCTAssertThrowsError(try KeychainMain.run(arguments) { _, _, _ in XCTFail("No second selection"); throw QueryFailure.invalidInput })
         let permissions = try FileManager.default.attributesOfItem(atPath: result.path)[.posixPermissions] as? NSNumber
@@ -61,21 +63,25 @@ final class NativeTransportTests: XCTestCase {
         XCTAssertEqual(reply.delivery, "RESPONSE_RECEIVED")
         XCTAssertEqual(reply.httpStatus, 200)
         XCTAssertEqual(reply.body, response)
+        XCTAssertEqual(reply.responseUrl, server.url.absoluteString)
         XCTAssertEqual(server.requests, 1)
         XCTAssertTrue(server.requestMatched)
         XCTAssertEqual(try identityDigest(identities.client).count, 64)
         let limited = QueryTransport(identity: identities.client, target: server.url, limit: 4, anchor: identities.serverCertificate).execute(query)
         XCTAssertEqual(limited.kind, "RESPONSE_TOO_LARGE")
         XCTAssertNil(limited.body)
+        XCTAssertEqual(limited.responseUrl, server.url.absoluteString)
         let untrusted = QueryTransport(identity: identities.client, target: server.url).execute(query)
         XCTAssertEqual(untrusted.kind, "UNKNOWN_DELIVERY")
         XCTAssertNil(untrusted.body)
+        XCTAssertNil(untrusted.responseUrl)
         let redirect = try LocalTlsServer(identity: identities.server, clientAnchor: identities.clientCertificate,
                                           response: response, expected: data,
                                           headers: "HTTP/1.1 302 Found\r\nLocation: https://localhost:9/never-follow\r\nContent-Type: text/xml")
         defer { redirect.close() }
         let redirected = QueryTransport(identity: identities.client, target: redirect.url, anchor: identities.serverCertificate).execute(query)
         XCTAssertEqual(redirected.httpStatus, 302)
+        XCTAssertEqual(redirected.responseUrl, redirect.url.absoluteString)
         XCTAssertEqual(redirected.kind, "XML_RESPONSE")
         XCTAssertEqual(redirect.requests, 1)
         let html = try LocalTlsServer(identity: identities.server, clientAnchor: identities.clientCertificate,
@@ -85,6 +91,7 @@ final class NativeTransportTests: XCTestCase {
         let nonXml = QueryTransport(identity: identities.client, target: html.url, anchor: identities.serverCertificate).execute(query)
         XCTAssertEqual(nonXml.kind, "NON_XML_RESPONSE")
         XCTAssertNil(nonXml.body)
+        XCTAssertEqual(nonXml.responseUrl, html.url.absoluteString)
 
     }
 }

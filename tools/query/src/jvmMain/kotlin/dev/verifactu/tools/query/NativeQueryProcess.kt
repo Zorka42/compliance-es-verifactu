@@ -20,6 +20,7 @@ internal data class NativeQueryReceipt(
     val delivery: String,
     val httpStatus: Int?,
     val identity: String?,
+    val responseUrl: String? = null,
 ) {
     override fun toString(): String = "NativeQueryReceipt(kind=$kind, delivery=$delivery, details=redacted)"
 }
@@ -91,6 +92,9 @@ private fun readNativeReceipt(call: NativeQueryCall): NativeQueryReceipt =
     try {
         val values = queryProperties(call.directory.resolve("native.properties"))
         queryRequire(values["request.sha256"] == call.sha256, "Native helper receipt does not match the request.")
+        queryRequire(values["request.url"] == call.endpoint, "Native helper used a different endpoint.")
+        val responseUrl = values["response.url"]?.takeUnless { it == "unavailable" }
+        queryRequire(responseUrl == null || responseUrl == call.endpoint, "Native helper response URL differs from the request.")
         val identity = values["identity.sha256"]?.takeIf { it.matches(Regex("[a-f0-9]{64}")) }
         queryRequire(identity == null || call.identity == null || call.identity == identity, "Native helper changed the selected identity.")
         val kind = values["kind"]
@@ -98,7 +102,8 @@ private fun readNativeReceipt(call: NativeQueryCall): NativeQueryReceipt =
         queryRequire(NATIVE_DELIVERY[kind] == delivery && delivery != null, "Invalid native helper result.")
         val status = values["http.status"]?.toIntOrNull()
         queryRequire(delivery != "RESPONSE_RECEIVED" || status in 100..599, "Missing or invalid response HTTP status.")
-        NativeQueryReceipt(kind!!, delivery!!, status, identity)
+        queryRequire(delivery != "RESPONSE_RECEIVED" || responseUrl != null, "Missing native response URL.")
+        NativeQueryReceipt(kind!!, delivery!!, status, identity, responseUrl)
     } catch (_: IOException) {
         NativeQueryReceipt("INVALID_HELPER_RECEIPT", "UNKNOWN", null, null)
     } catch (_: QueryInputException) {

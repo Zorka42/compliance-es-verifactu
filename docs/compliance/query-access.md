@@ -31,6 +31,8 @@ For the first live check, use the taxpayer's own explicitly selected identity an
 
 The [WSDL](https://prewww2.aeat.es/static_files/common/internet/dep/aplicaciones/es/aeat/tikeV1.0/cont/ws/SistemaFacturacion.wsdl) exposes `ConsultaFactuSistemaFacturacion` through the VERI*FACTU port type. Its binding uses SOAP 1.1 document/literal messages with an empty SOAP action. The operation is separate from `RegFactuSistemaFacturacion`; the service under a formal information request does not expose consultation.
 
+The archived `SistemaFacturacion.wsdl` (SHA-256 below) names `SistemaVerifactuPruebas` as PRUEBAS at `https://prewww1.aeat.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/VerifactuSOAP`; its production `SistemaVerifactu` port uses `www1.agenciatributaria.gob.es`. The read-only CLI fixes the former route, refuses redirects and uses normal system HTTPS trust. Its protected `network.log` distinguishes intended URL/domain from the response URL reported by the native HTTP transport; mismatched or missing response routes cannot produce a successful consultation. `NativeQueryProcessTest`, `QueryNetworkEvidenceTest`, `KeychainQueryTest` and loopback `NativeTransportTests` verify the receipt contract, redaction, default-trust rejection and redirect refusal without AEAT or real Keychain access. These checks establish client routing constraints, not independent verification of AEAT's internal isolation.
+
 Namespace identifiers use `tike/cont/ws/`, even though the downloadable contract locations use `tikeV1.0/cont/ws/`. XML namespace URLs identify names; an offline parser must never retrieve them.
 
 | Prefix used in this document | Namespace |
