@@ -69,7 +69,7 @@ class NativeQueryProcessTest {
         workspace { root ->
             val properties = "kind=XML_RESPONSE\ndelivery=RESPONSE_RECEIVED\nhttp.status=200"
             val production = "https://www1.agenciatributaria.gob.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/VerifactuSOAP"
-            for (route in listOf("unavailable", production, "$TEST_QUERY_ENDPOINT?PRIVATE")) {
+            for (route in listOf(null, "unavailable", production, "$TEST_QUERY_ENDPOINT?PRIVATE")) {
                 val response = executeNativeQuery(helper(root, properties, responseUrl = route), call(root))
                 assertEquals("INVALID_HELPER_RECEIPT", response.kind)
                 assertEquals(null, response.responseUrl)
@@ -155,11 +155,12 @@ class NativeQueryProcessTest {
         root: Path,
         properties: String,
         digest: String? = null,
-        requestUrl: String = TEST_QUERY_ENDPOINT,
-        responseUrl: String = if (properties.contains("delivery=RESPONSE_RECEIVED")) TEST_QUERY_ENDPOINT else "unavailable",
+        requestUrl: String? = TEST_QUERY_ENDPOINT,
+        responseUrl: String? = if (properties.contains("delivery=RESPONSE_RECEIVED")) TEST_QUERY_ENDPOINT else "unavailable",
     ): Path {
         val path = root.resolve("helper")
         val selectedDigest = digest ?: "${'$'}digest"
+        val routes = listOfNotNull(requestUrl?.let { "request.url=$it" }, responseUrl?.let { "response.url=$it" }).joinToString("\n")
         script(
             path,
             """
@@ -176,7 +177,7 @@ class NativeQueryProcessTest {
             done
             cat > "${'$'}result" <<EOF
             """.trimIndent() +
-                "\n$properties\nrequest.sha256=$selectedDigest\nrequest.url=$requestUrl\nresponse.url=$responseUrl\nselected.issuer=${'$'}issuer\nEOF\n",
+                "\n$properties\nrequest.sha256=$selectedDigest\n$routes\nselected.issuer=${'$'}issuer\nEOF\n",
         )
         return path
     }
