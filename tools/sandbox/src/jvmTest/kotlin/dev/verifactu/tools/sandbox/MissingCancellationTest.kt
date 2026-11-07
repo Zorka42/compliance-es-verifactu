@@ -40,7 +40,45 @@ class MissingCancellationTest {
             assertTrue("Expected scenario verification: REVIEW" in accepted.output)
             val wrongCode = rejected.copy(xml = rejected.xml.replace(">3002<", ">1152<"))
             assertEquals(3, summarizeTransport(bundle, wrongCode).exitCode)
-            assertEquals(3, summarizeTransport(bundle, rejected.copy(statusCode = 500)).exitCode)
+            for (status in listOf(199, 500)) {
+                assertEquals(3, summarizeTransport(bundle, rejected.copy(statusCode = status)).exitCode)
+            }
+        }
+
+    @Test fun incompleteAndContradictoryRejectionsCannotSatisfyTheNegativeScenario() =
+        withWorkspace { root ->
+            fixtureBundle(root)
+            val config = configFile(root, TEST_INPUTS + ("invoice.number" to "ABSENT-001"), "absent.properties")
+            val bundle =
+                prepareBundle(
+                    BundlePreparation(
+                        config,
+                        root.resolve("missing"),
+                        "cancellation-missing",
+                        "offline",
+                        "standard",
+                        root.resolve("bundle"),
+                    ),
+                )
+            val rejected = simulatedResponse(bundle, "rejected") as AeatTransportResult.XmlResponse
+            assertEquals(0, inspectXml(bundle, rejected.xml, false).exitCode)
+            val line =
+                "<RespuestaLinea>" + rejected.xml.substringAfter("<RespuestaLinea>").substringBefore("</RespuestaLinea>") +
+                    "</RespuestaLinea>"
+            val variants =
+                mapOf(
+                    "no line" to rejected.xml.replace(line, ""),
+                    "repeated line" to rejected.xml.replace(line, line + line),
+                    "other invoice" to rejected.xml.replace("ABSENT-001", "OTHER-001"),
+                    "wrong operation" to rejected.xml.replace(">Anulacion<", ">Alta<"),
+                    "contradictory state" to rejected.xml.replace("<EstadoRegistro>Incorrecto<", "<EstadoRegistro>Correcto<"),
+                    "unknown wait" to rejected.xml.replace("<TiempoEsperaEnvio>0<", "<TiempoEsperaEnvio>unknown<"),
+                )
+            for ((name, xml) in variants) {
+                val result = summarizeTransport(bundle, rejected.copy(xml = xml))
+                assertEquals(3, result.exitCode, name)
+                assertTrue("Expected scenario verification: PASS" !in result.output, name)
+            }
         }
 
     @Test fun commandPrintsAReviewableConfirmationWithoutCreatingAnAttempt() =
@@ -79,6 +117,24 @@ class MissingCancellationTest {
             assertEquals(0, shown.exitCode)
             assertTrue(bundle.sha256 in shown.output)
             assertTrue(bundle.plan.soap in shown.output)
+            fixtureBundle(root, "offline", "offline-tail")
+            val offline =
+                SandboxWorkflow.execute(
+                    listOf(
+                        "prepare",
+                        "--scenario",
+                        "cancellation-missing",
+                        "--config",
+                        config.toString(),
+                        "--previous",
+                        root.resolve("offline-tail").toString(),
+                        "--out",
+                        root.resolve("offline").toString(),
+                    ),
+                )
+            assertEquals(0, offline.exitCode)
+            assertTrue("Separately authorized TEST write:" !in offline.output)
+            assertTrue("Mode: offline" in offline.output)
         }
 
     @Test fun requiresADistinctTargetAndMatchingPreviousMetadata() =
@@ -108,7 +164,40 @@ class MissingCancellationTest {
                     .map { it.code },
             )
             assertEquals(bundle.plan.soap, loadBundle(root.resolve("negative")).plan.soap)
+            val draft = assertIs<SubmissionRecord.Registration>(bundle.plan.record).value.draft
+            assertFailsWith<SandboxInputException> {
+                buildPreCutoffFixture(
+                    draft.copy(
+                        invoice =
+                            draft.invoice.copy(
+                                issueDate =
+                                    value(
+                                        dev.verifactu.core.InvoiceIssueDate
+                                            .parse("28-10-2024"),
+                                    ),
+                            ),
+                    ),
+                )
+            }
+
             assertEquals(ChainState.FirstRecord, assertIs<SubmissionRecord.Registration>(bundle.plan.record).value.draft.chainState)
+            val warned =
+                buildPreCutoffFixture(
+                    draft.copy(
+                        totalAmount =
+                            value(
+                                dev.verifactu.core.FiscalAmount
+                                    .parse("150.00"),
+                            ),
+                    ),
+                )
+            assertTrue(warned.report.issues.any { it.severity == ValidationSeverity.WARNING && it.aeatCode == "2005" })
+            assertEquals(
+                listOf("VF-DATE-1152"),
+                warned.report.issues
+                    .filter { it.severity == ValidationSeverity.ERROR }
+                    .map { it.code },
+            )
             val malformed = configFile(root, before + ("invoice.number" to "BAD'NUMBER"), "malformed.properties")
             assertFailsWith<SandboxInputException> { prepareBundle(request.copy(config = malformed, scenario = "rejection-date")) }
         }
