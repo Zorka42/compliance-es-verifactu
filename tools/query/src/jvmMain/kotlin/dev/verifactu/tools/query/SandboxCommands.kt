@@ -70,7 +70,13 @@ private fun nativeSubmission(
             issuer,
             queryDigest(request.xmlPayload),
         )
-    val receipt = transport(helperProvider(), call)
+    val helper =
+        try {
+            helperProvider()
+        } catch (_: Exception) {
+            null
+        }
+    val receipt = if (helper == null) NativeQueryReceipt("HELPER_NOT_STARTED", "NOT_SENT", null, null) else transport(helper, call)
     privateFile(output.resolve("network.log"), submissionNetworkEvidence(call, receipt))
     return when (receipt.kind) {
         "XML_RESPONSE" ->

@@ -112,6 +112,8 @@ class SandboxWorkflowTest {
             val result = sendSandbox(sendOptions(root), { throw java.io.IOException("PRIVATE") }) { _, _ -> error("No retry") }
             assertEquals(4, result.exitCode)
             assertFalse(result.diagnostic.contains("PRIVATE"))
+            assertEquals("NOT_SENT", queryProperties(root.resolve("attempt/outcome.properties"))["delivery"])
+            assertTrue(Files.readString(root.resolve("attempt/network.log")).contains("kind=HELPER_NOT_STARTED"))
         }
 
     private fun prepare(

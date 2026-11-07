@@ -64,6 +64,7 @@ final class SubmissionGuardTests: XCTestCase {
                          "--result", root.appendingPathComponent("result.properties").path]
         XCTAssertThrowsError(try KeychainMain.run(arguments) { _, _, _ in XCTFail("Read path must reject writes"); throw QueryFailure.invalidInput })
         let confirmed = arguments + ["--confirm-submission-sha256", digest]
+        XCTAssertThrowsError(try KeychainMain.run(confirmed + ["--identity-sha256", String(repeating: "a", count: 64)]) { _, _, _ in XCTFail("A write cannot bypass explicit selection"); throw QueryFailure.invalidInput })
         let production = confirmed.map { $0.replacingOccurrences(of: "prewww1.aeat.es", with: "www1.agenciatributaria.gob.es") }
         XCTAssertThrowsError(try KeychainMain.run(production) { _, _, _ in XCTFail("No production identity access"); throw QueryFailure.invalidInput })
         XCTAssertThrowsError(try KeychainMain.run(arguments + ["--confirm-submission-sha256", "wrong"]) { _, _, _ in XCTFail("No unreviewed identity access"); throw QueryFailure.invalidInput })

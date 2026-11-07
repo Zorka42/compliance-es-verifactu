@@ -22,7 +22,7 @@ struct KeychainMain {
         let data = try readRequest(request)
         let query: any ReviewedRequest
         if let confirmation = options["confirm-submission-sha256"] {
-            guard confirmation == digest else { throw QueryFailure.invalidInput }
+            guard confirmation == digest, options["identity-sha256"] == nil else { throw QueryFailure.invalidInput }
             query = try ReviewedSubmission(data: data, expectedDigest: confirmation)
         } else {
             query = try ReviewedQuery(data: data, expectedDigest: digest)
