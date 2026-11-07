@@ -69,7 +69,28 @@ internal fun inspectXml(
         } else {
             "Invoice identifiers and remote diagnostics omitted."
         }
+    if (bundle.values["scenario"] == "cancellation-missing") {
+        val expected = expectedMissingCancellation(response, matched, httpStatus)
+        return CommandResult(
+            summary + expanded + "\nExpected scenario verification: ${if (expected) "PASS" else "REVIEW"}",
+            if (expected) 0 else 3,
+        )
+    }
     return CommandResult(summary + expanded, if (result == "ACCEPTED") 0 else 3)
+}
+
+private fun expectedMissingCancellation(
+    response: dev.verifactu.aeat.AeatSubmissionResponse,
+    matched: Boolean,
+    httpStatus: Int?,
+): Boolean {
+    val line = response.lines.singleOrNull() ?: return false
+    return matched &&
+        (httpStatus == null || httpStatus in 200..299) &&
+        response.status == AeatSubmissionStatus.REJECTED &&
+        line.status == AeatRecordStatus.REJECTED &&
+        line.errorCode == "3002" &&
+        response.flowControl is AeatFlowControl.Known
 }
 
 private fun submissionOutcome(

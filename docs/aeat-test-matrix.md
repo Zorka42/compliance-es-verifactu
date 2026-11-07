@@ -2,6 +2,27 @@
 
 This host-tool workflow prepares the entire manual interoperability matrix. It does not run AEAT operations implicitly, issue invoices for real business activity, establish production readiness or sign a declaración responsable. Production is unavailable in these commands. The repository launcher must be run from the checkout; the installed `verifactu` entry point can be used from another directory.
 
+## Owner-run TEST observations, 2026-11-07
+
+The owner executed the small suite with synthetic invoice data through native certificate selection. Reviewed private responses and request/response URL logs identify the fixed `prewww1.aeat.es` TEST service, HTTP 200 and matched response correlation. No private identities, invoice numbers, certificate references or raw live XML are reproduced here.
+
+| Case | Observed result |
+| --- | --- |
+| Registration | Accepted without errors |
+| Exact duplicate | Rejected as duplicate, code 3000; scenario PASS |
+| Intentional first-record warning | Accepted with errors, code 2007; scenario PASS |
+| Subsanation | Accepted without errors; response echoed `Subsanacion=S` |
+| Cancellation | Accepted without errors; subsequent issued/received queries both showed `Anulado` |
+| Pre-cutoff issue date | **Unexpected acceptance** of 27-10-2024; scenario REVIEW, not PASS |
+
+Both query roles returned the valid registration as `Correcto` and the cancelled invoice as `Anulado` for November 2026. A separate October 2024 consultation returned the unexpectedly accepted pre-cutoff invoice as `Correcto` in both roles. Query period follows the operation date, or issue date when absent, rather than the submission month (service v1.0.3 section 6.4).
+
+The public validation specification v1.2.2 section 3.1.3.1 and archived error 1152 still prohibit an issue date before 28-10-2024. The observed TEST acceptance does not explain the discrepancy, repeal that rule or establish production behavior. Keep the negative case in REVIEW; do not weaken validation or change the expected result merely to obtain PASS. Further writes in this session remain blocked. `MatrixEvidenceTest.acceptedPreCutoffRecordCannotPassTheRejectionCase` reproduces this mismatch with entirely synthetic inputs and responses.
+
+An earlier request prepared roughly half an hour before sending was accepted with warning 2004. That live reply stated a 240-second tolerance; the archived public message does not specify a number. Treat this as an observation, not a universal constant. Run `prepare` immediately before `show` and the reviewed `send`, without a chat round trip in between. Repeating `prepare` does not refresh an existing bundle; never alter or discard prior attempts to bypass evidence guards.
+
+Live replies requested 60 seconds between writes, and the reviewed small-suite attempt intervals respected those deadlines. This does not verify every flow-control branch. The owner postponed the 10001-record live pagination test; offline paging tests pass, but live paging remains unverified. The full ZA-111 matrix is incomplete. The strict `matrix query --scope small` gate also remains blocked by the unexpected rejection-case result. The final read-only evidence was obtained with `sandbox invoices list`; it is not relabelled as a successful full matrix report.
+
 ## Identities and initialization
 
 The taxpayer issuing the synthetic records and the software producer are separate identities. `config init` stores the taxpayer only. A producer file contains exactly `nif` and `name` in UTF-8 Java properties. Use agreed identities in private files outside Git, not the repository's synthetic fixture identities. The producer metadata identifies the TEST harness; it is not a signed compliance declaration. See the [component declaration guide](compliance/declaration-guide.md) before release.
@@ -14,7 +35,7 @@ The taxpayer issuing the synthetic records and the software producer are separat
 
 Directories are 0700 and files 0600. Initialization is local, with no certificate, Keychain or network access. It never overwrites a session. Keep the entire session private; generated fiscal XML contains real identity metadata even though the invoice data is synthetic. Reports omit identities, invoice numbers and remote descriptions; the request digest remains inspectable.
 
-The matrix uses F1 registrations with the taxpayer also explicitly named as recipient. The archived validation history removed the equal-NIF prohibition for autoconsumo in March 2025. **This makes the test data structurally supported; successful visibility in both query roles remains a live hypothesis to verify.** If AEAT behaves differently, stop and retain evidence; do not substitute empty received results or invent authorization. These are synthetic TEST cases, not a tax classification for an actual self-supply.
+The matrix uses F1 registrations with the taxpayer also explicitly named as recipient. The archived validation history removed the equal-NIF prohibition for autoconsumo in March 2025. The owner-run TEST observations above confirm visibility in both query roles for this dataset and selected identity; they do not establish other taxpayers' authorization. If AEAT behaves differently, stop and retain evidence; do not substitute empty received results or invent authorization. These are synthetic TEST cases, not a tax classification for an actual self-supply.
 
 ## Local rehearsal
 
@@ -80,3 +101,9 @@ Exact archived URLs, versions and digests are in [schemas-aeat/manifest.tsv](../
 - Archived `errores.properties`: 1152, 2007 and 3000. `SuministroInformacion.xsd` correction/operation types and `SuministroLR.xsd` submission structure.
 
 `MatrixTest` generates the full dataset and checks chaining, immutable retries, exact expected codes, flow deadlines and uncertainty blocks. `MatrixQueryTest` runs the actual query engine and XSD validation with complete synthetic 10000+1 pages in both roles, then verifies report rejection of wrong states, missing data, changed lists, simulation markers and production URLs. Native tests check explicit batch counts and transmit 1000 exact synthetic records over real loopback mTLS with disposable memory-only identities. Normal verification never contacts AEAT or enumerates personal Keychain identities.
+
+### Local correction and separate negative follow-up
+
+Normal registration validation now rejects pre-28-10-2024 issue dates with structured AEAT 1152 evidence; historical dates and original vectors are preserved. This does not reinterpret the owner's actual acceptance or make the existing rejection case PASS. The date source discrepancy and unsent clarification draft remain in [validation context](compliance/validation-context.md#public-source-recheck-and-live-discrepancy).
+
+The separate [`cancellation-missing` workflow](../tools/sandbox/README.md#negative-test-cancellation-of-an-absent-invoice) prepares an ordinary cancellation of an absent invoice, expecting 3002. It has its own bundle/digest/attempt and requires a reconciled chain tail, distinct target and owner-established absence. Local simulation is covered; live verification remains pending. It does not unlock the old matrix or prove live pagination.

@@ -95,7 +95,29 @@ private fun prepareCommand(options: Map<String, String>): CommandResult {
                 options["previous"]?.let { Path.of(it) },
             ),
         )
-    return CommandResult(bundleSummary(bundle) + "\nNo request was sent. Use show before a separately authorized send.")
+    val guidance =
+        if (scenario == "cancellation-missing" && bundle.values["mode"] == "aeat-test") {
+            val output = options.path("out").toAbsolutePath().normalize()
+            val send =
+                listOf(
+                    "./verifactu",
+                    "sandbox",
+                    "send",
+                    "--bundle",
+                    output.toString(),
+                    "--out",
+                    output.resolveSibling(output.fileName.toString() + "-attempt-001").toString(),
+                    "--confirm-sha256",
+                    bundle.sha256,
+                    "--confirm-records",
+                    "1",
+                ).joinToString(" ", transform = ::shellArgument)
+            "\nConfirm that the target is absent and --previous is the last accepted chain record.\n" +
+                "Generation time was set at this preparation; review and send promptly.\nSeparately authorized TEST write: $send"
+        } else {
+            ""
+        }
+    return CommandResult(bundleSummary(bundle) + guidance + "\nNo request was sent. Use show before a separately authorized send.")
 }
 
 private fun demoCommand(options: Map<String, String>): CommandResult {

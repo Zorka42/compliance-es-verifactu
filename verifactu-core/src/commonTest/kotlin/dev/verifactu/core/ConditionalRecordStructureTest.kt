@@ -141,7 +141,7 @@ class ConditionalRecordStructureTest {
                 ),
             chainState = ChainState.FirstRecord,
             system = SistemaInformatico("Producer", invoice.issuer, "VeriFactu", "VF", "1.0", "install-1", true, false, false),
-            generatedAt = (RecordGenerationTimestamp.parse("2024-01-01T19:20:30+01:00") as ValueResult.Valid).value,
+            generatedAt = (RecordGenerationTimestamp.parse("2024-10-28T19:20:30+01:00") as ValueResult.Valid).value,
             conditionalData =
                 RegistrationConditionalData(
                     recipients = listOf(FiscalParty("Recipient", FiscalPartyIdentifier.SpanishNif(invoice.issuer))),
@@ -153,7 +153,7 @@ class ConditionalRecordStructureTest {
         InvoiceIdentifier(
             (TaxIdentifier.parse("89890001K") as ValueResult.Valid).value,
             (InvoiceNumber.parse("INV-1") as ValueResult.Valid).value,
-            (InvoiceIssueDate.parse("01-01-2024") as ValueResult.Valid).value,
+            (InvoiceIssueDate.parse("28-10-2024") as ValueResult.Valid).value,
         )
 
     private fun amount(value: String): FiscalAmount = (FiscalAmount.parse(value) as ValueResult.Valid).value

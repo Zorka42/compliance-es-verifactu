@@ -50,7 +50,16 @@ internal val INPUT_KEYS: Set<String> =
 internal val PREVIOUS_KEYS: Set<String> = setOf("previous.issuer", "previous.number", "previous.date", "previous.hash")
 internal val OPTIONAL_INPUT_KEYS: Set<String> = setOf("recipient.nif", "recipient.name", "batch.count", "batch.start")
 internal val PREPARATION_SCENARIOS: Set<String> =
-    setOf("registration", "cancellation", "duplicate", "warning-first", "rejection-date", "subsanation", "pagination")
+    setOf(
+        "registration",
+        "cancellation",
+        "cancellation-missing",
+        "duplicate",
+        "warning-first",
+        "rejection-date",
+        "subsanation",
+        "pagination",
+    )
 internal val METADATA_KEYS: Set<String> = setOf("format", "scenario", "mode", "certificate.route", "request.sha256")
 
 internal data class SandboxPlan(
@@ -123,8 +132,14 @@ internal fun buildPlan(values: Map<String, String>): SandboxPlan {
     val identity = invoice(values)
     val timestamp = value(RecordGenerationTimestamp.parse(required(values, "generated.at")))
     val metadata = system(values)
-    if (scenario == "cancellation") {
+    if (scenario in setOf("cancellation", "cancellation-missing")) {
         sandboxRequire(previous is ChainState.PreviousRecord, "Cancellation requires a prior registration bundle.")
+        if (scenario == "cancellation-missing") {
+            sandboxRequire(
+                identity != (previous as ChainState.PreviousRecord).invoice,
+                "The absent cancellation target must differ from the chain tail.",
+            )
+        }
         val prepared =
             FiscalSubmissionPreparation.prepareCancellation(
                 RegistroAnulacionDraft(identity, previous, metadata, timestamp),
@@ -152,6 +167,7 @@ internal fun buildPlan(values: Map<String, String>): SandboxPlan {
         sandboxRequire(identity.issueDate.value == "27-10-2024", "Rejection scenario requires the explicit pre-cutoff date 27-10-2024.")
     }
     val draft = registrationDraft(values, identity, previous, metadata, timestamp)
+    if (scenario == "rejection-date") return buildPreCutoffFixture(draft)
     val prepared = FiscalSubmissionPreparation.prepareRegistration(draft, QrEnvironment.TEST)
     if (prepared is RegistrationPreparationResult.Invalid) invalidPlan(prepared.report)
     prepared as RegistrationPreparationResult.Prepared

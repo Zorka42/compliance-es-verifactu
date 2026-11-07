@@ -44,6 +44,50 @@ The following checks require additional evidence or a published rule that this c
 
 The host remains responsible for obtaining and retaining evidence where its workflow requires it. This library neither contacts an authenticated service nor certifies those facts. See [integration responsibilities](../integration-responsibilities.md) and [query access](query-access.md).
 
+## Date-rule audit after owner-run TEST verification, 2026-11-07
+
+Source presence, implemented local validation, a synthetic response test and a live server result are separate evidence. `MatrixEvidenceTest.acceptedPreCutoffRecordCannotPassTheRejectionCase` tests the host harness: a matched clean acceptance cannot satisfy an expected rejection or permit subsequent writes. It does **not** implement or prove fiscal date validation.
+
+| Requirement | Exact official source | Local coverage and required work |
+| --- | --- | --- |
+| A registration's `FechaExpedicionFactura` must be at least 28-10-2024 | Validation v1.2.2 section 3.1.3.1, p.8; `errores.properties` 1152 | **Implemented.** `registrationDateIssues` returns `VF-DATE-1152`, error severity, field `invoice.issueDate`, AEAT code 1152 and the exact source reference. No AEAT date or clock is needed. |
+| Issue date must not exceed AEAT's current date | Same section; error 1112 | Requires an explicitly established AEAT date. The current receipt-date context does not enable this check. Never substitute generation time or silently read a clock. |
+| Operation date must fall between AEAT's current date minus twenty years and the following year; future operations have additional IVA/IGIC regime restrictions | Validation v1.2.2 section 3.1.3.7, p.9 | Current-date bounds are not implemented; contextual inputs and exact inclusive boundaries need explicit requirements and tests. |
+| An operation after issue requires regime 14/15 for IVA/IGIC details | Validation v1.2.2 section 3.1.3.1 | Implemented by `taxOperationDateIssues`; covered by `TaxConditionalValidationTest`. |
+| Generation-time comparison with AEAT's system time | Validation v1.2.2 section 3.1.3.20; error 2004 | Remote-time knowledge and a published numeric tolerance are absent. The observed reply's 240 seconds must not become a hardcoded universal rule. The PDF describes an excessive future time; the observed older-time warning also needs clarification. |
+
+The gap was originally reproduced offline: three normal preparations differing only in issue date 27-10-2024, 28-10-2024 and 29-10-2024 all succeeded. The correction now rejects the day before and accepts the boundary and day after. `RegistrationDateValidationTest.registrationDateCutoffIsInclusiveAndHasStructuredSourceEvidence` checks the structured issue and factory outcome; `FiscalSubmissionPreparationTest.cutoffErrorsPropagateThroughPreparationAndBatchRevalidation` checks preparation and batch revalidation. Valid synthetic fixtures and the Kotlin/Java samples now use on-or-after-cutoff dates.
+
+The correction is specific to registration validation. `InvoiceIssueDate.parse` still accepts historical calendar dates for wire parsing, cancellation targets, referenced/previous invoices and official hash vectors. `historicalCalendarReferencesAndCancellationTargetsRemainUsable` verifies those uses. Original official hash vectors and archived contract bytes are unchanged.
+
+Only the host tool's explicit legacy `rejection-date` scenario uses low-level record/hash/XML construction to retain inspection of old prepared bytes. It requires exactly 27-10-2024 and exactly the cutoff error, rejecting any additional local error. Normal factory and submission preparation still reject the date. `MissingCancellationTest.normalPreparationRejectsTheDateAndLegacyNegativeFixturesRemainInspectable` covers both paths. The old live result remains REVIEW; parsing still reports what AEAT actually accepted.
+
+### Public-source recheck and live discrepancy
+
+The public validation PDF, error catalogue, common XSD, service WSDL and developer FAQ were retrieved again with normal HTTPS verification. All five SHA-256 values match [the archived manifest](../../schemas-aeat/manifest.tsv); original bytes were not replaced. The current technical index still links validation v1.2.2. Its page 8 and error 1152 both retain the cutoff. The reviewed developer FAQ v1.3 supplies no cutoff exception explaining this run. This is a bounded source review, not proof that no clarification exists elsewhere.
+
+Private evidence confirms that the exact prepared registration bytes were sent to the fixed TEST `VerifactuSOAP` service. The header has no `RemisionRequerimiento` or `RefRequerimiento`, and the request is an ordinary initial registration, not subsanation. The response accepted the same pre-cutoff date; subsequent consultations in both roles returned it as `Correcto`. The relaxed treatment of business errors documented for submission under an AEAT requirement therefore does not explain the request that was actually sent. Neither a reason for the discrepancy nor production behavior has been established. See the [owner-run observations](../aeat-test-matrix.md).
+
+### Separate missing-cancellation negative scenario
+
+Keep the original date scenario and its REVIEW evidence. A separate candidate is ordinary cancellation of a fresh synthetic invoice that does not exist in TEST, without `SinRegistroPrevio=S` or `RechazoPrevio=S`. The published operation table (validation v1.2.2 Annex 6.2, p.28, ERROR (6)) requires a prior registration for ordinary cancellation; error 3002 means no fiscal record exists. This avoids depending on the disputed date cutoff. It is a source-backed expectation awaiting owner verification, not a guaranteed server result.
+
+The standalone `sandbox prepare --scenario cancellation-missing` now separates the cancellation target from the actual chain tail supplied by `--previous`. It requires a distinct target and matching issuer/system/mode/route metadata, uses normal cancellation validation and XSD checks, and retains the digest/count/native TEST gates. It snapshots generation time once at explicit preparation; later show/send never refresh the bytes. Preparation does not establish absence or remote acceptance of the previous bundle: the owner must reconcile these facts before sending.
+
+`MissingCancellationTest` and the unified CLI `SandboxWorkflowTest` exercise a schema-valid synthetic 3002 rejection, unexpected acceptance, wrong code, non-success HTTP, chain metadata and local bundle replay. Only a matched single-record rejection with code 3002 and known flow control satisfies this scenario. The actual outcome stays `REJECTED`; expected-case PASS is separate. Offline demo/inspection is not live evidence. See [the command workflow](../../tools/sandbox/README.md#negative-test-cancellation-of-an-absent-invoice).
+
+The candidate is separate from the existing matrix. It does not mutate old evidence, relabel the date case, or bypass REVIEW/unknown delivery. A known unexpectedly accepted chain tail may be used only after its acceptance is reconciled from the actual response and consultation. No additional live request was made during implementation.
+
+### Draft technical clarification for AEAT (not sent)
+
+Asunto: PRE VERI*FACTU: aceptación de FechaExpedicionFactura anterior al 28/10/2024
+
+En el entorno de pruebas, en el servicio `https://prewww1.aeat.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/VerifactuSOAP`, se remitió un alta inicial F1 sintética con `FechaExpedicionFactura=27-10-2024`. No se informó `RemisionRequerimiento`, `RefRequerimiento` ni `Subsanacion`. La respuesta fue `EstadoEnvio=Correcto` y `EstadoRegistro=Correcto`, sin código de error. Posteriormente, las consultas de emisor y destinatario para octubre de 2024 devolvieron el mismo registro como `Correcto`.
+
+El documento de validaciones v1.2.2, apartado 3.1.3.1, página 8, y el código 1152 publicado indican que la fecha de expedición no puede ser anterior al 28/10/2024. ¿Esta validación está desactivada o tiene una excepción en PRE? ¿Existe alguna condición de aplicación o actualización oficial que debamos considerar? ¿Qué comportamiento documentado debe aplicar un productor al validar localmente nuevas altas? Podemos facilitar evidencias privadas mediante el canal adecuado, una vez autorizadas por su titular.
+
+This draft contains no taxpayer, producer, invoice or certificate identifiers. Sending or attaching private evidence requires the owner's explicit authorization.
+
 ## Unresolved zero-rate IVA surcharge rule
 
 The published sources do not establish one unambiguous local rule for a zero-rate IVA operation carrying equivalence-surcharge fields from 2024-10-01:

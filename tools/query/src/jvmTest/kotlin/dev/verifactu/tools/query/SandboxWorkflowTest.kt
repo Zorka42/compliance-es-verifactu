@@ -1,5 +1,6 @@
 package dev.verifactu.tools.query
 
+import dev.verifactu.aeat.AeatOperationType
 import dev.verifactu.testkit.AeatResponseFixtures
 import dev.verifactu.testkit.AeatResponseScenario
 import dev.verifactu.testkit.VerifactuFixtures
@@ -35,6 +36,68 @@ class SandboxWorkflowTest {
             assertEquals(2, missing.exitCode)
             assertTrue(missing.output.isEmpty())
             assertTrue(missing.diagnostic.isNotEmpty())
+        }
+
+    @Test
+    fun missingCancellationUsesTheUnifiedCommandsAndVerifiesOnlyTheExpectedRejection() =
+        workspace { root ->
+            prepare(root, "aeat-test")
+            assertTrue(command("prepare", "--help").output.contains("cancellation-missing"))
+            val config = root.resolve("missing.properties")
+            Files.writeString(config, Files.readString(root.resolve("inputs.properties")).replace("SANDBOX-001", "ABSENT-001"))
+            val bundle = root.resolve("missing")
+            val prepared =
+                command(
+                    "prepare",
+                    "--scenario",
+                    "cancellation-missing",
+                    "--config",
+                    config.toString(),
+                    "--previous",
+                    root.resolve("bundle").toString(),
+                    "--mode",
+                    "aeat-test",
+                    "--out",
+                    bundle.toString(),
+                )
+            assertEquals(0, prepared.exitCode, prepared.diagnostic)
+            assertTrue(prepared.output.contains("'--confirm-records' '1'"))
+            assertTrue(command("show", "--bundle", bundle.toString()).output.contains("RegistroAnulacion"))
+            val demo = command("demo", "--bundle", bundle.toString(), "--response", "rejected")
+            assertTrue(demo.output.contains("Expected scenario verification: PASS"))
+            assertTrue(demo.output.contains("Network calls: 0"))
+            val rejected =
+                AeatResponseFixtures
+                    .response(
+                        AeatResponseScenario.REJECTED,
+                        VerifactuFixtures.invoice("ABSENT-001"),
+                        AeatOperationType.CANCELLATION,
+                    ).xml
+            val options =
+                sendOptions(root) +
+                    mapOf(
+                        "bundle" to bundle.toString(),
+                        "confirm-sha256" to queryDigest(Files.readString(bundle.resolve("request.xml"))),
+                        "confirm-records" to "1",
+                    )
+            var calls = 0
+            val result =
+                sendSandbox(options, { root.resolve("helper") }) { _, call ->
+                    calls++
+                    assertEquals(TEST_QUERY_ENDPOINT, call.endpoint)
+                    assertTrue(Files.readString(call.request).contains("<RegistroAnulacion"))
+                    privateFile(call.directory.resolve("response.xml"), rejected)
+                    NativeQueryReceipt("XML_RESPONSE", "RESPONSE_RECEIVED", 200, IDENTITY, call.endpoint)
+                }
+            assertEquals(1, calls)
+            assertEquals(0, result.exitCode)
+            assertTrue(result.diagnostic.contains("Result: REJECTED"))
+            assertTrue(result.diagnostic.contains("Expected scenario verification: PASS"))
+            assertEquals("0", queryProperties(root.resolve("attempt/outcome.properties"))["exit.code"])
+            assertEquals(
+                0,
+                command("inspect", "--bundle", bundle.toString(), "--input", root.resolve("attempt/response.xml").toString()).exitCode,
+            )
         }
 
     @Test

@@ -13,7 +13,7 @@ class FiscalRecordFactoryTest {
         val result = FiscalRecordFactory.createRegistration(registrationDraft())
 
         val created = assertIs<RecordCreationResult.Created<RegistroAlta>>(result)
-        assertEquals("3C464DAF61ACB827C65FDA19F352A4E3BDC2C640E9E9FC4CC058073F38F12F60", created.record.hash)
+        assertEquals("D567F7CC50C83730CFA3D8003F68D1C4B8BBA606B154E5604B076C11635AA2F0", created.record.hash)
         assertEquals(created.record.hash, created.nextChainState.hash)
     }
 
@@ -395,13 +395,13 @@ class FiscalRecordFactoryTest {
                         false,
                         false,
                     ),
-                generatedAt = (RecordGenerationTimestamp.parse("2024-01-01T19:20:40+01:00") as ValueResult.Valid).value,
+                generatedAt = (RecordGenerationTimestamp.parse("2024-10-28T19:20:40+01:00") as ValueResult.Valid).value,
             )
 
         val result = FiscalRecordFactory.createCancellation(draft)
 
         val created = assertIs<RecordCreationResult.Created<RegistroAnulacion>>(result)
-        assertEquals("177547C0D57AC74748561D054A9CEC14B4C4EA23D1BEFD6F2E69E3A388F90C68", created.record.hash)
+        assertEquals("B4857B637F89D7E044E997AFF126322CD8D9290281C6EA257FC4ABF461B8185E", created.record.hash)
     }
 
     @Test
@@ -587,12 +587,12 @@ class FiscalRecordFactoryTest {
 
     private fun validInvoiceNumber(): InvoiceNumber = (InvoiceNumber.parse("12345678/G33") as ValueResult.Valid).value
 
-    private fun validIssueDate(): InvoiceIssueDate = (InvoiceIssueDate.parse("01-01-2024") as ValueResult.Valid).value
+    private fun validIssueDate(): InvoiceIssueDate = (InvoiceIssueDate.parse("28-10-2024") as ValueResult.Valid).value
 
     private fun validAmount(value: String): FiscalAmount = (FiscalAmount.parse(value) as ValueResult.Valid).value
 
     private fun validTimestamp(): RecordGenerationTimestamp =
-        (RecordGenerationTimestamp.parse("2024-01-01T19:20:30+01:00") as ValueResult.Valid).value
+        (RecordGenerationTimestamp.parse("2024-10-28T19:20:30+01:00") as ValueResult.Valid).value
 
     private fun taxBreakdown(
         operation: TaxOperation,

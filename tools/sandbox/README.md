@@ -38,11 +38,11 @@ Copy [examples/offline.properties](examples/offline.properties) to a private loc
 | --- | --- |
 | `issuer.nif`, `issuer.name` | Taxpayer issuing the record |
 | `invoice.number`, `invoice.date` | Explicit invoice identity; date `dd-mm-yyyy` |
-| `generated.at` | Explicit generation timestamp with offset, e.g. `2024-01-01T12:00:00+01:00` |
+| `generated.at` | Explicit generation timestamp with offset, e.g. `2024-10-28T12:00:00+01:00` |
 | `producer.nif`, `producer.name` | Explicit software producer identity |
 | `system.name`, `system.id`, `system.version`, `system.installation` | Explicit software and installation metadata |
 
-The registration scenario is deliberately narrow: **F2**, IVA regime `01`, subject/non-exempt, taxable base **100.00**, rate **21%**, charged tax **21.00**, invoice total **121.00**, no recipient. Its system metadata declares VERI*FACTU-only use and one taxpayer. It does not cover rectification, subsanation, exemption, reverse charge, multiple taxpayers or arbitrary invoice import. Use the library APIs for those workflows. No date, invoice number, chain position or installation identity is generated from the clock or random values.
+The registration scenario is deliberately narrow: **F2**, IVA regime `01`, subject/non-exempt, taxable base **100.00**, rate **21%**, charged tax **21.00**, invoice total **121.00**, no recipient. Its system metadata declares VERI*FACTU-only use and one taxpayer. It does not cover rectification, subsanation, exemption, reverse charge, multiple taxpayers or arbitrary invoice import. Use the library APIs for those workflows. For these basic scenarios, dates, invoice numbers, chain positions and installation identities are explicit. The matrix and the separate `cancellation-missing` preparation snapshot generation time in the host tool; the library never reads a clock.
 
 Preparation composes the library's validation, record factory, hash/chain, XML, batch and TEST QR APIs, then checks the batch against packaged archived XSDs with external resource access disabled. Warnings remain in `validation.txt`. Passing these checks is not AEAT acceptance, proof of census status or proof of authority to submit.
 
@@ -63,6 +63,25 @@ For cancellation, copy the original config to `cancellation.properties`, retain 
 ```
 
 The cancellation scenario directly follows the matching registration. For a real chain with intervening records, use the library and the host application's authoritative chain state. `duplicate` copies the registration's exact SOAP bytes, hash, original generation timestamp, chain inputs, mode and route. It accepts no replacement config or mode. It does not invent a new fiscal record or assert that resubmission is appropriate.
+
+## Negative test: cancellation of an absent invoice
+
+`cancellation-missing` is a separate TEST candidate based on validation v1.2.2 Annex 6.2 p.28 ERROR (6) and error 3002; see [source traceability](../../docs/compliance/validation-context.md#separate-missing-cancellation-negative-scenario). It cancels a fresh invoice identifier that the owner has established is absent. It omits `SinRegistroPrevio` and `RechazoPrevio`. Its target differs from the last accepted chain record supplied by `--previous`; issuer, system, mode and certificate route must match that bundle. Preparation cannot establish remote history or absence.
+
+Create a private config with the absent invoice identity and the same issuer/system metadata as the reconciled chain tail. Keep the required `generated.at` input; this scenario replaces it with the host's current time **once at preparation**. Prepare immediately before reviewing/sending. An already prepared bundle is immutable and is never refreshed at send time.
+
+```sh
+./verifactu sandbox prepare --scenario cancellation-missing \
+  --config "$vf_inputs" --previous "$vf_tail" --mode aeat-test \
+  --out "$vf_run/missing-cancellation"
+./verifactu sandbox show --bundle "$vf_run/missing-cancellation"
+```
+
+Preparation prints a concrete `./verifactu sandbox send` command containing the reviewed digest, record count 1 and a new attempt directory. After reviewing the XML, execute that command only for the authorized TEST write; append `--issuer "AC FNMT Usuarios"` if appropriate for your identity. Local rehearsal is `sandbox demo --bundle DIRECTORY --response rejected`, which never contacts AEAT.
+
+A matched single-record rejection with code 3002 and known flow control prints `Result: REJECTED` and `Expected scenario verification: PASS`, exit 0. Unexpected acceptance, another code, unknown flow control or a correlation/HTTP failure cannot pass. Demo completion still exits 0 as a simulation; inspect/send exit 0 only when their expected-case check passes. Saved XML inspection does not prove delivery. Preserve `network.log`, `summary.txt`, `outcome.properties` and the private raw evidence from an actual send.
+
+This candidate does not alter an existing matrix or waive its REVIEW state. The old `rejection-date` case remains available for inspection: it intentionally constructs only the known 27-10-2024 violation and refuses other validation errors. Normal registration preparation rejects that date. The owner-run date case was unexpectedly accepted and remains REVIEW; no live 3002 result is claimed.
 
 ## Review and saved responses
 
@@ -87,7 +106,7 @@ Inspect a response saved outside the repository against the exact request bundle
 
 Default output omits invoice identifiers, CSV/remote identifiers, descriptions and exception text. `--details` opts into invoice/error diagnostics; control and directional characters are escaped and each field is bounded. Raw XML remains available in the saved file. Saved-file inspection is not proof of network delivery.
 
-The utility uses the library's response/fault parsers and correlates invoice identity and operation against the prepared record. Only a matched clean acceptance has exit 0; a non-success HTTP response, contradictory error diagnostics, warnings, duplicates, rejections, SOAP faults, unknown states, malformed XML or correlation mismatch requires review. The parser preserves unknown protocol values; it does not assert full response-schema or fiscal validation. Flow-control seconds are displayed without sleeping or resending.
+The utility uses the library's response/fault parsers and correlates invoice identity and operation against the prepared record. Outside the dedicated expected-rejection scenario above, only a matched clean acceptance has exit 0; a non-success HTTP response, contradictory error diagnostics, warnings, duplicates, rejections, SOAP faults, unknown states, malformed XML or correlation mismatch requires review. The parser preserves unknown protocol values; it does not assert full response-schema or fiscal validation. Flow-control seconds are displayed without sleeping or resending.
 
 ## Explicit TEST delivery, for a separately authorized session
 

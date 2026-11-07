@@ -57,6 +57,8 @@ Each send uses a new `0700` attempt directory, exact request/start evidence befo
 
 The same `prepare` command supports `--scenario duplicate --previous REGISTRATION_BUNDLE` for exact bytes, and `--scenario cancellation --config CANCELLATION_CONFIG --previous REGISTRATION_BUNDLE` for the matching invoice with explicitly updated generation time. Review each new bundle/digest and use a new attempt directory for every authorized send. The default F2 scenario has no recipient. The [ZA-111 matrix](../../docs/aeat-test-matrix.md) adds explicit F1 self-recipient inputs, correction/subsanation and a pagination dataset. Warning/rejection/flow-control demo responses do not guarantee those outcomes from AEAT.
 
+For a separate negative TEST case, `prepare --scenario cancellation-missing` takes a distinct absent invoice and `--previous` with the reconciled last accepted chain record. It snapshots generation time at preparation and prints a send command with exact digest/count. See the [full command workflow and expected 3002 semantics](../sandbox/README.md#negative-test-cancellation-of-an-absent-invoice). Existing matrix evidence remains unchanged.
+
 ## Prepare the full ZA-111 matrix
 
 Use `verifactu sandbox matrix --help` and the [matrix operator guide](../../docs/aeat-test-matrix.md). `init`, `prepare`, `show`, `rehearse` and `report` are local only; `send` and `query` are separate explicit TEST operations. Private taxpayer/producer files never enter the repository.

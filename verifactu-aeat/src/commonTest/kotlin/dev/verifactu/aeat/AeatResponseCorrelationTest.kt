@@ -215,7 +215,7 @@ class AeatResponseCorrelationTest {
     ): AeatResponseLine =
         AeatResponseLine(
             status = AeatRecordStatus.ACCEPTED,
-            invoice = AeatInvoiceReference("89890001K", number, "01-01-2024"),
+            invoice = AeatInvoiceReference("89890001K", number, "28-10-2024"),
             operation = AeatResponseOperation(operation, if (operation == AeatOperationType.REGISTRATION) "Alta" else "Anulacion"),
             rawStatus = "Correcto",
         )
@@ -248,7 +248,7 @@ class AeatResponseCorrelationTest {
                 ),
                 ChainState.FirstRecord,
                 system(invoice.issuer),
-                value(RecordGenerationTimestamp.parse("2024-01-01T12:00:00+01:00")),
+                value(RecordGenerationTimestamp.parse("2024-10-28T12:00:00+01:00")),
                 conditionalData,
             )
         return SubmissionRecord.Registration(
@@ -263,7 +263,7 @@ class AeatResponseCorrelationTest {
                 invoice,
                 ChainState.FirstRecord,
                 system(invoice.issuer),
-                value(RecordGenerationTimestamp.parse("2024-01-01T12:00:00+01:00")),
+                value(RecordGenerationTimestamp.parse("2024-10-28T12:00:00+01:00")),
             )
         return SubmissionRecord.Cancellation(
             assertIs<RecordCreationResult.Created<RegistroAnulacion>>(FiscalRecordFactory.createCancellation(draft)).record,
@@ -274,7 +274,7 @@ class AeatResponseCorrelationTest {
         InvoiceIdentifier(
             value(TaxIdentifier.parse("89890001K")),
             value(InvoiceNumber.parse(number)),
-            value(InvoiceIssueDate.parse("01-01-2024")),
+            value(InvoiceIssueDate.parse("28-10-2024")),
         )
 
     private fun system(issuer: TaxIdentifier): SistemaInformatico =

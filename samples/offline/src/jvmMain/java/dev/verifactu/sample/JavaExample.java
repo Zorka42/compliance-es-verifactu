@@ -55,7 +55,7 @@ public final class JavaExample {
     public static void main(String[] args) {
         TaxIdentifier issuer = value(TaxIdentifier.parse("89890001K"));
         InvoiceIdentifier invoice = new InvoiceIdentifier(
-            issuer, value(InvoiceNumber.parse("JAVA-001")), value(InvoiceIssueDate.parse("01-01-2024"))
+            issuer, value(InvoiceNumber.parse("JAVA-001")), value(InvoiceIssueDate.parse("28-10-2024"))
         );
         TaxBreakdownDetail detail = new TaxBreakdownDetail(
             new TaxOperation.Qualified(Qualification.SUBJECT_NOT_EXEMPT), value(FiscalAmount.parse("100.00")),
@@ -70,7 +70,7 @@ public final class JavaExample {
             value(FiscalAmount.parse("21.00")), value(FiscalAmount.parse("121.00")), "Synthetic Java example",
             new TaxBreakdown(List.of(detail)), ChainState.FirstRecord.INSTANCE,
             new SistemaInformatico("Example producer", issuer, "Java sample", "VF", "0.1", "sample-1", true, false, false),
-            value(RecordGenerationTimestamp.parse("2024-01-01T12:00:00+01:00")),
+            value(RecordGenerationTimestamp.parse("2024-10-28T12:00:00+01:00")),
             new RegistrationConditionalData(
                 null, null, null, null, List.of(), null, null, null, null, null, null, recipients, null, null, null
             )
