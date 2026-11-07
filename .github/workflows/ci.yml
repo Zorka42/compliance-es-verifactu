@@ -47,6 +47,9 @@ jobs:
           tools/sandbox/build/install/verifactu-sandbox/bin/verifactu-sandbox demo --bundle "$sandbox_dir/registration"
           ./verifactu sandbox demo --response timeout
           ./verifactu sandbox invoices list --help
+          printf 'nif=89890001K\nname=Synthetic matrix identity\n' > "$sandbox_dir/identity.properties"
+          ./verifactu sandbox matrix init --party-file "$sandbox_dir/identity.properties" --producer-file "$sandbox_dir/identity.properties" --out "$sandbox_dir/matrix"
+          ./verifactu sandbox matrix rehearse --run "$sandbox_dir/matrix" --out "$sandbox_dir/rehearsal"
           tools/query/build/install/verifactu-query/bin/verifactu-query inspect --input tools/query/src/jvmTest/resources/query-fixtures/issued-empty.xml
       - name: Upload JVM coverage
         if: ${{ env.CODECOV_TOKEN != '' }}

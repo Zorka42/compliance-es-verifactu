@@ -23,8 +23,10 @@ struct KeychainMain {
         let query: any ReviewedRequest
         if let confirmation = options["confirm-submission-sha256"] {
             guard confirmation == digest, options["identity-sha256"] == nil else { throw QueryFailure.invalidInput }
-            query = try ReviewedSubmission(data: data, expectedDigest: confirmation)
+            let count = options["confirm-record-count"].flatMap(Int.init) ?? (options["confirm-record-count"] == nil ? 1 : 0)
+            query = try ReviewedSubmission(data: data, expectedDigest: confirmation, expectedCount: count)
         } else {
+            guard options["confirm-record-count"] == nil else { throw QueryFailure.invalidInput }
             query = try ReviewedQuery(data: data, expectedDigest: digest)
         }
         if options["validate-only"] != nil {
@@ -54,7 +56,7 @@ struct KeychainMain {
     }
 
     static func parse(_ arguments: [String]) throws -> [String: String] {
-        let allowed = ["endpoint", "request", "sha256", "response", "result", "identity-sha256", "issuer", "validate-only", "confirm-submission-sha256"]
+        let allowed = ["endpoint", "request", "sha256", "response", "result", "identity-sha256", "issuer", "validate-only", "confirm-submission-sha256", "confirm-record-count"]
         var options: [String: String] = [:]
         var index = 0
         while index < arguments.count {
@@ -88,7 +90,7 @@ private func readRequest(_ path: String) throws -> Data {
     defer { try? handle.close() }
     var info = stat()
     guard fstat(fd, &info) == 0, info.st_mode & S_IFMT == S_IFREG else { throw QueryFailure.localFile }
-    return try handle.read(upToCount: 65_537) ?? Data()
+    return try handle.read(upToCount: 8 * 1024 * 1024 + 1) ?? Data()
 }
 
 private func writeNew(_ data: Data, at path: String) throws {

@@ -11,7 +11,7 @@ import java.util.Properties
 
 internal fun readText(
     path: Path,
-    limit: Int = 1_048_576,
+    limit: Int = 8 * 1024 * 1024,
 ): String {
     sandboxRequire(Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS), "Select a regular local input file, not a link.")
     val bytes = Files.newInputStream(path).use { it.readNBytes(limit + 1) }

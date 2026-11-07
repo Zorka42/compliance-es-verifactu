@@ -44,3 +44,5 @@ The README stays short. Product scope, integration details, and compliance expla
 
 - [Module architecture](architecture.md)
 - [Chain-state persistence and concurrency contract](chain-state-contract.md)
+
+- [AEAT TEST matrix operator guide (ZA-111)](aeat-test-matrix.md)

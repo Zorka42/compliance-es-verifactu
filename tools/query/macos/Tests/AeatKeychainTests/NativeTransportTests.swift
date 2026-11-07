@@ -92,8 +92,8 @@ final class NativeTransportTests: XCTestCase {
         XCTAssertEqual(nonXml.kind, "NON_XML_RESPONSE")
         XCTAssertNil(nonXml.body)
         XCTAssertEqual(nonXml.responseUrl, html.url.absoluteString)
-        let submissionData = Data(submissionFixture().utf8)
-        let submission = try ReviewedSubmission(data: submissionData, expectedDigest: sha256Hex(submissionData))
+        let submissionData = submissionBatchFixture(1000)
+        let submission = try ReviewedSubmission(data: submissionData, expectedDigest: sha256Hex(submissionData), expectedCount: 1000)
         let writeServer = try LocalTlsServer(identity: identities.server, clientAnchor: identities.clientCertificate,
                                              response: response, expected: submissionData)
         defer { writeServer.close() }
@@ -102,8 +102,6 @@ final class NativeTransportTests: XCTestCase {
         XCTAssertEqual(submitted.responseUrl, writeServer.url.absoluteString)
         XCTAssertEqual(writeServer.requests, 1)
         XCTAssertTrue(writeServer.requestMatched)
-
-
     }
 }
 
@@ -232,7 +230,7 @@ private final class LocalTlsServer {
                 var output = Data("\(headers)\r\nContent-Length: \(response.count)\r\nConnection: close\r\n\r\n".utf8)
                 output.append(response)
                 connection.send(content: output, completion: .contentProcessed { _ in connection.cancel() })
-            } else if !complete && collected.count < 65_536 {
+            } else if !complete && collected.count < expected.count + 65_536 {
                 self.receive(connection, data: collected, response: response, expected: expected, headers: headers)
             } else { connection.cancel() }
         }

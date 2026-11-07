@@ -129,3 +129,20 @@ Native certificate selection and HTTPS use Apple's [SFChooseIdentityPanel](https
 
 
 The host CLI's optional `--issuer NAME` filter compares the public leaf certificate's issuer CN exactly, as exposed by Apple's [SecCertificateCopyValues](https://developer.apple.com/documentation/security/seccertificatecopyvalues(_:_:_:)) issuer-name property and common-name OID. It does not change trust evaluation, certificate storage or AEAT authorization rules. `CertificateIssuerTests` checks issuer versus a misleading subject and a missing CN with freshly generated certificates; `NativeTransportTests` checks inclusion/exclusion with memory-only identities. JVM tests verify forwarding across both query roles, pagination and the native process boundary, plus rejection of blank/control/oversized filters before credential access. No existing user identity is required.
+
+
+## ZA-111 manual matrix preparation, 2026-11-07
+
+The [operator guide](../aeat-test-matrix.md) now composes public contract behavior in host tools. This extends the earlier one-record native gate to explicitly counted registration batches (1–1000); single cancellation and the separate read-only gate remain unchanged. Published library behavior and contract snapshot bytes are unchanged.
+
+| Test condition | Exact archived source | Implementation and evidence |
+| --- | --- | --- |
+| F1 self-recipient synthetic data | Validation v1.2.2 revision history v1.0.3, 18-03-2025: equal issuer/recipient prohibition removed | `registrationDraft`, `MatrixTest`; actual received visibility remains a live hypothesis |
+| Warning after an accepted record of the same SIF/taxpayer | Validation v1.2.2 section 4.3.1; error catalogue 2007 | `warning-first`, correlation/code checks and correction-chain tests |
+| Explicit pre-cutoff issue-date rejection | Validation v1.2.2 section 3.1.3.1; error 1152 | `rejection-date` uses 27-10-2024, normal local hash/schema validation retained |
+| Exact duplicate and subsanation echo | Error 3000; common XSD `SubsanacionType`/`OperacionType` | Immutable SOAP replay, correction flags and response correlation tests |
+| 10001 records in 11 confirmed batches, both query roles and real pagination | Service v1.0.3 section 3, section 6.4/11; submission/query XSD cardinalities | `PaginationPlan`, full offline rehearsal and XSD-backed 10000+1 response tests |
+| Reply wait controls next manual send | Service v1.0.3 section 6.4.4.1; Orden HAC/1177/2024 art.16.2 | Deadline guard, stored actual timing and interval report; no automatic scheduling, full-batch early-send exception unused |
+| Digest/count confirmations, private artifacts and TEST routing | Host engineering controls, not extra fiscal requirements | JVM/native tests; real loopback batch mTLS using disposable memory-only identities |
+
+Synthetic responses are explicitly labelled and cannot satisfy live evidence. No declaration is signed by configuring a TEST producer identity. Live outcomes, authorization, protocol differences and personal-certificate selection require owner execution and external verification; normal checks remain offline from AEAT.

@@ -32,11 +32,13 @@ internal fun sendSandbox(
     helperProvider: () -> Path = ::installedHelper,
     transport: (Path, NativeQueryCall) -> NativeQueryReceipt = ::executeNativeQuery,
 ): CliResult {
-    options.allow("bundle", "out", "confirm-sha256", "issuer")
+    options.allow("bundle", "out", "confirm-sha256", "issuer", "confirm-records")
     validateIssuer(options["issuer"])
     val bundle = Path.of(options.required("bundle"))
     val output = Path.of(options.required("out"))
     val confirmation = options.required("confirm-sha256")
+    val records = options["confirm-records"]?.toIntOrNull() ?: if ("confirm-records" !in options) 1 else 0
+    queryRequire(records in 1..1000, "--confirm-records must be 1..1000.")
     queryRequire(confirmation.matches(Regex("[a-f0-9]{64}")), "--confirm-sha256 requires the exact digest printed by sandbox show.")
     val result =
         SandboxWorkflow.send(
@@ -45,8 +47,9 @@ internal fun sendSandbox(
             confirmation,
             object : AeatTransportAdapter {
                 override fun execute(request: AeatTransportRequest): AeatTransportResult =
-                    nativeSubmission(request, output, options["issuer"], helperProvider, transport)
+                    nativeSubmission(request, output, NativeSubmissionSelection(options["issuer"], records), helperProvider, transport)
             },
+            records,
         )
     return CliResult(diagnostic = result.output + "\nEvidence directory: $output", exitCode = result.exitCode)
 }
@@ -54,7 +57,7 @@ internal fun sendSandbox(
 private fun nativeSubmission(
     request: AeatTransportRequest,
     output: Path,
-    issuer: String?,
+    selection: NativeSubmissionSelection,
     helperProvider: () -> Path,
     transport: (Path, NativeQueryCall) -> NativeQueryReceipt,
 ): AeatTransportResult {
@@ -67,8 +70,9 @@ private fun nativeSubmission(
             queryDigest(request.xmlPayload),
             request.endpoint.url,
             null,
-            issuer,
+            selection.issuer,
             queryDigest(request.xmlPayload),
+            selection.records,
         )
     val helper =
         try {
@@ -109,3 +113,38 @@ private fun submissionNetworkEvidence(
         "redirect.policy=REFUSE\ntls.server.trust.policy=SYSTEM_DEFAULT\n" +
         "response.url=${receipt.responseUrl?.takeIf { it == call.endpoint } ?: "unavailable"}\n" +
         "http.status=${receipt.httpStatus ?: "unavailable"}\nkind=${receipt.kind}\ndelivery=${receipt.delivery}\n"
+
+private data class NativeSubmissionSelection(
+    val issuer: String?,
+    val records: Int,
+)
+
+internal fun matrixSend(
+    options: Map<String, String>,
+    helperProvider: () -> Path = ::installedHelper,
+    transport: (Path, NativeQueryCall) -> NativeQueryReceipt = ::executeNativeQuery,
+): CliResult {
+    options.allow("run", "case", "confirm-sha256", "confirm-records", "issuer")
+    validateIssuer(options["issuer"])
+    val count = options.required("confirm-records").toIntOrNull()
+    queryRequire(count != null && count in 1..1000, "--confirm-records must be 1..1000.")
+    return matrixResult(
+        SandboxWorkflow.sendMatrix(
+            Path.of(options.required("run")),
+            options.required("case"),
+            options.required("confirm-sha256"),
+            count!!,
+        ) { output, records ->
+            object : AeatTransportAdapter {
+                override fun execute(request: AeatTransportRequest): AeatTransportResult =
+                    nativeSubmission(
+                        request,
+                        output,
+                        NativeSubmissionSelection(options["issuer"], records),
+                        helperProvider,
+                        transport,
+                    )
+            }
+        },
+    )
+}

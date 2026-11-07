@@ -1,7 +1,6 @@
 package dev.verifactu.tools.sandbox
 
 import dev.verifactu.aeat.AeatFlowControl
-import dev.verifactu.aeat.AeatOperationType
 import dev.verifactu.aeat.AeatRecordStatus
 import dev.verifactu.aeat.AeatResponseCorrelation
 import dev.verifactu.aeat.AeatResponseCorrelationResult
@@ -12,7 +11,6 @@ import dev.verifactu.aeat.AeatTransportResult
 import dev.verifactu.aeat.SoapFaultParseResult
 import dev.verifactu.testkit.AeatResponseFixtures
 import dev.verifactu.testkit.AeatResponseScenario
-import dev.verifactu.xml.SubmissionRecord
 
 internal fun inspectXml(
     bundle: SandboxBundle,
@@ -35,7 +33,7 @@ internal fun inspectXml(
     val parsed = AeatResponseParser.parseSubmission(xml)
     if (parsed !is AeatResponseParseResult.Parsed) return CommandResult("Result: INVALID_XML\nNo acceptance established.", 3)
     val response = parsed.response
-    val correlation = AeatResponseCorrelation.correlate(listOf(bundle.plan.record), response)
+    val correlation = AeatResponseCorrelation.correlate(bundle.plan.records, response)
     val matched = correlation is AeatResponseCorrelationResult.Matched
     val result = submissionOutcome(response, matched, httpStatus)
     val states = response.lines.groupingBy { it.status }.eachCount()
@@ -158,8 +156,6 @@ internal fun simulatedResponse(
     bundle: SandboxBundle,
     scenario: String,
 ): AeatTransportResult {
-    val operation =
-        if (bundle.plan.record is SubmissionRecord.Registration) AeatOperationType.REGISTRATION else AeatOperationType.CANCELLATION
     val fixture =
         when (scenario) {
             "accepted" -> AeatResponseScenario.ACCEPTED
@@ -172,5 +168,15 @@ internal fun simulatedResponse(
             "not-sent" -> return AeatTransportResult.NotSent("Synthetic preflight failure")
             else -> throw SandboxInputException("Unsupported offline response scenario.")
         }
-    return AeatResponseFixtures.response(fixture, invoice(bundle.values), operation)
+    val responses = bundle.plan.records.map { syntheticRecordResponse(it, bundle.values["scenario"], fixture) }
+    val lines =
+        responses.joinToString("") {
+            "<RespuestaLinea>" + it.substringAfter("<RespuestaLinea>").substringBefore("</RespuestaLinea>") +
+                "</RespuestaLinea>"
+        }
+    return AeatTransportResult.XmlResponse(
+        200,
+        "text/xml",
+        responses.first().substringBefore("<RespuestaLinea>") + lines + "</RespuestaRegFactuSistemaFacturacion>",
+    )
 }
