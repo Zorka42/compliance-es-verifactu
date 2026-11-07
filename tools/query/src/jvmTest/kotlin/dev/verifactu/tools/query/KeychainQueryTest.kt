@@ -16,12 +16,13 @@ class KeychainQueryTest {
             val responses = listOf(fixture("issued-empty"), fixture("received-page"), fixture("received-final"))
             val calls = mutableListOf<NativeQueryCall>()
             val result =
-                fetchQueries(options(root, "both"), { root.resolve("helper") }) { _, call ->
+                fetchQueries(options(root, "both") + ("issuer" to "AC FNMT Usuarios"), { root.resolve("helper") }) { _, call ->
                     calls += call
                     assertTrue(Files.exists(call.directory.resolve("started.properties")))
                     val request = Files.readString(call.request)
                     assertEquals(queryDigest(request), call.sha256)
                     assertEquals(TEST_QUERY_ENDPOINT, call.endpoint)
+                    assertEquals("AC FNMT Usuarios", call.issuer)
                     assertFalse(request.contains("<sfLR:RegFactu"))
                     assertEquals(if (calls.size == 1) null else IDENTITY, call.identity)
                     if (calls.size == 3) assertTrue(request.contains("ClavePaginacion"))
@@ -56,6 +57,9 @@ class KeychainQueryTest {
                     options(root) + ("month" to "13"),
                     options(root) + ("year" to "bad"),
                     options(root) - "out",
+                    options(root) + ("issuer" to " "),
+                    options(root) + ("issuer" to "CA\nName"),
+                    options(root) + ("issuer" to "é".repeat(513)),
                 )
             invalid.forEach { args -> assertFailsWith<QueryInputException> { fetchQueries(args, { error("No helper access") }) } }
             assertFalse(Files.exists(root.resolve("out")))

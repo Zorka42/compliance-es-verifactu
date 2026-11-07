@@ -16,16 +16,34 @@ final class NativeTransportTests: XCTestCase {
         let response = root.appendingPathComponent("response.xml")
         let arguments = ["--endpoint", "https://prewww1.aeat.es/wlpl/TIKE-CONT/ws/SistemaFacturacion/VerifactuSOAP",
                          "--request", request.path, "--sha256", sha256Hex(data), "--response", response.path, "--result", result.path]
-        try KeychainMain.run(arguments) { _, _ in throw QueryFailure.selectionCancelled }
+        try KeychainMain.run(arguments + ["--issuer", "Synthetic CA"]) { _, _, issuer in
+            XCTAssertEqual(issuer, "Synthetic CA")
+            throw QueryFailure.selectionCancelled
+        }
         let receipt = try String(contentsOf: result, encoding: .utf8)
         XCTAssertTrue(receipt.contains("kind=SELECTION_CANCELLED"))
         XCTAssertTrue(receipt.contains("delivery=NOT_SENT"))
         XCTAssertFalse(FileManager.default.fileExists(atPath: response.path))
-        XCTAssertThrowsError(try KeychainMain.run(arguments) { _, _ in XCTFail("No second selection"); throw QueryFailure.invalidInput })
+        XCTAssertThrowsError(try KeychainMain.run(arguments) { _, _, _ in XCTFail("No second selection"); throw QueryFailure.invalidInput })
         let permissions = try FileManager.default.attributesOfItem(atPath: result.path)[.posixPermissions] as? NSNumber
         XCTAssertEqual(permissions?.intValue, 0o600)
         let invalid = arguments.map { $0.replacingOccurrences(of: "prewww1.aeat.es", with: "www1.agenciatributaria.gob.es") }
-        XCTAssertThrowsError(try KeychainMain.run(invalid) { _, _ in XCTFail("No identity access before TEST routing"); throw QueryFailure.invalidInput })
+        XCTAssertThrowsError(try KeychainMain.run(invalid) { _, _, _ in XCTFail("No identity access before TEST routing"); throw QueryFailure.invalidInput })
+    }
+
+    func testIssuerFilterPreservesOtherProvidersByDefaultAndNeverFallsBackWhenEmpty() throws {
+        guard #available(macOS 15, *) else { throw XCTSkip("Memory-only PKCS#12 import requires macOS 15.") }
+        let identities = try DisposableIdentities()
+        defer { identities.remove() }
+        let available = [identities.client, identities.server]
+        XCTAssertEqual(filterIdentities(available, issuer: nil).count, 2)
+        let filtered = filterIdentities(available, issuer: "Synthetic client")
+        XCTAssertEqual(filtered.count, 1)
+        XCTAssertEqual(try identityDigest(filtered[0]), try identityDigest(identities.client))
+        XCTAssertEqual(filterIdentities(available, issuer: "localhost").count, 1)
+        XCTAssertTrue(filterIdentities(available, issuer: "Synthetic").isEmpty)
+        XCTAssertTrue(filterIdentities(available, issuer: "synthetic client").isEmpty)
+        XCTAssertTrue(filterIdentities(available, issuer: "AC FNMT Usuarios").isEmpty)
     }
 
     func testNativeMutualTlsUsesMemoryOnlyIdentityAndExactQuery() throws {
@@ -100,7 +118,8 @@ private final class DisposableIdentities {
                 let key = directory.appendingPathComponent(name + ".key").path
                 let certificate = directory.appendingPathComponent(name + ".pem").path
                 let p12 = directory.appendingPathComponent(name + ".p12")
-                try openssl(["req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "1", "-subj", "/CN=localhost",
+                let subject = name == "client" ? "/CN=Synthetic client" : "/CN=localhost"
+                try openssl(["req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "1", "-subj", subject,
                              "-config", config.path, "-keyout", key, "-out", certificate])
                 try openssl(["pkcs12", "-export", "-inkey", key, "-in", certificate, "-out", p12.path,
                              "-keypbe", "PBE-SHA1-3DES", "-certpbe", "PBE-SHA1-3DES", "-macalg", "sha1",

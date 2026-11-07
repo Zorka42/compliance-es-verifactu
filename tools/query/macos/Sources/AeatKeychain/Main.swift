@@ -13,7 +13,7 @@ struct KeychainMain {
         }
     }
 
-    static func run(_ arguments: [String], select: (ReviewedQuery, String?) throws -> SecIdentity = chooseIdentity) throws {
+    static func run(_ arguments: [String], select: (ReviewedQuery, String?, String?) throws -> SecIdentity = chooseIdentity) throws {
         let options = try parse(arguments)
         guard let endpoint = options["endpoint"], let request = options["request"], let digest = options["sha256"] else {
             throw QueryFailure.invalidInput
@@ -31,7 +31,7 @@ struct KeychainMain {
         var fingerprint = "unavailable"
         var reply: QueryReply
         do {
-            let identity = try select(query, options["identity-sha256"])
+            let identity = try select(query, options["identity-sha256"], options["issuer"])
             fingerprint = try identityDigest(identity)
             reply = QueryTransport(identity: identity, target: target).execute(query)
         } catch QueryFailure.selectionCancelled {
@@ -46,7 +46,7 @@ struct KeychainMain {
     }
 
     static func parse(_ arguments: [String]) throws -> [String: String] {
-        let allowed = ["endpoint", "request", "sha256", "response", "result", "identity-sha256", "validate-only"]
+        let allowed = ["endpoint", "request", "sha256", "response", "result", "identity-sha256", "issuer", "validate-only"]
         var options: [String: String] = [:]
         var index = 0
         while index < arguments.count {
@@ -62,6 +62,12 @@ struct KeychainMain {
         }
         if let identity = options["identity-sha256"], identity.range(of: "^[a-f0-9]{64}$", options: .regularExpression) == nil {
             throw QueryFailure.invalidInput
+        }
+        if let issuer = options["issuer"] {
+            guard !issuer.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, issuer.utf8.count <= 1024,
+                  !issuer.unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) }) else {
+                throw QueryFailure.invalidInput
+            }
         }
         return options
     }

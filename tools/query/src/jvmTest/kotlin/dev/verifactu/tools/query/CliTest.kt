@@ -123,6 +123,7 @@ class CliTest {
                         "--month=2024-02",
                         "--direction=received",
                         "--format=tsv",
+                        "--issuer=AC FNMT Usuarios",
                         "--party-file",
                         settings.taxpayerFile.toString(),
                         "--out",
@@ -133,6 +134,7 @@ class CliTest {
                         assertEquals("2024", options["year"])
                         assertEquals("02", options["month"])
                         assertEquals("received", options["direction"])
+                        assertEquals("AC FNMT Usuarios", options["issuer"])
                         privateDirectory(target)
                         privateFile(target.resolve("invoices.tsv"), ROWS)
                         QueryRunResult("INCOMPLETE: later page failed", 3)

@@ -15,6 +15,7 @@ internal data class KeychainQueryInputs(
     val period: QueryPeriod,
     val directions: List<QueryDirection>,
     val output: Path,
+    val issuer: String?,
 )
 
 internal fun queryCommand(args: List<String>): QueryRunResult =
@@ -25,8 +26,10 @@ internal fun fetchQueries(
     helperProvider: () -> Path = ::installedHelper,
     transport: (Path, NativeQueryCall) -> NativeQueryReceipt = ::executeNativeQuery,
 ): QueryRunResult {
-    options.allow("direction", "party-file", "year", "month", "out", "keychain")
+    options.allow("direction", "party-file", "year", "month", "out", "keychain", "issuer")
     queryRequire(options["keychain"] == "true", "Fetching requires explicit --keychain selection; TEST only.")
+    val issuer = options["issuer"]
+    validateIssuer(issuer)
     val party = queryProperties(Path.of(options.required("party-file")))
     queryRequire(party.keys == setOf("nif", "name"), "Party file must contain exactly nif and name.")
     val directions =
@@ -42,6 +45,7 @@ internal fun fetchQueries(
             QueryPeriod(options.required("year"), options.required("month")),
             directions,
             Path.of(options.required("out")),
+            issuer,
         )
     directions.forEach { InvoiceQuery().prepare(it, inputs.party, inputs.period) }
     val helper = helperProvider()
@@ -118,7 +122,14 @@ private class QueryFetchSession(
                 try {
                     transport(
                         helper,
-                        NativeQueryCall(directory.resolve("request.xml"), directory, queryDigest(request), TEST_QUERY_ENDPOINT, identity),
+                        NativeQueryCall(
+                            directory.resolve("request.xml"),
+                            directory,
+                            queryDigest(request),
+                            TEST_QUERY_ENDPOINT,
+                            identity,
+                            inputs.issuer,
+                        ),
                     )
                 } catch (_: Exception) {
                     NativeQueryReceipt("HELPER_FAILED", "UNKNOWN", null, null)

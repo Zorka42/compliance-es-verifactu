@@ -41,6 +41,10 @@ final class QueryGuardTests: XCTestCase {
             XCTAssertThrowsError(try ReviewedQuery(data: data, expectedDigest: sha256Hex(data)))
         }
         XCTAssertThrowsError(try ReviewedQuery(data: Data(repeating: 65, count: 65_537), expectedDigest: "invalid"))
+        XCTAssertEqual(try KeychainMain.parse(["--issuer", "AC FNMT Usuarios"])["issuer"], "AC FNMT Usuarios")
+        for issuer in ["", "  ", "CA\nName", String(repeating: "é", count: 513)] {
+            XCTAssertThrowsError(try KeychainMain.parse(["--issuer", issuer]))
+        }
         XCTAssertThrowsError(try KeychainMain.parse(["--password", "PRIVATE"]))
         XCTAssertThrowsError(try KeychainMain.parse(["--request", "a", "--request", "b"]))
         XCTAssertThrowsError(try KeychainMain.parse(["--request"]))

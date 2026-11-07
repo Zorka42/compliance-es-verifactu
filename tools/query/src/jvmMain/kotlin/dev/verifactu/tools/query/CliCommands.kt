@@ -48,7 +48,8 @@ internal fun listInvoices(
     settings: CliSettings,
     fetch: (Map<String, String>) -> QueryRunResult,
 ): CliResult {
-    options.allow("month", "direction", "party-file", "out", "format")
+    options.allow("month", "direction", "party-file", "out", "format", "issuer")
+    validateIssuer(options["issuer"])
     val month = options["month"] ?: settings.month
     queryRequire(month.matches(Regex("[0-9]{4}-(0[1-9]|1[0-2])")), "--month must be YYYY-MM, for example 2026-11.")
     val direction = options["direction"] ?: "both"
@@ -75,7 +76,7 @@ internal fun listInvoices(
                 "year" to month.substring(0, 4),
                 "month" to month.substring(5),
                 "out" to output.toString(),
-            ),
+            ) + options.filterKeys { it == "issuer" },
         )
     return renderConsultation(result, output, format)
 }

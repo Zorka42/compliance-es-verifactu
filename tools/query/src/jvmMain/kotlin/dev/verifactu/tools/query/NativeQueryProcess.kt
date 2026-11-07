@@ -10,6 +10,7 @@ internal data class NativeQueryCall(
     val sha256: String,
     val endpoint: String,
     val identity: String?,
+    val issuer: String? = null,
 ) {
     override fun toString(): String = "NativeQueryCall(sha256=$sha256, details=redacted)"
 }
@@ -62,6 +63,7 @@ internal fun executeNativeQuery(
             call.directory.resolve("native.properties").toString(),
         )
     call.identity?.let { arguments += listOf("--identity-sha256", it) }
+    call.issuer?.let { arguments += listOf("--issuer", it) }
     val process =
         try {
             ProcessBuilder(arguments)
