@@ -34,9 +34,7 @@ internal fun matrixTestSend(
     session: MatrixSession,
     case: MatrixCase,
     time: OffsetDateTime,
-    result: (
-        (SandboxBundle) -> AeatTransportResult
-    )? = null,
+    result: ((SandboxBundle) -> AeatTransportResult)? = null,
 ): CommandResult {
     val bundle = loadBundle(session.bundle(case))
     return sendMatrixCase(
@@ -46,38 +44,45 @@ internal fun matrixTestSend(
             "confirm-sha256" to bundle.sha256,
             "confirm-records" to case.records.toString(),
         ),
-        { output, count ->
-            assertEquals(case.records, count)
-            object : AeatTransportAdapter {
-                override fun execute(request: AeatTransportRequest): AeatTransportResult {
-                    assertEquals(bundle.plan.soap, request.xmlPayload)
-                    val kind =
-                        when (case.id) {
-                            "warning" -> "warning"
-                            "rejection" -> "rejected"
-                            "duplicate" -> "duplicate"
-                            else -> "accepted"
-                        }
-                    val response = result?.invoke(bundle) ?: simulatedResponse(bundle, kind)
-                    val received = response is AeatTransportResult.XmlResponse
-                    writePrivate(
-                        output.resolve("network.log"),
-                        propertiesText(
-                            mapOf(
-                                "request.url" to request.endpoint.url,
-                                "response.url" to if (received) request.endpoint.url else "unavailable",
-                                "delivery" to response.deliveryState.name,
-                                "http.status" to if (received) "200" else "unavailable",
-                            ),
-                        ),
-                    )
-                    return response
-                }
-            }
-        },
+        matrixTestFactory(bundle, case, result),
         { time },
     )
 }
+
+internal fun matrixTestFactory(
+    bundle: SandboxBundle,
+    case: MatrixCase,
+    result: ((SandboxBundle) -> AeatTransportResult)? = null,
+): (Path, Int) -> AeatTransportAdapter =
+    { output, count ->
+        assertEquals(case.records, count)
+        object : AeatTransportAdapter {
+            override fun execute(request: AeatTransportRequest): AeatTransportResult {
+                assertEquals(bundle.plan.soap, request.xmlPayload)
+                val kind =
+                    when (case.id) {
+                        "warning" -> "warning"
+                        "rejection" -> "rejected"
+                        "duplicate" -> "duplicate"
+                        else -> "accepted"
+                    }
+                val response = result?.invoke(bundle) ?: simulatedResponse(bundle, kind)
+                val received = response is AeatTransportResult.XmlResponse
+                writePrivate(
+                    output.resolve("network.log"),
+                    propertiesText(
+                        mapOf(
+                            "request.url" to request.endpoint.url,
+                            "response.url" to if (received) request.endpoint.url else "unavailable",
+                            "delivery" to response.deliveryState.name,
+                            "http.status" to if (received) "200" else "unavailable",
+                        ),
+                    ),
+                )
+                return response
+            }
+        }
+    }
 
 class MatrixTest {
     @Test fun fullOfflineRehearsalBuildsEveryRealRequestAndKeepsLiveEvidenceEmpty() =

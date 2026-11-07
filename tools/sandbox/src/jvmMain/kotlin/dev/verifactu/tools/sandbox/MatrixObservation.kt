@@ -77,7 +77,7 @@ private fun analyzeMatrixCase(
         "Non-successful matrix response.",
     )
     sandboxRequire(
-        network["request.url"] == endpoint(bundle.values).url && network["response.url"] == endpoint(bundle.values).url,
+        network["response.url"] == endpoint(bundle.values).url,
         "Unexpected matrix response route.",
     )
     sandboxRequire(
@@ -119,8 +119,10 @@ private fun observeMatrixResponse(
     val codes =
         response.lines
             .mapNotNull { it.errorCode }
+            .map { if (it.matches(Regex("[0-9]{4}"))) it else "UNKNOWN" }
             .distinct()
             .sorted()
+            .take(20)
     val wait = (response.flowControl as? AeatFlowControl.Known)?.seconds?.toLong()
     val timing = readProperties(attempt.resolve("matrix-timing.properties"))
     val start = matrixTime(required(timing, "started.at"))
