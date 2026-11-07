@@ -8,20 +8,27 @@ struct KeychainMain {
         do {
             try run(Array(CommandLine.arguments.dropFirst()))
         } catch {
-            FileHandle.standardError.write(Data("Cannot complete the selected TEST consultation. No credentials or remote diagnostics are printed.\n".utf8))
+            FileHandle.standardError.write(Data("Cannot complete the selected TEST request. No credentials or remote diagnostics are printed.\n".utf8))
             exit(2)
         }
     }
 
-    static func run(_ arguments: [String], select: (ReviewedQuery, String?, String?) throws -> SecIdentity = chooseIdentity) throws {
+    static func run(_ arguments: [String], select: (any ReviewedRequest, String?, String?) throws -> SecIdentity = chooseIdentity) throws {
         let options = try parse(arguments)
         guard let endpoint = options["endpoint"], let request = options["request"], let digest = options["sha256"] else {
             throw QueryFailure.invalidInput
         }
         let target = try testEndpoint(endpoint)
-        let query = try ReviewedQuery(data: readRequest(request), expectedDigest: digest)
+        let data = try readRequest(request)
+        let query: any ReviewedRequest
+        if let confirmation = options["confirm-submission-sha256"] {
+            guard confirmation == digest else { throw QueryFailure.invalidInput }
+            query = try ReviewedSubmission(data: data, expectedDigest: confirmation)
+        } else {
+            query = try ReviewedQuery(data: data, expectedDigest: digest)
+        }
         if options["validate-only"] != nil {
-            print("Read-only TEST query verified. No Keychain or network access.")
+            print("Selected TEST request verified. No Keychain or network access.")
             return
         }
         guard let output = options["response"], let result = options["result"],
@@ -47,7 +54,7 @@ struct KeychainMain {
     }
 
     static func parse(_ arguments: [String]) throws -> [String: String] {
-        let allowed = ["endpoint", "request", "sha256", "response", "result", "identity-sha256", "issuer", "validate-only"]
+        let allowed = ["endpoint", "request", "sha256", "response", "result", "identity-sha256", "issuer", "validate-only", "confirm-submission-sha256"]
         var options: [String: String] = [:]
         var index = 0
         while index < arguments.count {

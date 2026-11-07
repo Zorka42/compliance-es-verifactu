@@ -10,7 +10,7 @@ func identityDigest(_ identity: SecIdentity) throws -> String {
     return sha256Hex(SecCertificateCopyData(certificate) as Data)
 }
 
-func chooseIdentity(for query: ReviewedQuery, previousDigest: String?, issuer: String?) throws -> SecIdentity {
+func chooseIdentity(for query: any ReviewedRequest, previousDigest: String?, issuer: String?) throws -> SecIdentity {
     var found: CFTypeRef?
     let search: [String: Any] = [
         kSecClass as String: kSecClassIdentity,
@@ -33,7 +33,7 @@ func chooseIdentity(for query: ReviewedQuery, previousDigest: String?, issuer: S
     application.activate(ignoringOtherApps: true)
     guard let panel = SFChooseIdentityPanel.shared() else { throw QueryFailure.identityUnavailable }
     panel.setPolicies(SecPolicyCreateSSL(false, nil))
-    panel.setDefaultButtonTitle("Use for TEST consultation")
+    panel.setDefaultButtonTitle(query.buttonTitle)
     panel.setAlternateButtonTitle("Cancel")
     // Setting a domain would persist an identity preference in Keychain. Selection stays session-local.
     let answer = panel.runModal(forIdentities: identities, message: query.description)

@@ -2,6 +2,8 @@
 
 For everyday use, start with the unified [VeriFactu CLI](../query/README.md): build once with `./gradlew :tools:query:installDist`, then run `./verifactu sandbox demo` or `./verifactu sandbox demo --response timeout`. The commands below expose the explicit bundle/XML workflow for diagnostics and separately authorized submissions.
 
+The unified launcher also exposes `sandbox scenarios`, `prepare`, `show`, `demo --bundle`, `inspect` and `send`, with contextual help. Its explicit `send` uses the native macOS Keychain identity chooser and the same reviewed bundle/digest, persistence and response semantics described here. The standalone launcher below retains its explicit PKCS#12 transport; credential flags are not accepted by the unified Keychain command.
+
 A standalone JVM host utility for preparing VERI*FACTU test requests, reviewing XML, exercising response scenarios and inspecting saved responses. Build and test it locally without AEAT access or an existing certificate. It is separate from the published library and is not a complete invoicing system.
 
 Only the explicit `send` command can load an explicitly selected PKCS#12 identity and make a network request. It supports the library's **TEST** submission endpoints only. Preparation defaults to an unsendable `offline` mode. No command discovers certificates, registers software, selects production, schedules work or retries a request.

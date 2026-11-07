@@ -92,6 +92,17 @@ final class NativeTransportTests: XCTestCase {
         XCTAssertEqual(nonXml.kind, "NON_XML_RESPONSE")
         XCTAssertNil(nonXml.body)
         XCTAssertEqual(nonXml.responseUrl, html.url.absoluteString)
+        let submissionData = Data(submissionFixture().utf8)
+        let submission = try ReviewedSubmission(data: submissionData, expectedDigest: sha256Hex(submissionData))
+        let writeServer = try LocalTlsServer(identity: identities.server, clientAnchor: identities.clientCertificate,
+                                             response: response, expected: submissionData)
+        defer { writeServer.close() }
+        let submitted = QueryTransport(identity: identities.client, target: writeServer.url, anchor: identities.serverCertificate).execute(submission)
+        XCTAssertEqual(submitted.kind, "XML_RESPONSE")
+        XCTAssertEqual(submitted.responseUrl, writeServer.url.absoluteString)
+        XCTAssertEqual(writeServer.requests, 1)
+        XCTAssertTrue(writeServer.requestMatched)
+
 
     }
 }

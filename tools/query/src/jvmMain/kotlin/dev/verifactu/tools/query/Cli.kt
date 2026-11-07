@@ -1,5 +1,6 @@
 package dev.verifactu.tools.query
 
+import dev.verifactu.tools.sandbox.SandboxWorkflow
 import java.io.IOException
 import java.nio.file.Path
 import java.time.YearMonth
@@ -7,7 +8,7 @@ import java.time.ZoneId
 import kotlin.system.exitProcess
 import dev.verifactu.tools.sandbox.main as sandboxMain
 
-/** Runs the user-facing CLI. Only sandbox invoices list explicitly accesses AEAT TEST and Keychain. */
+/** Runs the user-facing CLI. Only explicit list/send commands access AEAT TEST and Keychain. */
 public fun main(args: Array<String>) {
     val exit = printCliResult(cliResult(args.toList()), System.out, System.err)
     if (exit != 0) exitProcess(exit)
@@ -69,8 +70,15 @@ private fun runCli(
     return when (command) {
         listOf("config", "init") -> initializeTaxpayer(options, settings)
         listOf("sandbox", "invoices", "list") -> listInvoices(options, settings, fetch)
-        listOf("sandbox", "demo") -> runDemo(options, sandbox)
-        else -> throw QueryInputException("Choose an action.\n$help")
+        listOf("sandbox", "demo") ->
+            if ("bundle" in options) sandboxLocal("demo", options, SandboxWorkflow::execute) else runDemo(options, sandbox)
+        listOf("sandbox", "send") -> sendSandbox(options)
+        else ->
+            if (command.size == 2 && command.first() == "sandbox") {
+                sandboxLocal(command.last(), options, SandboxWorkflow::execute)
+            } else {
+                throw QueryInputException("Choose an action.\n$help")
+            }
     }
 }
 
@@ -82,7 +90,14 @@ internal fun cliOptions(args: List<String>): Map<String, String> {
         queryRequire(token.startsWith("--") && token.length > 2, "Expected a --named-option.")
         val key = token.substring(2).substringBefore('=')
         queryRequire(key !in result, "Repeated --$key option.")
-        val value = if ('=' in token) token.substringAfter('=') else args.getOrNull(index++)
+        val value =
+            if ('=' in token) {
+                token.substringAfter('=')
+            } else if (key == "details") {
+                "true"
+            } else {
+                args.getOrNull(index++)
+            }
         queryRequire(value != null && value.isNotBlank() && !value.startsWith("--"), "--$key requires a value.")
         result[key] = value!!
     }

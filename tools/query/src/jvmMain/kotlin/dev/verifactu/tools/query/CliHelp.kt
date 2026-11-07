@@ -5,6 +5,11 @@ internal val LEAF_COMMANDS: Set<List<String>> =
         listOf("config", "init"),
         listOf("sandbox", "demo"),
         listOf("sandbox", "invoices", "list"),
+        listOf("sandbox", "scenarios"),
+        listOf("sandbox", "prepare"),
+        listOf("sandbox", "show"),
+        listOf("sandbox", "inspect"),
+        listOf("sandbox", "send"),
     )
 
 internal val DEMO_RESPONSES: List<String> =
@@ -30,7 +35,12 @@ internal fun commandHelp(command: List<String>): String =
 
             COMMANDS
               config init             Configure the taxpayer locally
+              sandbox scenarios       List available preparation/response scenarios
+              sandbox prepare         Prepare a local request bundle
+              sandbox show            Review XML, TEST endpoint and request digest
               sandbox demo            Run synthetic scenarios offline
+              sandbox inspect         Inspect a saved response locally
+              sandbox send            Send one reviewed TEST bundle (macOS Keychain)
               sandbox invoices list   Read issued and received VERI*FACTU TEST records (macOS)
 
             EXAMPLES
@@ -43,7 +53,7 @@ internal fun commandHelp(command: List<String>): String =
               verifactu <command> --help
               verifactu help sandbox invoices list
 
-            No command runs implicitly. Only sandbox invoices list accesses Keychain and AEAT TEST.
+            No command runs implicitly. Only explicit sandbox invoices list/send commands access Keychain and AEAT TEST.
             """.trimIndent()
         listOf("config") -> "USAGE\n  verifactu config <command>\n\nCOMMANDS\n  init   Configure the taxpayer locally"
         listOf("config", "init") ->
@@ -67,7 +77,9 @@ internal fun commandHelp(command: List<String>): String =
         ),
         ->
             "USAGE\n  verifactu sandbox <command>\n\nCOMMANDS\n" +
-                "  demo       Run offline scenarios\n  invoices   Consult VERI*FACTU TEST records"
+                "  scenarios  List scenarios\n  prepare    Prepare a local bundle\n  show       Review XML and digest\n" +
+                "  demo       Run offline scenarios\n  inspect    Inspect saved response XML\n" +
+                "  send       Send a reviewed TEST bundle (macOS Keychain)\n  invoices   Consult TEST records"
         listOf(
             "sandbox",
             "invoices",
@@ -78,12 +90,13 @@ internal fun commandHelp(command: List<String>): String =
         listOf("sandbox", "demo") ->
             """
             Run synthetic registration response scenarios. No setup, Keychain or network access.
-            Creates and removes its temporary synthetic inputs automatically.
+            Without --bundle, creates and removes temporary synthetic inputs automatically.
 
             USAGE
-              verifactu sandbox demo [--response NAME]
+              verifactu sandbox demo [--bundle DIRECTORY] [--response NAME]
 
             FLAGS
+              --bundle DIR      Use an existing bundle; still no network or Keychain access
               --response NAME   Run one response instead of all eight:
                                 accepted, warning, rejected, duplicate, flow-control,
                                 soap-fault, timeout, not-sent
@@ -123,5 +136,5 @@ internal fun commandHelp(command: List<String>): String =
               Exit: 0 complete; 2 local input; 3 response needs review; 4 transport/artifact failure.
               No automatic retries. macOS controls whether key use requires password or Touch ID.
             """.trimIndent()
-        else -> throw QueryInputException("Unknown command. Run 'verifactu --help' to choose a command.")
+        else -> sandboxActionHelp(command)
     }

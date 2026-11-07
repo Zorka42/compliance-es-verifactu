@@ -2,3 +2,22 @@ public final class dev/verifactu/tools/sandbox/MainKt {
 	public static final fun main ([Ljava/lang/String;)V
 }
 
+public final class dev/verifactu/tools/sandbox/SandboxCommandResult {
+	public fun <init> (Ljava/lang/String;I)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun copy (Ljava/lang/String;I)Ldev/verifactu/tools/sandbox/SandboxCommandResult;
+	public static synthetic fun copy$default (Ldev/verifactu/tools/sandbox/SandboxCommandResult;Ljava/lang/String;IILjava/lang/Object;)Ldev/verifactu/tools/sandbox/SandboxCommandResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getExitCode ()I
+	public final fun getOutput ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class dev/verifactu/tools/sandbox/SandboxWorkflow {
+	public static final field INSTANCE Ldev/verifactu/tools/sandbox/SandboxWorkflow;
+	public final fun execute (Ljava/util/List;)Ldev/verifactu/tools/sandbox/SandboxCommandResult;
+	public final fun send (Ljava/nio/file/Path;Ljava/nio/file/Path;Ljava/lang/String;Ldev/verifactu/aeat/AeatTransportAdapter;)Ldev/verifactu/tools/sandbox/SandboxCommandResult;
+}
+

@@ -132,6 +132,14 @@ private fun sendCommand(
         } finally {
             password.fill('\u0000')
         }
+    return deliverSandboxBundle(bundle, output, transport)
+}
+
+internal fun deliverSandboxBundle(
+    bundle: SandboxBundle,
+    output: Path,
+    transport: AeatTransportAdapter,
+): CommandResult {
     val destination = endpoint(bundle.values)
     writePrivate(output.resolve("request.xml"), bundle.plan.soap)
     writePrivate(
