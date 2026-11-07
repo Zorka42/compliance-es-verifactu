@@ -6,6 +6,7 @@ struct QueryReply {
     let delivery: String
     let httpStatus: Int?
     let body: Data?
+    var responseUrl: String? = nil
 }
 
 final class QueryTransport: NSObject, URLSessionDataDelegate {
@@ -45,15 +46,15 @@ final class QueryTransport: NSObject, URLSessionDataDelegate {
         session.dataTask(with: request).resume()
         completed.wait()
         session.invalidateAndCancel()
-        if tooLarge { return QueryReply(kind: "RESPONSE_TOO_LARGE", delivery: "RESPONSE_RECEIVED", httpStatus: response?.statusCode, body: nil) }
-        if failed { return QueryReply(kind: "UNKNOWN_DELIVERY", delivery: "UNKNOWN", httpStatus: response?.statusCode, body: nil) }
+        if tooLarge { return QueryReply(kind: "RESPONSE_TOO_LARGE", delivery: "RESPONSE_RECEIVED", httpStatus: response?.statusCode, body: nil, responseUrl: response?.url?.absoluteString) }
+        if failed { return QueryReply(kind: "UNKNOWN_DELIVERY", delivery: "UNKNOWN", httpStatus: response?.statusCode, body: nil, responseUrl: response?.url?.absoluteString) }
         guard let response else { return QueryReply(kind: "UNKNOWN_DELIVERY", delivery: "UNKNOWN", httpStatus: nil, body: nil) }
         let media = response.mimeType?.lowercased() ?? ""
         guard media == "text/xml" || media == "application/xml" || media.hasSuffix("+xml"),
               String(data: body, encoding: .utf8) != nil else {
-            return QueryReply(kind: "NON_XML_RESPONSE", delivery: "RESPONSE_RECEIVED", httpStatus: response.statusCode, body: nil)
+            return QueryReply(kind: "NON_XML_RESPONSE", delivery: "RESPONSE_RECEIVED", httpStatus: response.statusCode, body: nil, responseUrl: response.url?.absoluteString)
         }
-        return QueryReply(kind: "XML_RESPONSE", delivery: "RESPONSE_RECEIVED", httpStatus: response.statusCode, body: body)
+        return QueryReply(kind: "XML_RESPONSE", delivery: "RESPONSE_RECEIVED", httpStatus: response.statusCode, body: body, responseUrl: response.url?.absoluteString)
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge,

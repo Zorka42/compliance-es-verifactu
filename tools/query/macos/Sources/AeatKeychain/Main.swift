@@ -41,7 +41,8 @@ struct KeychainMain {
         }
         if let body = reply.body { try writeNew(body, at: output) }
         let receipt = "kind=\(reply.kind)\ndelivery=\(reply.delivery)\nhttp.status=\(reply.httpStatus.map(String.init) ?? "unavailable")\n" +
-            "request.sha256=\(query.sha256)\nidentity.sha256=\(fingerprint)\n"
+            "request.sha256=\(query.sha256)\nidentity.sha256=\(fingerprint)\n" +
+            "request.url=\(target.absoluteString)\nresponse.url=\(reply.responseUrl ?? "unavailable")\n"
         try writeNew(Data(receipt.utf8), at: result)
     }
 

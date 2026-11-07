@@ -60,6 +60,7 @@ private class QueryFetchSession(
 ) {
     private val rows = mutableListOf("direction\tissuer\tinvoice\tissue_date\tstate\ttotal")
     private val summaries = mutableListOf<String>()
+    private val network = mutableListOf(queryNetworkHeader())
     private var identity: String? = null
     private var started = false
     private var pageCount = 0
@@ -76,9 +77,14 @@ private class QueryFetchSession(
                 }
             }
             val outcome = result ?: QueryRunResult("COMPLETE: all requested consultations finished.")
+            privateFile(inputs.output.resolve("network.log"), network.joinToString("\n", postfix = "\n"))
             privateFile(inputs.output.resolve("invoices.tsv"), rows.joinToString("\n", postfix = "\n"))
             val output =
-                "Environment: TEST; operation: CONSULTATION_ONLY\n" + summaries.joinToString("\n") + "\n" + outcome.output +
+                "Environment: TEST; operation: CONSULTATION_ONLY\nRequest URL: $TEST_QUERY_ENDPOINT\n" +
+                    summaries.joinToString(
+                        "\n",
+                    ) + "\n" +
+                    outcome.output +
                     "\nSaved list: ${inputs.output.resolve("invoices.tsv")}\nOnly VERI*FACTU TEST records are covered."
             privateFile(inputs.output.resolve("summary.txt"), output + "\n")
             privateFile(
@@ -116,7 +122,10 @@ private class QueryFetchSession(
             val directory = inputs.output.resolve("${direction.name.lowercase()}-${++pageCount}")
             privateDirectory(directory)
             privateFile(directory.resolve("request.xml"), request)
-            privateFile(directory.resolve("started.properties"), "request.sha256=${queryDigest(request)}\nstate=STARTED\n")
+            privateFile(
+                directory.resolve("started.properties"),
+                "request.sha256=${queryDigest(request)}\nstate=STARTED\nrequest.url=$TEST_QUERY_ENDPOINT\n",
+            )
             started = true
             val reply =
                 try {
@@ -138,6 +147,9 @@ private class QueryFetchSession(
                 directory.resolve("delivery.properties"),
                 "kind=${reply.kind}\ndelivery=${reply.delivery}\nhttp.status=${reply.httpStatus ?: "unavailable"}\n",
             )
+            val evidence = queryNetworkPage(direction, pageCount, reply)
+            privateFile(directory.resolve("network.log"), queryNetworkHeader() + "\n" + evidence + "\n")
+            network += evidence
             val page =
                 when (val reviewed = reviewPage(reply, directory, direction)) {
                     is PageReview.Failed -> return reviewed.result

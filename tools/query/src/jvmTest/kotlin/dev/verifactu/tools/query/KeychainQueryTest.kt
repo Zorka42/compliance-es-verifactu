@@ -27,10 +27,18 @@ class KeychainQueryTest {
                     assertEquals(if (calls.size == 1) null else IDENTITY, call.identity)
                     if (calls.size == 3) assertTrue(request.contains("ClavePaginacion"))
                     privateFile(call.directory.resolve("response.xml"), responses[calls.size - 1])
-                    NativeQueryReceipt("XML_RESPONSE", "RESPONSE_RECEIVED", 200, IDENTITY)
+                    NativeQueryReceipt("XML_RESPONSE", "RESPONSE_RECEIVED", 200, IDENTITY, TEST_QUERY_ENDPOINT)
                 }
             assertEquals(0, result.exitCode)
             assertEquals(3, calls.size)
+            val network = Files.readString(root.resolve("out/network.log"))
+            assertTrue(network.contains("request.domain=prewww1.aeat.es"))
+            assertTrue(network.contains("page.3.response.url=$TEST_QUERY_ENDPOINT"))
+            assertTrue(network.contains("page.3.http.status=200"))
+            assertEquals(PosixFilePermissions.fromString("rw-------"), Files.getPosixFilePermissions(root.resolve("out/network.log")))
+            for (privateValue in listOf(IDENTITY, "89890001K", "SUP-A&B", "121.00", "<")) {
+                assertFalse(network.contains(privateValue))
+            }
             assertTrue(result.output.contains("ISSUED: COMPLETE, records=0"))
             assertTrue(result.output.contains("RECEIVED: COMPLETE, records=4"))
             assertFalse(result.output.contains("89890001K"))
@@ -93,6 +101,9 @@ class KeychainQueryTest {
                     }
                 assertEquals(4, result.exitCode)
                 assertEquals(1, count)
+                val network = Files.readString(root.resolve("$out/network.log"))
+                assertTrue(network.contains("page.1.response.url=unavailable"))
+                assertTrue(network.contains("page.1.kind=$kind"))
                 assertFalse(result.output.contains("COMPLETE, records=0"))
                 assertEquals("INCOMPLETE", queryProperties(root.resolve("$out/outcome.properties"))["state"])
             }
