@@ -1,6 +1,6 @@
 # Explicit Validation Context
 
-`ValidationContext` carries facts supplied by the host application for rules that cannot be decided from the fiscal record alone. Its current field is `aeatReceiptDate`. A null date means unknown. The library does not obtain that date, establish delivery, read a clock, or substitute `generatedAt` for AEAT's receipt date.
+`ValidationContext` carries facts supplied by the host application for rules that cannot be decided from the fiscal record alone. Its fields are `aeatReceiptDate` for the IPSI transition and the independent `aeatCurrentDate` for [current-date validation](current-date-validation.md). Neither date substitutes for the other. A null date means unknown. The library does not obtain that date, establish delivery, read a clock, or substitute `generatedAt` for AEAT's receipt date.
 
 ```kotlin
 val receiptDate = (InvoiceIssueDate.parse("01-01-2027") as ValueResult.Valid).value
@@ -36,7 +36,7 @@ The following checks require additional evidence or a published rule that this c
 
 | Check | Archived source | Remaining boundary |
 | --- | --- | --- |
-| Issue and operation dates relative to AEAT's current date | Validation specification §3.1.3.1 and §3.1.3.7 | The receipt-date field currently resolves the IPSI transition only. It does not silently enable other current-date validations. |
+| Issue and operation dates relative to AEAT's current date | Validation specification §3.1.3.1 and §3.1.3.7 | The independent `aeatCurrentDate` enables local comparisons but does not establish AEAT's actual system date. Missing context and unresolved calendar boundaries remain warnings; receipt date does not substitute for current date. |
 | Generation timestamp relative to AEAT's system time | §3.1.3.20; `errores.properties` 2004 | The PDF mentions a tolerance without specifying its numeric value; the archived message ends after introducing that tolerance. No tolerance or substitute clock is invented. |
 | Taxpayer identification in the relevant census | §3.1.1; §3.1.3.4, .5, .12, .13, .15.6.9 | Locally valid identifier structure or a NIF prefix does not establish census status. |
 | Prior registration, prior rejection, first-record status and permitted correction/cancellation history | §4.3 and Annex 6; errors including 2007 and 3000 | Caller-owned chain state is not proof of AEAT's stored history. No history store, remote lookup or boolean “verified” bypass is introduced. |
@@ -51,8 +51,8 @@ Source presence, implemented local validation, a synthetic response test and a l
 | Requirement | Exact official source | Local coverage and required work |
 | --- | --- | --- |
 | A registration's `FechaExpedicionFactura` must be at least 28-10-2024 | Validation v1.2.2 section 3.1.3.1, p.8; `errores.properties` 1152 | **Implemented.** `registrationDateIssues` returns `VF-DATE-1152`, error severity, field `invoice.issueDate`, AEAT code 1152 and the exact source reference. No AEAT date or clock is needed. |
-| Issue date must not exceed AEAT's current date | Same section; error 1112 | Requires an explicitly established AEAT date. The current receipt-date context does not enable this check. Never substitute generation time or silently read a clock. |
-| Operation date must fall between AEAT's current date minus twenty years and the following year; future operations have additional IVA/IGIC regime restrictions | Validation v1.2.2 section 3.1.3.7, p.9 | Current-date bounds are not implemented; contextual inputs and exact inclusive boundaries need explicit requirements and tests. |
+| Issue date must not exceed AEAT's current date | Same section; error 1112 | Implemented with the independent caller-supplied `aeatCurrentDate`; unknown input gives a warning. Receipt date and generation time do not substitute for it. |
+| Operation date must fall between AEAT's current date minus twenty years and the following year; future operations have additional IVA/IGIC regime restrictions | Validation v1.2.2 section 3.1.3.7, p.9 | Implemented for unambiguous bounds with `aeatCurrentDate`; the disputed following-year band and invalid leap-day anniversary retain warnings. See the [date contract](current-date-validation.md). |
 | An operation after issue requires regime 14/15 for IVA/IGIC details | Validation v1.2.2 section 3.1.3.1 | Implemented by `taxOperationDateIssues`; covered by `TaxConditionalValidationTest`. |
 | Generation-time comparison with AEAT's system time | Validation v1.2.2 section 3.1.3.20; error 2004 | Remote-time knowledge and a published numeric tolerance are absent. The observed reply's 240 seconds must not become a hardcoded universal rule. The PDF describes an excessive future time; the observed older-time warning also needs clarification. |
 

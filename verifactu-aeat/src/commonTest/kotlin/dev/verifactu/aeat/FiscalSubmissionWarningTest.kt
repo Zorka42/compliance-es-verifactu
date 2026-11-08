@@ -48,7 +48,7 @@ class FiscalSubmissionWarningTest {
 
         assertTrue(prepared.report.isValid)
         assertEquals(created.report, prepared.report)
-        val warning = prepared.report.issues.single()
+        val warning = prepared.report.issues.single { it.code == "VF-TAX-IPSI-TRANSITION" }
         assertEquals("VF-TAX-IPSI-TRANSITION", warning.code)
         assertEquals("taxBreakdown.details[0].regimeCode", warning.fieldPath)
         assertEquals(ValidationSeverity.WARNING, warning.severity)
@@ -113,14 +113,14 @@ class FiscalSubmissionWarningTest {
 
         assertFalse(invalidBatch.report.isValid)
         assertEquals(
-            setOf("VF-BATCH-002", "VF-TAX-IPSI-TRANSITION"),
+            setOf("VF-BATCH-002", "VF-TAX-IPSI-TRANSITION", "VF-DATE-CONTEXT-UNKNOWN"),
             invalidBatch.report.issues
                 .map { it.code }
                 .toSet(),
         )
         assertFalse(invalidDraft.report.isValid)
         assertEquals(
-            setOf("VF-RECORD-001", "VF-TAX-IPSI-TRANSITION"),
+            setOf("VF-RECORD-001", "VF-TAX-IPSI-TRANSITION", "VF-DATE-CONTEXT-UNKNOWN"),
             invalidDraft.report.issues
                 .map { it.code }
                 .toSet(),
@@ -156,7 +156,7 @@ class FiscalSubmissionWarningTest {
                 FiscalSubmissionPreparation.prepareBatch(header.copy(issuerName = ""), emptyList()),
             )
 
-        assertEquals(2, created.report.issues.size)
+        assertEquals(4, created.report.issues.size)
         listOf(created.report, invalid.report, invalidCount.report).forEach(::assertImmutableIssues)
     }
 

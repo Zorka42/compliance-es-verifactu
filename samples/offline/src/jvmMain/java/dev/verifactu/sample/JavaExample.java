@@ -77,12 +77,24 @@ public final class JavaExample {
         );
         RegistrationPreparationResult result = FiscalSubmissionPreparation.prepareRegistration(draft, QrEnvironment.TEST);
         RegistrationPreparationResult withContext = FiscalSubmissionPreparation.prepareRegistration(
-            draft, QrEnvironment.TEST, new ValidationContext(value(InvoiceIssueDate.parse("01-01-2027")))
+            draft, QrEnvironment.TEST, new ValidationContext(
+                value(InvoiceIssueDate.parse("01-01-2027")), value(InvoiceIssueDate.parse("08-11-2026"))
+            )
         );
         if (!(withContext instanceof RegistrationPreparationResult.Prepared)
                 || !FiscalIdentifierValidator.validateTaxIdentifier(issuer).isValid()
-                || new ValidationContext().getAeatReceiptDate() != null) {
+                || new ValidationContext().getAeatReceiptDate() != null
+                || new ValidationContext().getAeatCurrentDate() != null
+                || new ValidationContext(value(InvoiceIssueDate.parse("01-01-2027"))).getAeatCurrentDate() != null) {
             throw new IllegalStateException("Java identifier or explicit-context entry points failed");
+        }
+        RegistrationPreparationResult futureDate = FiscalSubmissionPreparation.prepareRegistration(
+            draft, QrEnvironment.TEST, new ValidationContext(null, value(InvoiceIssueDate.parse("27-10-2024")))
+        );
+        if (!(futureDate instanceof RegistrationPreparationResult.Invalid)
+                || ((RegistrationPreparationResult.Invalid) futureDate).getReport().getIssues().stream()
+                    .noneMatch(issue -> "1112".equals(issue.getAeatCode()))) {
+            throw new IllegalStateException("Java current-date validation did not reject a future issue date");
         }
         if (!(result instanceof RegistrationPreparationResult.Prepared)) {
             throw new IllegalStateException("Synthetic Java draft failed local validation");

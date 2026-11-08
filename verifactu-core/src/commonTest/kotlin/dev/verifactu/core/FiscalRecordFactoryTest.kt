@@ -28,7 +28,7 @@ class FiscalRecordFactoryTest {
         assertEquals(
             "VF-CHAIN-001",
             invalid.report.issues
-                .single()
+                .single { it.severity == ValidationSeverity.ERROR }
                 .code,
         )
     }
@@ -43,7 +43,7 @@ class FiscalRecordFactoryTest {
         assertEquals(
             "system.producerName",
             invalid.report.issues
-                .single()
+                .single { it.severity == ValidationSeverity.ERROR }
                 .fieldPath,
         )
     }
@@ -59,7 +59,7 @@ class FiscalRecordFactoryTest {
         assertEquals(
             "VF-RECORD-002",
             invalid.report.issues
-                .single()
+                .single { it.severity == ValidationSeverity.ERROR }
                 .code,
         )
     }
@@ -485,9 +485,15 @@ class FiscalRecordFactoryTest {
 
         assertEquals(
             listOf("system.systemIdentifier", "issuerName", "operationDescription"),
-            invalid.report.issues.map { it.fieldPath },
+            invalid.report.issues
+                .filter { it.severity == ValidationSeverity.ERROR }
+                .map { it.fieldPath },
         )
-        assertTrue(invalid.report.issues.all { it.code == "VF-RECORD-001" })
+        assertTrue(
+            invalid.report.issues
+                .filter { it.severity == ValidationSeverity.ERROR }
+                .all { it.code == "VF-RECORD-001" },
+        )
     }
 
     @Test
@@ -521,9 +527,16 @@ class FiscalRecordFactoryTest {
 
         assertEquals(
             listOf("system.producerName", "system.version", "issuerName", "operationDescription"),
-            invalid.report.issues.map { it.fieldPath },
+            invalid.report.issues
+                .filter { it.severity == ValidationSeverity.ERROR }
+                .map { it.fieldPath },
         )
-        assertTrue(invalid.report.issues.all { it.code == "VF-RECORD-006" && it.source?.document == "W3C XML 1.0" })
+        assertTrue(
+            invalid.report.issues.filter { it.severity == ValidationSeverity.ERROR }.all {
+                it.code == "VF-RECORD-006" &&
+                    it.source?.document == "W3C XML 1.0"
+            },
+        )
     }
 
     @Test

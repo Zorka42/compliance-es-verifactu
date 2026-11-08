@@ -10,6 +10,8 @@ This project follows Semantic Versioning.
 
 ### Added
 
+- Explicit AEAT current-date context, source-backed issue/operation date checks and warnings for unknown dates and unresolved calendar boundaries.
+
 - Separate host CLI `cancellation-missing` negative scenario, with an explicit absent target, actual chain tail and expected 3002 response verification.
 
 - Standalone Java 11+ sandbox CLI with deterministic request bundles, XML/digest review, offline response scenarios, saved-response inspection and an explicit TEST-only delivery command; local disposable mTLS and CI launcher checks.

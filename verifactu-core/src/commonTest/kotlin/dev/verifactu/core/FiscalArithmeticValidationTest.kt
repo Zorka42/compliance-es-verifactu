@@ -131,7 +131,7 @@ class FiscalArithmeticValidationTest {
         assertEquals(
             "2006",
             created.report.issues
-                .single()
+                .single { it.code == "VF-AMOUNT-2006" }
                 .aeatCode,
         )
     }

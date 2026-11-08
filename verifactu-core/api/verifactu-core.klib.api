@@ -836,13 +836,16 @@ final class dev.verifactu.core/TaxIdentifier { // dev.verifactu.core/TaxIdentifi
 }
 
 final class dev.verifactu.core/ValidationContext { // dev.verifactu.core/ValidationContext|null[0]
-    constructor <init>(dev.verifactu.core/InvoiceIssueDate? = ...) // dev.verifactu.core/ValidationContext.<init>|<init>(dev.verifactu.core.InvoiceIssueDate?){}[0]
+    constructor <init>(dev.verifactu.core/InvoiceIssueDate? = ..., dev.verifactu.core/InvoiceIssueDate? = ...) // dev.verifactu.core/ValidationContext.<init>|<init>(dev.verifactu.core.InvoiceIssueDate?;dev.verifactu.core.InvoiceIssueDate?){}[0]
 
+    final val aeatCurrentDate // dev.verifactu.core/ValidationContext.aeatCurrentDate|{}aeatCurrentDate[0]
+        final fun <get-aeatCurrentDate>(): dev.verifactu.core/InvoiceIssueDate? // dev.verifactu.core/ValidationContext.aeatCurrentDate.<get-aeatCurrentDate>|<get-aeatCurrentDate>(){}[0]
     final val aeatReceiptDate // dev.verifactu.core/ValidationContext.aeatReceiptDate|{}aeatReceiptDate[0]
         final fun <get-aeatReceiptDate>(): dev.verifactu.core/InvoiceIssueDate? // dev.verifactu.core/ValidationContext.aeatReceiptDate.<get-aeatReceiptDate>|<get-aeatReceiptDate>(){}[0]
 
     final fun component1(): dev.verifactu.core/InvoiceIssueDate? // dev.verifactu.core/ValidationContext.component1|component1(){}[0]
-    final fun copy(dev.verifactu.core/InvoiceIssueDate? = ...): dev.verifactu.core/ValidationContext // dev.verifactu.core/ValidationContext.copy|copy(dev.verifactu.core.InvoiceIssueDate?){}[0]
+    final fun component2(): dev.verifactu.core/InvoiceIssueDate? // dev.verifactu.core/ValidationContext.component2|component2(){}[0]
+    final fun copy(dev.verifactu.core/InvoiceIssueDate? = ..., dev.verifactu.core/InvoiceIssueDate? = ...): dev.verifactu.core/ValidationContext // dev.verifactu.core/ValidationContext.copy|copy(dev.verifactu.core.InvoiceIssueDate?;dev.verifactu.core.InvoiceIssueDate?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // dev.verifactu.core/ValidationContext.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // dev.verifactu.core/ValidationContext.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // dev.verifactu.core/ValidationContext.toString|toString(){}[0]
