@@ -81,7 +81,7 @@ Preparation prints a concrete `./verifactu sandbox send` command containing the 
 
 A matched single-record rejection with code 3002 and known flow control prints `Result: REJECTED` and `Expected scenario verification: PASS`, exit 0. Unexpected acceptance, another code, unknown flow control or a correlation/HTTP failure cannot pass. Demo completion still exits 0 as a simulation; inspect/send exit 0 only when their expected-case check passes. Saved XML inspection does not prove delivery. Preserve `network.log`, `summary.txt`, `outcome.properties` and the private raw evidence from an actual send.
 
-This candidate does not alter an existing matrix or waive its REVIEW state. The old `rejection-date` case remains available for inspection: it intentionally constructs only the known 27-10-2024 violation and refuses other validation errors. Normal registration preparation rejects that date. The owner-run date case was unexpectedly accepted and remains REVIEW; no live 3002 result is claimed.
+This candidate does not alter an existing matrix or waive its REVIEW state. The old `rejection-date` case remains available for inspection: it intentionally constructs only the known 27-10-2024 violation and refuses other validation errors. Normal registration preparation rejects that date. The owner-run date case was unexpectedly accepted and remains REVIEW; the separate owner-run 3002 rejection was verified on 2026-11-08, as recorded in the [operator guide](../../docs/aeat-test-matrix.md#owner-run-missing-cancellation-result-2026-11-08).
 
 ## Review and saved responses
 

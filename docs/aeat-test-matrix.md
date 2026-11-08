@@ -2,6 +2,12 @@
 
 This host-tool workflow prepares the entire manual interoperability matrix. It does not run AEAT operations implicitly, issue invoices for real business activity, establish production readiness or sign a declaración responsable. Production is unavailable in these commands. The repository launcher must be run from the checkout; the installed `verifactu` entry point can be used from another directory.
 
+## Owner-run missing-cancellation result, 2026-11-08
+
+The owner executed the separate `cancellation-missing` case. The saved request matches its reviewed SHA-256 and the exact attempt request bytes. Request and native response URLs both identify the fixed HTTPS `prewww1.aeat.es` TEST service; redirects were refused and normal system trust remained enabled. The response was HTTP 200, `RESPONSE_RECEIVED`, matched to the cancellation target and operation, with aggregate/record rejection and code **3002**. Expected scenario verification is **PASS**, CLI exit 0; the reply supplied a 60-second wait. Local reinspection of the saved response also passes without network or certificate access.
+
+This externally verifies the ordinary absent-record rejection path. The agreed small functional suite now has live registration, duplicate, warning, subsanation, cancellation, rejection and both-role consultation evidence. No repeat send or additional owner command is needed for this case. It does not change the original pre-cutoff acceptance/REVIEW result or unlock the original matrix. Live 10001-record pagination remains postponed and full ZA-111 is incomplete. Private request/response XML, identities, invoice numbers and certificate data remain outside Git; existing wholly synthetic 3002 fixtures/tests cover the public protocol behavior.
+
 ## Owner-run TEST observations, 2026-11-07
 
 The owner executed the small suite with synthetic invoice data through native certificate selection. Reviewed private responses and request/response URL logs identify the fixed `prewww1.aeat.es` TEST service, HTTP 200 and matched response correlation. No private identities, invoice numbers, certificate references or raw live XML are reproduced here.
@@ -106,4 +112,4 @@ Exact archived URLs, versions and digests are in [schemas-aeat/manifest.tsv](../
 
 Normal registration validation now rejects pre-28-10-2024 issue dates with structured AEAT 1152 evidence; historical dates and original vectors are preserved. This does not reinterpret the owner's actual acceptance or make the existing rejection case PASS. The date source discrepancy and unsent clarification draft remain in [validation context](compliance/validation-context.md#public-source-recheck-and-live-discrepancy).
 
-The separate [`cancellation-missing` workflow](../tools/sandbox/README.md#negative-test-cancellation-of-an-absent-invoice) prepares an ordinary cancellation of an absent invoice, expecting 3002. It has its own bundle/digest/attempt and requires a reconciled chain tail, distinct target and owner-established absence. Local simulation is covered; live verification remains pending. It does not unlock the old matrix or prove live pagination.
+The separate [`cancellation-missing` workflow](../tools/sandbox/README.md#negative-test-cancellation-of-an-absent-invoice) prepares an ordinary cancellation of an absent invoice, expecting 3002. It has its own bundle/digest/attempt and requires a reconciled chain tail, distinct target and owner-established absence. Local simulation is covered; the owner-run 3002 rejection was verified on 2026-11-08. It does not unlock the old matrix or prove live pagination.
