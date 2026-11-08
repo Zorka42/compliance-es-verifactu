@@ -29,6 +29,7 @@ import dev.verifactu.core.TaxBreakdownDetail
 import dev.verifactu.core.TaxIdentifier
 import dev.verifactu.core.TaxOperation
 import dev.verifactu.core.TaxType
+import dev.verifactu.core.ValidationSeverity
 import dev.verifactu.core.ValueResult
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -250,13 +251,13 @@ class RegistroXmlSerializerTest {
                 assertEquals(
                     "VF-BATCH-002",
                     invalid.report.issues
-                        .single()
+                        .single { it.severity == ValidationSeverity.ERROR }
                         .code,
                 )
                 assertEquals(
                     "header.issuerName",
                     invalid.report.issues
-                        .single()
+                        .single { it.severity == ValidationSeverity.ERROR }
                         .fieldPath,
                 )
             }
@@ -292,9 +293,15 @@ class RegistroXmlSerializerTest {
 
         assertEquals(
             listOf("records[0].draft.invoice.issuer", "records[1].draft.cancelledInvoice.issuer"),
-            invalid.report.issues.map { it.fieldPath },
+            invalid.report.issues
+                .filter { it.severity == ValidationSeverity.ERROR }
+                .map { it.fieldPath },
         )
-        assertTrue(invalid.report.issues.all { it.code == "VF-BATCH-003" })
+        assertTrue(
+            invalid.report.issues
+                .filter { it.severity == ValidationSeverity.ERROR }
+                .all { it.code == "VF-BATCH-003" },
+        )
     }
 
     @Test
@@ -310,8 +317,18 @@ class RegistroXmlSerializerTest {
                 ),
             )
 
-        assertEquals(listOf("records[0].hash", "records[1].hash"), invalid.report.issues.map { it.fieldPath })
-        assertTrue(invalid.report.issues.all { it.code == "VF-BATCH-004" })
+        assertEquals(
+            listOf("records[0].hash", "records[1].hash"),
+            invalid.report.issues
+                .filter {
+                    it.severity == ValidationSeverity.ERROR
+                }.map { it.fieldPath },
+        )
+        assertTrue(
+            invalid.report.issues
+                .filter { it.severity == ValidationSeverity.ERROR }
+                .all { it.code == "VF-BATCH-004" },
+        )
     }
 
     @Test
@@ -333,7 +350,9 @@ class RegistroXmlSerializerTest {
 
         assertEquals(
             listOf("records[0].draft.issuerName", "records[1].draft.system.producerName"),
-            invalid.report.issues.map { it.fieldPath },
+            invalid.report.issues
+                .filter { it.severity == ValidationSeverity.ERROR }
+                .map { it.fieldPath },
         )
     }
 

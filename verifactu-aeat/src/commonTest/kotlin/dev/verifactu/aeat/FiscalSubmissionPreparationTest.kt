@@ -33,6 +33,78 @@ import kotlin.test.assertTrue
 
 class FiscalSubmissionPreparationTest {
     @Test
+    fun currentDateIssuesPropagateThroughPreparationAndBatchRevalidationWithoutChangingBytes() {
+        val base = registrationDraft()
+        val original =
+            assertIs<RegistrationPreparationResult.Prepared>(FiscalSubmissionPreparation.prepareRegistration(base, QrEnvironment.TEST))
+        val known =
+            assertIs<RegistrationPreparationResult.Prepared>(
+                FiscalSubmissionPreparation.prepareRegistration(
+                    base,
+                    QrEnvironment.TEST,
+                    ValidationContext(aeatCurrentDate = value(InvoiceIssueDate.parse("28-10-2024"))),
+                ),
+            )
+        assertEquals(original.record, known.record)
+        assertEquals(original.recordXml, known.recordXml)
+        assertEquals(original.batchXml, known.batchXml)
+        assertEquals(original.soapEnvelope, known.soapEnvelope)
+        assertEquals(original.qr, known.qr)
+        assertEquals(listOf("VF-DATE-CONTEXT-UNKNOWN"), original.report.issues.map { it.code })
+        assertTrue(known.report.issues.isEmpty())
+        val cases =
+            listOf(
+                Triple("27-10-2024", null, "1112"),
+                Triple("08-11-2026", "07-11-2006", "1134"),
+                Triple("08-11-2026", "01-01-2028", "1125"),
+                Triple("08-11-2026", "09-11-2026", "1173"),
+                Triple("08-11-2026", "09-11-2027", "OPERATION-UPPER-BOUND-UNRESOLVED"),
+                Triple("29-02-2120", "28-02-2100", "OPERATION-LEAP-BOUND-UNRESOLVED"),
+            )
+        for ((current, operation, code) in cases) {
+            val draft =
+                base.copy(
+                    conditionalData = base.conditionalData.copy(operationDate = operation?.let { value(InvoiceIssueDate.parse(it)) }),
+                    taxBreakdown =
+                        TaxBreakdown(
+                            base.taxBreakdown.details.map {
+                                it.copy(
+                                    regimeCode =
+                                        if (code in
+                                            listOf("1134", "1173")
+                                        ) {
+                                            "01"
+                                        } else {
+                                            "15"
+                                        },
+                                )
+                            },
+                        ),
+                )
+            // The baseline record is deliberately revalidated under a different context at batch preparation.
+            val unchecked = original.record.copy(draft = draft)
+            val context = ValidationContext(aeatCurrentDate = value(InvoiceIssueDate.parse(current)))
+            val preparation = FiscalSubmissionPreparation.prepareRegistration(draft, QrEnvironment.TEST, context)
+            val header = SubmissionHeader(draft.issuerName, draft.invoice.issuer)
+            val batch = FiscalSubmissionPreparation.prepareBatch(header, listOf(SubmissionRecord.Registration(unchecked)), context)
+            val reports =
+                if (code.endsWith("UNRESOLVED")) {
+                    listOf(
+                        assertIs<RegistrationPreparationResult.Prepared>(preparation).report,
+                        assertIs<SubmissionBatchBuildResult.Created>(batch).report,
+                    )
+                } else {
+                    listOf(
+                        assertIs<RegistrationPreparationResult.Invalid>(preparation).report,
+                        assertIs<SubmissionBatchBuildResult.Invalid>(batch).report,
+                    )
+                }
+            val issue = reports[0].issues.single { it.code == "VF-DATE-$code" }
+            assertEquals(issue.copy(fieldPath = "records[0].draft.${issue.fieldPath}"), reports[1].issues.single { it.code == issue.code })
+        }
+    }
+
+    @Test
     fun cutoffErrorsPropagateThroughPreparationAndBatchRevalidation() {
         val base = registrationDraft()
         val before = base.copy(invoice = base.invoice.copy(issueDate = value(InvoiceIssueDate.parse("27-10-2024"))))
@@ -79,7 +151,7 @@ class FiscalSubmissionPreparationTest {
         assertEquals(
             ValidationSeverity.WARNING,
             prepared.report.issues
-                .single()
+                .single { it.code == "VF-TAX-IPSI-TRANSITION" }
                 .severity,
         )
         val header = SubmissionHeader(draft.issuerName, draft.invoice.issuer)
@@ -87,23 +159,23 @@ class FiscalSubmissionPreparationTest {
         val earlyBatch = assertIs<SubmissionBatchBuildResult.Created>(FiscalSubmissionPreparation.prepareBatch(header, records, before))
         assertEquals(
             prepared.report.issues
-                .single()
+                .single { it.code == "VF-TAX-IPSI-TRANSITION" }
                 .aeatCode,
             earlyBatch.report.issues
-                .single()
+                .single { it.code == "VF-TAX-IPSI-TRANSITION" }
                 .aeatCode,
         )
         assertEquals(
             "records[0].draft.taxBreakdown.details[0].regimeCode",
             earlyBatch.report.issues
-                .single()
+                .single { it.code == "VF-TAX-IPSI-TRANSITION" }
                 .fieldPath,
         )
         val lateBatch = assertIs<SubmissionBatchBuildResult.Invalid>(FiscalSubmissionPreparation.prepareBatch(header, records, after))
         assertEquals(
             ValidationSeverity.ERROR,
             lateBatch.report.issues
-                .single()
+                .single { it.code == "VF-TAX-IPSI-TRANSITION" }
                 .severity,
         )
         val latePreparation =
@@ -113,7 +185,7 @@ class FiscalSubmissionPreparationTest {
         assertEquals(
             ValidationSeverity.ERROR,
             latePreparation.report.issues
-                .single()
+                .single { it.code == "VF-TAX-IPSI-TRANSITION" }
                 .severity,
         )
     }
@@ -192,13 +264,13 @@ class FiscalSubmissionPreparationTest {
         assertEquals(
             "VF-RECORD-001",
             invalidRecord.report.issues
-                .single()
+                .single { it.severity == ValidationSeverity.ERROR }
                 .code,
         )
         assertEquals(
             "operationDescription",
             invalidRecord.report.issues
-                .single()
+                .single { it.severity == ValidationSeverity.ERROR }
                 .fieldPath,
         )
 
@@ -212,13 +284,13 @@ class FiscalSubmissionPreparationTest {
         assertEquals(
             "1130",
             invalidInvoiceNumber.report.issues
-                .single()
+                .single { it.severity == ValidationSeverity.ERROR }
                 .aeatCode,
         )
         assertEquals(
             "invoice.number",
             invalidInvoiceNumber.report.issues
-                .single()
+                .single { it.severity == ValidationSeverity.ERROR }
                 .fieldPath,
         )
     }
@@ -238,7 +310,7 @@ class FiscalSubmissionPreparationTest {
         assertEquals(
             "VF-RECORD-001",
             invalidRecord.report.issues
-                .single()
+                .single { it.severity == ValidationSeverity.ERROR }
                 .code,
         )
 
@@ -289,7 +361,7 @@ class FiscalSubmissionPreparationTest {
         assertEquals(
             "VF-BATCH-004",
             invalid.report.issues
-                .single()
+                .single { it.severity == ValidationSeverity.ERROR }
                 .code,
         )
     }

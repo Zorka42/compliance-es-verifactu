@@ -254,7 +254,7 @@ class FiscalIdentifierValidationTest {
                     val created =
                         assertIs<RecordCreationResult.Created<RegistroAlta>>(FiscalRecordFactory.createRegistration(draft, context))
                     assertEquals(
-                        setOf("VF-ID-CHECKSUM-UNVERIFIED", "VF-ID-COUNTRY-PREFIX-ASSUMPTION"),
+                        setOf("VF-ID-CHECKSUM-UNVERIFIED", "VF-ID-COUNTRY-PREFIX-ASSUMPTION", "VF-DATE-CONTEXT-UNKNOWN"),
                         created.report.issues
                             .map { it.code }
                             .toSet(),

@@ -38,7 +38,7 @@ class TaxConditionalValidationTest {
         listOf(null, "02", "21").forEach { regime ->
             listOf("2026-12-31T23:59:59+01:00", "2027-01-01T00:00:00+01:00").forEach { generatedAt ->
                 val draft = draft(detail().copy(tax = TaxType.IPSI, regimeCode = regime)).copy(generatedAt = timestamp(generatedAt))
-                val issue = RegistroAltaValidator.validate(draft).issues.single()
+                val issue = RegistroAltaValidator.validate(draft).issues.single { it.code == "VF-TAX-IPSI-TRANSITION" }
                 assertEquals("VF-TAX-IPSI-TRANSITION", issue.code)
                 assertEquals(ValidationSeverity.WARNING, issue.severity)
                 assertEquals(null, issue.aeatCode)
@@ -46,9 +46,9 @@ class TaxConditionalValidationTest {
                 assertTrue(issue.message.contains("does not establish acceptance"))
                 assertTrue(assertNotNull(issue.source).section.contains("15.6"))
                 val created = assertIs<RecordCreationResult.Created<RegistroAlta>>(FiscalRecordFactory.createRegistration(draft))
-                assertEquals(listOf(issue), created.report.issues)
+                assertEquals(RegistroAltaValidator.validate(draft), created.report)
                 assertFails { (created.report.issues as MutableList<ValidationIssue>).clear() }
-                assertEquals(listOf(issue), created.report.issues)
+                assertEquals(RegistroAltaValidator.validate(draft), created.report)
             }
         }
     }
@@ -78,45 +78,45 @@ class TaxConditionalValidationTest {
                 assertEquals(
                     ValidationSeverity.WARNING,
                     early.report.issues
-                        .single()
+                        .single { it.code == "VF-TAX-IPSI-TRANSITION" }
                         .severity,
                 )
                 assertEquals(
                     if (regime == null) "2009" else null,
                     early.report.issues
-                        .single()
+                        .single { it.code == "VF-TAX-IPSI-TRANSITION" }
                         .aeatCode,
                 )
                 val late = assertIs<RecordCreationResult.Invalid>(FiscalRecordFactory.createRegistration(draft, after))
                 assertEquals(
                     ValidationSeverity.ERROR,
                     late.report.issues
-                        .single()
+                        .single { it.code == "VF-TAX-IPSI-TRANSITION" }
                         .severity,
                 )
                 assertEquals(
                     if (regime == null) "1245" else "1246",
                     late.report.issues
-                        .single()
+                        .single { it.code == "VF-TAX-IPSI-TRANSITION" }
                         .aeatCode,
                 )
                 assertEquals(
                     "taxBreakdown.details[0].regimeCode",
                     late.report.issues
-                        .single()
+                        .single { it.code == "VF-TAX-IPSI-TRANSITION" }
                         .fieldPath,
                 )
                 assertEquals(
                     "1.2.2 (2026-04-08)",
                     late.report.issues
-                        .single()
+                        .single { it.code == "VF-TAX-IPSI-TRANSITION" }
                         .source
                         ?.version,
                 )
             }
         }
         val valid = draft(detail().copy(tax = TaxType.IPSI, regimeCode = "01"))
-        assertTrue(RegistroAltaValidator.validate(valid, after).issues.isEmpty())
+        assertEquals(listOf("VF-DATE-CONTEXT-UNKNOWN"), RegistroAltaValidator.validate(valid, after).issues.map { it.code })
         val ordinary = draft(detail())
         assertEquals(RegistroAltaValidator.validate(ordinary), RegistroAltaValidator.validate(ordinary, after))
     }
@@ -334,7 +334,7 @@ class TaxConditionalValidationTest {
                             zero.copy(equivalenceSurchargeRate = surcharge),
                         ).copy(totalTax = amount("0"), totalAmount = amount("100")).withOperationDate(date),
                     )
-                val issue = report.issues.single()
+                val issue = report.issues.single { it.code == "VF-TAX-ZERO-RATE-UNRESOLVED" }
                 assertTrue(report.isValid)
                 assertEquals("VF-TAX-ZERO-RATE-UNRESOLVED", issue.code)
                 assertEquals(ValidationSeverity.WARNING, issue.severity)
