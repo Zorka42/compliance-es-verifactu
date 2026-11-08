@@ -83,6 +83,8 @@ class RegistrationDateValidationTest {
         assertEquals(ValidationSeverity.WARNING, issue.severity)
         assertNull(issue.aeatCode)
         assertTrue(operationIssues("29-02-2120", "01-03-2100").isEmpty())
+        assertDateError(operationIssues("29-02-2120", "28-02-2099").single(), "1134", "conditionalData.operationDate", "3.1.3.7")
+        assertTrue(operationIssues("29-02-2120", "28-02-2101").isEmpty())
     }
 
     @Test

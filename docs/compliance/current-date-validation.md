@@ -56,7 +56,7 @@ The catalogue also contains 1133 for an issue date older than twenty years, but 
 | Issue date before/equal/after, structured source evidence, factory propagation | `RegistrationDateValidationTest.issueDateUsesOnlyExplicitAeatCurrentDateAndPropagatesThroughFactory` |
 | No implicit date from receipt/generation; unknown warning; unchanged record/hash/chain | `RegistrationDateValidationTest.unknownCurrentDateIsInspectableAndReceiptAndGenerationDatesCannotReplaceIt` |
 | Inclusive twenty-year bound, rollover, leap days, Gregorian centuries and early years | `RegistrationDateValidationTest.operationLowerBoundIsInclusiveAcrossOrdinaryAndLeapYears` |
-| Disputed leap day warns; surrounding days remain decisive | `RegistrationDateValidationTest.unresolvedLeapDayLowerBoundWarnsOnlyOnTheDisputedDay` |
+| Disputed leap day warns only in the boundary year; surrounding days and adjacent years remain decisive | `RegistrationDateValidationTest.unresolvedLeapDayLowerBoundWarnsOnlyOnTheDisputedDay` |
 | Disputed upper band, rollover, leap anniversary and year 9999 | `RegistrationDateValidationTest.operationUpperBoundRetainsTheDisputedBandWithoutInventingAnAeatError` |
 | Every IVA/IGIC detail, omitted tax, both permitted regimes and non-applicable taxes | `RegistrationDateValidationTest.futureOperationChecksEveryIvaAndIgicDetailIncludingImplicitIva` |
 | Preparation/batch errors and warnings with indexed paths; unchanged XML/SOAP/QR | `FiscalSubmissionPreparationTest.currentDateIssuesPropagateThroughPreparationAndBatchRevalidationWithoutChangingBytes` |
